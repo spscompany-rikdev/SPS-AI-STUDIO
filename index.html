@@ -491,9 +491,12 @@ Send
 <script>
 
 const API = "https://juice-emporium-frozen.ngrok-free.dev";
-//=====================================
-// Example=https://juice-emporium-frozen.ngrok-free.dev
-//=====================================
+
+const HEADERS = {
+"Content-Type":"application/json",
+"x-sps-client":"sps_ai_web"
+};
+
 // ======================================
 // PAGE
 // ======================================
@@ -516,7 +519,6 @@ document.getElementById(id)
 
 }
 
-
 // ======================================
 // SIGNUP
 // ======================================
@@ -531,15 +533,21 @@ const status =
 document.getElementById("signupStatus");
 
 status.classList.remove("hidden");
+
+if(!email){
+
+status.innerHTML = "Enter your email.";
+return;
+
+}
+
 status.innerHTML = "Sending OTP...";
 
 try{
 
 const r = await fetch(API + "/signup",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:HEADERS,
 body:JSON.stringify({email})
 });
 
@@ -569,7 +577,6 @@ status.innerHTML = "Server connection failed.";
 
 }
 
-
 // ======================================
 // VERIFY
 // ======================================
@@ -594,9 +601,7 @@ try{
 
 const r = await fetch(API + "/verify",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:HEADERS,
 body:JSON.stringify({
 email,
 otp
@@ -637,7 +642,6 @@ status.innerHTML = "Verification failed.";
 
 }
 
-
 // ======================================
 // DASHBOARD
 // ======================================
@@ -653,9 +657,7 @@ try{
 
 const r = await fetch(API + "/apikey",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:HEADERS,
 body:JSON.stringify({api_key})
 });
 
@@ -671,6 +673,11 @@ document.getElementById(
 "remainingCount"
 ).innerHTML = data.remaining;
 
+}else{
+
+localStorage.clear();
+location.reload();
+
 }
 
 }catch(err){
@@ -680,7 +687,6 @@ console.log(err);
 }
 
 }
-
 
 // ======================================
 // COPY
@@ -697,7 +703,6 @@ document.getElementById(
 alert("API Key Copied");
 
 }
-
 
 // ======================================
 // CHAT
@@ -726,9 +731,7 @@ try{
 
 const r = await fetch(API + "/chat",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:HEADERS,
 body:JSON.stringify({
 api_key,
 message
@@ -769,7 +772,6 @@ addMessage(
 
 }
 
-
 // ======================================
 // CHAT UI
 // ======================================
@@ -799,7 +801,6 @@ chatBox.scrollTop =
 chatBox.scrollHeight;
 
 }
-
 
 function showTyping(){
 
@@ -835,7 +836,6 @@ chatBox.scrollHeight;
 
 }
 
-
 function removeTyping(){
 
 const typing =
@@ -844,7 +844,6 @@ document.getElementById("typing");
 if(typing) typing.remove();
 
 }
-
 
 // ======================================
 // ENTER SEND
@@ -869,19 +868,17 @@ sendMessage();
 }
 );
 
-
 // ======================================
 // SIGN OUT
 // ======================================
 
 function signOut(){
 
-localStorage.removeItem("api_key");
+localStorage.clear();
 
 location.reload();
 
 }
-
 
 // ======================================
 // DELETE ACCOUNT
@@ -904,9 +901,7 @@ const r = await fetch(
 API + "/delete-account",
 {
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:HEADERS,
 body:JSON.stringify({
 api_key
 })
@@ -928,7 +923,6 @@ alert("Delete failed");
 }
 
 }
-
 
 // ======================================
 // AUTO LOGIN
@@ -956,4 +950,4 @@ loadDashboard();
 </script>
 
 </body>
-</html>
+  </html>
