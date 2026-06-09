@@ -1,953 +1,3356 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SPS AI Studio</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-background:#0b1120;
-color:white;
-min-height:100vh;
-overflow-x:hidden;
-}
-
-body::before{
-content:"";
-position:fixed;
-width:500px;
-height:500px;
-background:#2563eb;
-filter:blur(180px);
-top:-150px;
-left:-100px;
-opacity:.3;
-z-index:-1;
-}
-
-body::after{
-content:"";
-position:fixed;
-width:500px;
-height:500px;
-background:#7c3aed;
-filter:blur(180px);
-bottom:-150px;
-right:-100px;
-opacity:.3;
-z-index:-1;
-}
-
-.header{
-width:100%;
-padding:20px 25px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:rgba(17,24,39,.65);
-backdrop-filter:blur(14px);
-border-bottom:1px solid rgba(255,255,255,.08);
-position:sticky;
-top:0;
-z-index:100;
-}
-
-.logo{
-font-size:28px;
-font-weight:700;
-background:linear-gradient(90deg,#60a5fa,#a78bfa);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-.header-buttons{
-display:flex;
-gap:10px;
-}
-
-.top-btn{
-padding:10px 16px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-font-weight:600;
-background:#1f2937;
-color:white;
-}
-
-.delete-btn{
-background:#dc2626;
-}
-
-.main{
-padding:35px 20px;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-.card{
-width:100%;
-max-width:450px;
-background:rgba(17,24,39,.85);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.08);
-border-radius:28px;
-padding:35px;
-box-shadow:0 0 50px rgba(0,0,0,.35);
-}
-
-h1{
-font-size:34px;
-margin-bottom:10px;
-}
-
-.subtitle{
-color:#9ca3af;
-margin-bottom:28px;
-line-height:1.6;
-}
-
-input,
-textarea{
-width:100%;
-padding:16px;
-background:#1f2937;
-border:none;
-border-radius:16px;
-color:white;
-font-size:15px;
-outline:none;
-margin-top:15px;
-}
-
-textarea{
-resize:none;
-}
-
-button{
-width:100%;
-padding:15px;
-margin-top:20px;
-border:none;
-border-radius:16px;
-background:linear-gradient(135deg,#2563eb,#7c3aed);
-color:white;
-font-size:16px;
-font-weight:600;
-cursor:pointer;
-transition:.25s;
-}
-
-button:hover{
-transform:translateY(-2px);
-}
-
-.hidden{
-display:none;
-}
-
-.status{
-margin-top:18px;
-padding:14px;
-border-radius:14px;
-background:#1e293b;
-font-size:14px;
-}
-
-.dashboard{
-width:100%;
-max-width:1200px;
-}
-
-.top-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:20px;
-margin-bottom:25px;
-}
-
-.stat-card{
-background:rgba(17,24,39,.85);
-backdrop-filter:blur(15px);
-padding:25px;
-border-radius:22px;
-border:1px solid rgba(255,255,255,.08);
-}
-
-.stat-title{
-font-size:14px;
-color:#9ca3af;
-margin-bottom:10px;
-}
-
-.stat-value{
-font-size:30px;
-font-weight:700;
-}
-
-.api-box{
-background:rgba(17,24,39,.85);
-padding:25px;
-border-radius:22px;
-border:1px solid rgba(255,255,255,.08);
-margin-bottom:25px;
-}
-
-.chat-container{
-height:75vh;
-background:rgba(17,24,39,.85);
-border-radius:24px;
-border:1px solid rgba(255,255,255,.08);
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
-
-.chat-box{
-flex:1;
-overflow-y:auto;
-padding:25px;
-scroll-behavior:smooth;
-}
-
-.message{
-display:flex;
-margin-bottom:20px;
-animation:fade .25s ease;
-}
-
-@keyframes fade{
-from{
-opacity:0;
-transform:translateY(10px);
-}
-to{
-opacity:1;
-transform:none;
-}
-}
-
-.user{
-justify-content:flex-end;
-}
-
-.ai{
-justify-content:flex-start;
-}
-
-.bubble{
-max-width:80%;
-padding:16px 18px;
-border-radius:18px;
-line-height:1.7;
-white-space:pre-wrap;
-word-wrap:break-word;
-}
-
-.user .bubble{
-background:#2563eb;
-}
-
-.ai .bubble{
-background:#1f2937;
-}
-
-.chat-input{
-padding:20px;
-display:flex;
-gap:15px;
-border-top:1px solid rgba(255,255,255,.08);
-}
-
-.chat-input textarea{
-height:60px;
-margin:0;
-}
-
-.send-btn{
-width:120px;
-margin:0;
-}
-
-.copy-btn{
-background:#1f2937;
-}
-
-.typing{
-display:flex;
-gap:5px;
-align-items:center;
-}
-
-.dot{
-width:8px;
-height:8px;
-background:#60a5fa;
-border-radius:50%;
-animation:bounce 1s infinite;
-}
-
-.dot:nth-child(2){
-animation-delay:.2s;
-}
-
-.dot:nth-child(3){
-animation-delay:.4s;
-}
-
-@keyframes bounce{
-0%,80%,100%{
-transform:translateY(0);
-opacity:.5;
-}
-40%{
-transform:translateY(-8px);
-opacity:1;
-}
-}
-
-.warning{
-color:#f59e0b;
-margin-top:10px;
-font-size:14px;
-}
-
-@media(max-width:768px){
-
-.chat-input{
-flex-direction:column;
-}
-
-.send-btn{
-width:100%;
-}
-
-.header{
-padding:18px;
-}
-
-.logo{
-font-size:22px;
-}
-
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="header">
-
-<div class="logo">SPS AI STUDIO</div>
-
-<div class="header-buttons hidden" id="headerButtons">
-
-<button class="top-btn" onclick="signOut()">
-Sign Out
-</button>
-
-<button class="top-btn delete-btn" onclick="deleteAccount()">
-Delete Account
-</button>
-
-</div>
-
-</div>
-
-<!-- SIGNUP -->
-
-<div class="main" id="signupPage">
-
-<div class="card">
-
-<h1>Create Account</h1>
-
-<div class="subtitle">
-Create your SPS AI account and receive your personal API key.
-</div>
-
-<input
-type="email"
-id="signupEmail"
-placeholder="Enter your email"
-/>
-
-<button onclick="signup()">
-Send OTP
-</button>
-
-<div class="status hidden" id="signupStatus"></div>
-
-</div>
-
-</div>
-
-<!-- VERIFY -->
-
-<div class="main hidden" id="verifyPage">
-
-<div class="card">
-
-<h1>Verify OTP</h1>
-
-<div class="subtitle">
-We sent a 6 digit code to your email.
-</div>
-
-<input
-type="text"
-id="otpInput"
-placeholder="Enter OTP"
-/>
-
-<button onclick="verifyOTP()">
-Verify Account
-</button>
-
-<div class="status hidden" id="verifyStatus"></div>
-
-</div>
-
-</div>
-
-<!-- DASHBOARD -->
-
-<div class="main hidden" id="dashboardPage">
-
-<div class="dashboard">
-
-<div class="top-grid">
-
-<div class="stat-card">
-<div class="stat-title">Daily Limit</div>
-<div class="stat-value">8</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-title">Remaining Today</div>
-<div class="stat-value" id="remainingCount">0</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-title">Status</div>
-<div class="stat-value">Active</div>
-</div>
-
-</div>
-
-<div class="api-box">
-
-<h2>Your API Key</h2>
-
-<textarea id="apiKeyBox" readonly></textarea>
-
-<button class="copy-btn" onclick="copyAPIKey()">
-Copy API Key
-</button>
-
-<div class="warning">
-Do not share your API key publicly.
-</div>
-
-</div>
-
-<div class="chat-container">
-
-<div class="chat-box" id="chatBox"></div>
-
-<div class="chat-input">
-
-<textarea
-id="messageInput"
-placeholder="Ask SPS AI anything..."
-></textarea>
-
-<button class="send-btn" onclick="sendMessage()">
-Send
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-const API = "https://juice-emporium-frozen.ngrok-free.dev";
-
-const HEADERS = {
-"Content-Type":"application/json",
-"x-sps-client":"sps_ai_web"
-};
-
-// ======================================
-// PAGE
-// ======================================
-
-function showPage(id){
-
-[
-"signupPage",
-"verifyPage",
-"dashboardPage"
-].forEach(page=>{
-
-document.getElementById(page)
-.classList.add("hidden");
-
-});
-
-document.getElementById(id)
-.classList.remove("hidden");
-
-}
-
-// ======================================
-// SIGNUP
-// ======================================
-
-async function signup(){
-
-const email =
-document.getElementById("signupEmail")
-.value.trim();
-
-const status =
-document.getElementById("signupStatus");
-
-status.classList.remove("hidden");
-
-if(!email){
-
-status.innerHTML = "Enter your email.";
-return;
-
-}
-
-status.innerHTML = "Sending OTP...";
-
-try{
-
-const r = await fetch(API + "/signup",{
-method:"POST",
-headers:HEADERS,
-body:JSON.stringify({email})
-});
-
-const data = await r.json();
-
-if(data.success){
-
-localStorage.setItem("email",email);
-
-status.innerHTML = "OTP sent successfully.";
-
-setTimeout(()=>{
-showPage("verifyPage");
-},1000);
-
-}else{
-
-status.innerHTML = data.message;
-
-}
-
-}catch(err){
-
-status.innerHTML = "Server connection failed.";
-
-}
-
-}
-
-// ======================================
-// VERIFY
-// ======================================
-
-async function verifyOTP(){
-
-const email =
-localStorage.getItem("email");
-
-const otp =
-document.getElementById("otpInput")
-.value.trim();
-
-const status =
-document.getElementById("verifyStatus");
-
-status.classList.remove("hidden");
-
-status.innerHTML = "Verifying...";
-
-try{
-
-const r = await fetch(API + "/verify",{
-method:"POST",
-headers:HEADERS,
-body:JSON.stringify({
-email,
-otp
-})
-});
-
-const data = await r.json();
-
-if(data.success){
-
-localStorage.setItem(
-"api_key",
-data.api_key
-);
-
-status.innerHTML =
-"Verification successful.";
-
-showPage("dashboardPage");
-
-document
-.getElementById("headerButtons")
-.classList.remove("hidden");
-
-loadDashboard();
-
-}else{
-
-status.innerHTML = data.message;
-
-}
-
-}catch(err){
-
-status.innerHTML = "Verification failed.";
-
-}
-
-}
-
-// ======================================
-// DASHBOARD
-// ======================================
-
-async function loadDashboard(){
-
-const api_key =
-localStorage.getItem("api_key");
-
-if(!api_key) return;
-
-try{
-
-const r = await fetch(API + "/apikey",{
-method:"POST",
-headers:HEADERS,
-body:JSON.stringify({api_key})
-});
-
-const data = await r.json();
-
-if(data.success){
-
-document.getElementById(
-"apiKeyBox"
-).value = api_key;
-
-document.getElementById(
-"remainingCount"
-).innerHTML = data.remaining;
-
-}else{
-
-localStorage.clear();
-location.reload();
-
-}
-
-}catch(err){
-
-console.log(err);
-
-}
-
-}
-
-// ======================================
-// COPY
-// ======================================
-
-function copyAPIKey(){
-
-navigator.clipboard.writeText(
-document.getElementById(
-"apiKeyBox"
-).value
-);
-
-alert("API Key Copied");
-
-}
-
-// ======================================
-// CHAT
-// ======================================
-
-async function sendMessage(){
-
-const input =
-document.getElementById("messageInput");
-
-const message =
-input.value.trim();
-
-if(!message) return;
-
-const api_key =
-localStorage.getItem("api_key");
-
-addMessage(message,"user");
-
-input.value = "";
-
-showTyping();
-
-try{
-
-const r = await fetch(API + "/chat",{
-method:"POST",
-headers:HEADERS,
-body:JSON.stringify({
-api_key,
-message
-})
-});
-
-const data = await r.json();
-
-removeTyping();
-
-if(data.success){
-
-const text =
-data.response.content || "No response";
-
-addMessage(text,"ai");
-
-document.getElementById(
-"remainingCount"
-).innerHTML = data.remaining;
-
-}else{
-
-addMessage(data.message,"ai");
-
-}
-
-}catch(err){
-
-removeTyping();
-
-addMessage(
-"Server error.",
-"ai"
-);
-
-}
-
-}
-
-// ======================================
-// CHAT UI
-// ======================================
-
-function addMessage(text,type){
-
-const chatBox =
-document.getElementById("chatBox");
-
-const div =
-document.createElement("div");
-
-div.className = "message " + type;
-
-const bubble =
-document.createElement("div");
-
-bubble.className = "bubble";
-
-bubble.innerText = text;
-
-div.appendChild(bubble);
-
-chatBox.appendChild(div);
-
-chatBox.scrollTop =
-chatBox.scrollHeight;
-
-}
-
-function showTyping(){
-
-const chatBox =
-document.getElementById("chatBox");
-
-const div =
-document.createElement("div");
-
-div.className = "message ai";
-
-div.id = "typing";
-
-const bubble =
-document.createElement("div");
-
-bubble.className = "bubble";
-
-bubble.innerHTML = `
-<div class="typing">
-<div class="dot"></div>
-<div class="dot"></div>
-<div class="dot"></div>
-</div>
-`;
-
-div.appendChild(bubble);
-
-chatBox.appendChild(div);
-
-chatBox.scrollTop =
-chatBox.scrollHeight;
-
-}
-
-function removeTyping(){
-
-const typing =
-document.getElementById("typing");
-
-if(typing) typing.remove();
-
-}
-
-// ======================================
-// ENTER SEND
-// ======================================
-
-document.addEventListener(
-"keydown",
-function(e){
-
-if(
-e.key === "Enter" &&
-!e.shiftKey &&
-document.activeElement.id === "messageInput"
-){
-
-e.preventDefault();
-
-sendMessage();
-
-}
-
-}
-);
-
-// ======================================
-// SIGN OUT
-// ======================================
-
-function signOut(){
-
-localStorage.clear();
-
-location.reload();
-
-}
-
-// ======================================
-// DELETE ACCOUNT
-// ======================================
-
-async function deleteAccount(){
-
-const confirmDelete = confirm(
-"Delete account permanently?"
-);
-
-if(!confirmDelete) return;
-
-const api_key =
-localStorage.getItem("api_key");
-
-try{
-
-const r = await fetch(
-API + "/delete-account",
-{
-method:"POST",
-headers:HEADERS,
-body:JSON.stringify({
-api_key
-})
-}
-);
-
-const data = await r.json();
-
-alert(data.message);
-
-localStorage.clear();
-
-location.reload();
-
-}catch(err){
-
-alert("Delete failed");
-
-}
-
-}
-
-// ======================================
-// AUTO LOGIN
-// ======================================
-
-window.onload = ()=>{
-
-const api_key =
-localStorage.getItem("api_key");
-
-if(api_key){
-
-showPage("dashboardPage");
-
-document
-.getElementById("headerButtons")
-.classList.remove("hidden");
-
-loadDashboard();
-
-}
-
-};
-
-</script>
-
-</body>
-  </html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPS AI Agent Studio</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --bg: #ffffff;
+        --bg2: #f8f7f5;
+        --bg3: #f0eeeb;
+        --bgh: #e8e5e1;
+        --bd: #e2dfd9;
+        --bd2: #ccc9c2;
+        --tx: #1a1916;
+        --tx2: #5a5853;
+        --tx3: #9a9890;
+        --acc: #d97706;
+        --accl: #fef3c7;
+        --acc2: #b45309;
+        --udark: #1a1916;
+        --red: #dc2626;
+        --green: #16a34a;
+        --blue: #2563eb;
+        --sh: 0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shlg: 0 4px 24px rgba(0, 0, 0, 0.09);
+        --r: 10px;
+        --rsm: 7px;
+        --rlg: 18px;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: var(--bg2);
+        color: var(--tx);
+        min-height: 100vh;
+        font-size: 14px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .app {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* ── SIDEBAR ───────────────────────────────────────────── */
+      .sidebar {
+        width: 255px;
+        min-width: 255px;
+        background: var(--bg);
+        border-right: 1px solid var(--bd);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      .sb-head {
+        padding: 16px 14px 12px;
+        border-bottom: 1px solid var(--bd);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .logo-box {
+        width: 30px;
+        height: 30px;
+        background: var(--tx);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .logo-box svg {
+        width: 16px;
+        height: 16px;
+        fill: white;
+      }
+      .logo-txt {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      .logo-txt span {
+        color: var(--acc);
+      }
+      .new-btn {
+        margin: 10px 10px 6px;
+        padding: 8px 12px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: var(--rsm);
+        color: var(--tx);
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: inherit;
+        transition: background 0.15s;
+      }
+      .new-btn:hover {
+        background: var(--bgh);
+      }
+      .sb-sec {
+        padding: 10px 14px 5px;
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--tx3);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+      .hist {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 6px;
+      }
+      .hi {
+        padding: 7px 9px;
+        border-radius: var(--rsm);
+        cursor: pointer;
+        color: var(--tx2);
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: background 0.1s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 2px;
+      }
+      .hi:hover {
+        background: var(--bg3);
+        color: var(--tx);
+      }
+      .hi.active {
+        background: var(--bgh);
+        color: var(--tx);
+        font-weight: 500;
+      }
+      .hi svg {
+        width: 13px;
+        height: 13px;
+        flex-shrink: 0;
+        opacity: 0.45;
+      }
+      .sb-foot {
+        border-top: 1px solid var(--bd);
+        padding: 10px;
+      }
+      .sf-btn {
+        padding: 7px 9px;
+        border-radius: var(--rsm);
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--tx2);
+        background: transparent;
+        border: none;
+        font-family: inherit;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        width: 100%;
+        transition: background 0.1s;
+      }
+      .sf-btn:hover {
+        background: var(--bg3);
+        color: var(--tx);
+      }
+      .sf-btn svg {
+        width: 14px;
+        height: 14px;
+        opacity: 0.55;
+      }
+      .sf-btn.danger {
+        color: var(--red);
+      }
+      .sf-btn.danger:hover {
+        background: #fef2f2;
+      }
+      .uemail {
+        font-size: 10px;
+        color: var(--tx3);
+        padding: 3px 9px 7px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* ── MAIN ─────────────────────────────────────────────── */
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 100vh;
+      }
+      .topbar {
+        background: var(--bg);
+        border-bottom: 1px solid var(--bd);
+        padding: 0 22px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .tb-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .model-badge {
+        padding: 4px 10px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--tx2);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .mdot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+      }
+      .tb-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .ib {
+        width: 30px;
+        height: 30px;
+        border-radius: var(--rsm);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--tx3);
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
+      .ib:hover {
+        background: var(--bg3);
+        color: var(--tx);
+      }
+      .ib svg {
+        width: 15px;
+        height: 15px;
+      }
+      .upill {
+        padding: 3px 9px;
+        background: var(--accl);
+        border-radius: 20px;
+        font-size: 11px;
+        color: var(--acc2);
+        font-weight: 600;
+      }
+      .agent-bar {
+        background: var(--accl);
+        border-bottom: 1px solid #fde68a;
+        padding: 6px 22px;
+        font-size: 12px;
+        color: var(--acc2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .agent-bar svg {
+        width: 14px;
+        height: 14px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      /* ── AUTH ─────────────────────────────────────────────── */
+      .auth-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--bg2);
+      }
+      .auth-card {
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: var(--rlg);
+        padding: 44px 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: var(--shlg);
+      }
+      .auth-icon {
+        width: 44px;
+        height: 44px;
+        background: var(--tx);
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+      .auth-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+      }
+      .auth-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+        margin-bottom: 5px;
+      }
+      .auth-sub {
+        color: var(--tx2);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .flabel {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--tx2);
+        margin-bottom: 5px;
+        display: block;
+        margin-top: 18px;
+      }
+      .finput {
+        width: 100%;
+        padding: 10px 13px;
+        background: var(--bg2);
+        border: 1px solid var(--bd);
+        border-radius: var(--rsm);
+        color: var(--tx);
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+        transition:
+          border 0.15s,
+          box-shadow 0.15s;
+      }
+      .finput:focus {
+        border-color: var(--acc);
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+      }
+      .finput::placeholder {
+        color: var(--tx3);
+      }
+      .pbtn {
+        width: 100%;
+        padding: 10px 13px;
+        margin-top: 14px;
+        background: var(--tx);
+        color: white;
+        border: none;
+        border-radius: var(--rsm);
+        font-size: 13px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .pbtn:hover {
+        opacity: 0.85;
+      }
+      .pbtn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .astatus {
+        margin-top: 12px;
+        padding: 9px 13px;
+        border-radius: var(--rsm);
+        font-size: 12px;
+        background: var(--bg3);
+        color: var(--tx2);
+        display: none;
+      }
+      .astatus.err {
+        background: #fef2f2;
+        color: var(--red);
+      }
+      .astatus.ok {
+        background: #f0fdf4;
+        color: var(--green);
+      }
+      .backl {
+        text-align: center;
+        font-size: 12px;
+        color: var(--tx3);
+        margin-top: 14px;
+      }
+      .backl a {
+        color: var(--acc);
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      /* ── CHAT ─────────────────────────────────────────────── */
+      .chat-area {
+        flex: 1;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+      }
+      .chat-inner {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 28px 22px 22px;
+      }
+      .welcome {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 62vh;
+        text-align: center;
+      }
+      .w-icon {
+        width: 52px;
+        height: 52px;
+        background: var(--tx);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+      }
+      .w-icon svg {
+        width: 28px;
+        height: 28px;
+        fill: white;
+      }
+      .w-title {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+      }
+      .w-sub {
+        color: var(--tx2);
+        font-size: 14px;
+        max-width: 390px;
+        line-height: 1.6;
+      }
+      .w-caps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 22px;
+        justify-content: center;
+        max-width: 500px;
+      }
+      .cap-badge {
+        padding: 6px 12px;
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--tx2);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .cap-badge svg {
+        width: 12px;
+        height: 12px;
+        opacity: 0.6;
+      }
+      .sug-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 20px;
+        width: 100%;
+        max-width: 500px;
+      }
+      .sug {
+        padding: 12px 14px;
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: var(--r);
+        cursor: pointer;
+        text-align: left;
+        font-family: inherit;
+        font-size: 12px;
+        color: var(--tx2);
+        line-height: 1.5;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .sug:hover {
+        background: var(--bg3);
+        border-color: var(--bd2);
+        color: var(--tx);
+      }
+      .sug strong {
+        display: block;
+        font-weight: 600;
+        color: var(--tx);
+        margin-bottom: 2px;
+        font-size: 12px;
+      }
+
+      /* ── MESSAGES ─────────────────────────────────────────── */
+      .msg-group {
+        margin-bottom: 24px;
+        animation: fup 0.2s ease;
+      }
+      @keyframes fup {
+        from {
+          opacity: 0;
+          transform: translateY(7px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .msg-row {
+        display: flex;
+        gap: 10px;
+      }
+      .msg-row.user {
+        flex-direction: row-reverse;
+      }
+      .av {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+      .av.ai {
+        background: var(--tx);
+        color: white;
+      }
+      .av.user {
+        background: var(--acc);
+        color: white;
+      }
+      .bwrap {
+        display: flex;
+        flex-direction: column;
+        max-width: 86%;
+      }
+      .msg-row.user .bwrap {
+        align-items: flex-end;
+      }
+      .bubble {
+        padding: 11px 15px;
+        border-radius: var(--r);
+        font-size: 13px;
+        line-height: 1.75;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .bubble.user {
+        background: var(--udark);
+        color: white;
+        border-bottom-right-radius: 3px;
+      }
+      .bubble.ai {
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        color: var(--tx);
+        border-bottom-left-radius: 3px;
+      }
+      .bubble.ai code {
+        background: var(--bg3);
+        padding: 2px 5px;
+        border-radius: 4px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: #b45309;
+      }
+      .bubble.ai pre {
+        background: #1a1916;
+        color: #e8e5e1;
+        padding: 13px 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 9px 0;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11.5px;
+        line-height: 1.6;
+      }
+      .bubble.ai pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+      }
+      .bubble.ai ul,
+      .bubble.ai ol {
+        padding-left: 18px;
+        margin: 5px 0;
+      }
+      .bubble.ai li {
+        margin-bottom: 3px;
+      }
+      .bubble.ai h1,
+      .bubble.ai h2,
+      .bubble.ai h3 {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 9px 0 3px;
+      }
+      .bubble.ai p {
+        margin-bottom: 7px;
+      }
+      .bubble.ai p:last-child {
+        margin-bottom: 0;
+      }
+      .bubble.ai strong {
+        font-weight: 600;
+      }
+      .bubble.ai a {
+        color: var(--blue);
+        text-decoration: none;
+      }
+      .bubble.ai table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 8px 0;
+        font-size: 12px;
+      }
+      .bubble.ai th {
+        background: var(--bg3);
+        padding: 7px 10px;
+        text-align: left;
+        border-bottom: 2px solid var(--bd);
+        font-weight: 600;
+      }
+      .bubble.ai td {
+        padding: 6px 10px;
+        border-bottom: 1px solid var(--bd);
+      }
+      .mmeta {
+        font-size: 11px;
+        color: var(--tx3);
+        margin-top: 4px;
+        padding: 0 3px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .mab {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--tx3);
+        font-size: 11px;
+        font-family: inherit;
+        padding: 2px 5px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
+      .mab:hover {
+        background: var(--bg3);
+        color: var(--tx);
+      }
+      .mab svg {
+        width: 10px;
+        height: 10px;
+      }
+      .typing-bub {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        padding: 13px 15px;
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: var(--r);
+        border-bottom-left-radius: 3px;
+        width: fit-content;
+      }
+      .tdot {
+        width: 6px;
+        height: 6px;
+        background: var(--tx3);
+        border-radius: 50%;
+        animation: tb 1.2s infinite;
+      }
+      .tdot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .tdot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes tb {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        30% {
+          transform: translateY(-5px);
+          opacity: 1;
+        }
+      }
+
+      /* ── TOOL BLOCKS ──────────────────────────────────────── */
+      .tool-block {
+        margin: 8px 0;
+        border: 1px solid var(--bd);
+        border-radius: 8px;
+        overflow: hidden;
+        font-size: 12px;
+      }
+      .tool-header {
+        padding: 7px 12px;
+        background: var(--bg3);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 500;
+        color: var(--tx2);
+        cursor: pointer;
+        user-select: none;
+      }
+      .tool-status {
+        margin-left: auto;
+        font-size: 11px;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-weight: 500;
+      }
+      .tool-status.running {
+        background: #fef3c7;
+        color: #b45309;
+      }
+      .tool-status.done {
+        background: #dcfce7;
+        color: #15803d;
+      }
+      .tool-status.error {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .tool-body {
+        padding: 10px 12px;
+        background: #1a1916;
+        color: #e8e5e1;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-all;
+        max-height: 220px;
+        overflow-y: auto;
+        display: none;
+      }
+      .tool-block.open .tool-body {
+        display: block;
+      }
+
+      /* ── FILE OUTPUT ──────────────────────────────────────── */
+      .file-out-card {
+        margin: 10px 0;
+        border: 1px solid var(--bd);
+        border-radius: 9px;
+        overflow: hidden;
+      }
+      .fo-head {
+        padding: 10px 14px;
+        background: var(--bg3);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .fo-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .fo-icon svg {
+        width: 15px;
+        height: 15px;
+        color: var(--tx2);
+      }
+      .fo-name {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .fo-size {
+        font-size: 11px;
+        color: var(--tx3);
+      }
+      .fo-dl {
+        padding: 5px 12px;
+        background: var(--tx);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .fo-dl:hover {
+        opacity: 0.85;
+      }
+      .fo-preview {
+        padding: 12px 14px;
+        background: #1a1916;
+        color: #e8e5e1;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        line-height: 1.6;
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .file-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 5px;
+        font-size: 11px;
+        margin-bottom: 7px;
+      }
+      .file-chip.light {
+        background: var(--bg3);
+        color: var(--tx2);
+      }
+      .msg-img {
+        max-width: 260px;
+        border-radius: 7px;
+        margin-bottom: 7px;
+        display: block;
+        border: 1px solid var(--bd);
+      }
+
+      /* ── INPUT AREA ───────────────────────────────────────── */
+      .input-area {
+        background: var(--bg);
+        border-top: 1px solid var(--bd);
+        padding: 14px 22px 18px;
+        flex-shrink: 0;
+      }
+      .inp-inner {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .upload-prev {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 8px;
+      }
+      .uthumb {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: 7px;
+        font-size: 11px;
+        color: var(--tx2);
+      }
+      .uthumb img {
+        width: 28px;
+        height: 28px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+      .urm {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--tx3);
+        font-size: 13px;
+        margin-left: 3px;
+      }
+      .urm:hover {
+        color: var(--red);
+      }
+      .composer {
+        background: var(--bg);
+        border: 1px solid var(--bd2);
+        border-radius: var(--rlg);
+        overflow: hidden;
+        box-shadow: var(--sh);
+        transition: box-shadow 0.15s;
+      }
+      .composer:focus-within {
+        box-shadow:
+          0 0 0 3px rgba(217, 119, 6, 0.08),
+          var(--sh);
+      }
+      .comp-ta {
+        width: 100%;
+        min-height: 48px;
+        max-height: 180px;
+        padding: 13px 15px 7px;
+        background: transparent;
+        border: none;
+        color: var(--tx);
+        font-size: 13px;
+        font-family: inherit;
+        resize: none;
+        outline: none;
+        line-height: 1.6;
+        overflow-y: auto;
+      }
+      .comp-ta::placeholder {
+        color: var(--tx3);
+      }
+      .comp-actions {
+        display: flex;
+        align-items: center;
+        padding: 7px 11px;
+        gap: 5px;
+        border-top: 1px solid var(--bd);
+      }
+      .ctb {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: var(--tx3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.1s,
+          color 0.1s;
+        position: relative;
+      }
+      .ctb:hover {
+        background: var(--bg3);
+        color: var(--tx);
+      }
+      .ctb svg {
+        width: 15px;
+        height: 15px;
+      }
+      .ctb input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+      .csp {
+        flex: 1;
+      }
+      .sbtn {
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        border: none;
+        background: var(--tx);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+      .sbtn:hover {
+        opacity: 0.85;
+      }
+      .sbtn:active {
+        transform: scale(0.93);
+      }
+      .sbtn:disabled {
+        background: var(--bd);
+        cursor: not-allowed;
+      }
+      .sbtn svg {
+        width: 15px;
+        height: 15px;
+      }
+      .inp-hint {
+        font-size: 10px;
+        color: var(--tx3);
+        margin-top: 7px;
+        text-align: center;
+      }
+
+      /* ── PANELS ───────────────────────────────────────────── */
+      .pov {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        z-index: 200;
+        display: none;
+        align-items: flex-start;
+        justify-content: flex-end;
+      }
+      .pov.open {
+        display: flex;
+      }
+      .panel {
+        background: var(--bg);
+        border-left: 1px solid var(--bd);
+        width: 400px;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        animation: sin 0.18s ease;
+      }
+      @keyframes sin {
+        from {
+          transform: translateX(30px);
+          opacity: 0;
+        }
+        to {
+          transform: none;
+          opacity: 1;
+        }
+      }
+      .ph {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--bd);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        z-index: 1;
+      }
+      .ph-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .pc {
+        width: 26px;
+        height: 26px;
+        border-radius: 5px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: var(--tx3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        transition: background 0.1s;
+      }
+      .pc:hover {
+        background: var(--bg3);
+        color: var(--tx);
+      }
+      .pb {
+        padding: 18px;
+        flex: 1;
+      }
+
+      /* ── SANDBOX ──────────────────────────────────────────── */
+      .stabs {
+        display: flex;
+        gap: 3px;
+        margin-bottom: 14px;
+        background: var(--bg3);
+        padding: 3px;
+        border-radius: 7px;
+      }
+      .stab {
+        flex: 1;
+        padding: 6px 8px;
+        border-radius: 5px;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        color: var(--tx2);
+        transition:
+          background 0.1s,
+          color 0.1s;
+      }
+      .stab.active {
+        background: var(--bg);
+        color: var(--tx);
+        box-shadow: var(--sh);
+      }
+      .sc {
+        display: none;
+      }
+      .sc.active {
+        display: block;
+      }
+      .ced {
+        width: 100%;
+        min-height: 180px;
+        padding: 12px;
+        background: #1a1916;
+        border: 1px solid #333;
+        border-radius: 7px;
+        color: #e8e5e1;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11.5px;
+        line-height: 1.6;
+        resize: vertical;
+        outline: none;
+        margin-bottom: 9px;
+      }
+      .rbtn {
+        padding: 7px 14px;
+        background: var(--tx);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: opacity 0.15s;
+      }
+      .rbtn:hover {
+        opacity: 0.85;
+      }
+      .sout {
+        margin-top: 10px;
+        padding: 10px 12px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: 7px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--tx2);
+        min-height: 50px;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .uzone {
+        border: 2px dashed var(--bd);
+        border-radius: var(--rsm);
+        padding: 20px;
+        text-align: center;
+        color: var(--tx3);
+        font-size: 12px;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+        position: relative;
+        margin-bottom: 12px;
+      }
+      .uzone:hover {
+        border-color: var(--acc);
+        background: var(--accl);
+      }
+      .uzone input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .uzone svg {
+        width: 22px;
+        height: 22px;
+        margin: 0 auto 6px;
+        display: block;
+        opacity: 0.35;
+      }
+      .fitem {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 11px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: 7px;
+        margin-bottom: 6px;
+      }
+      .fi-icon {
+        width: 26px;
+        height: 26px;
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .fi-icon svg {
+        width: 13px;
+        height: 13px;
+        color: var(--tx3);
+      }
+      .fi-name {
+        flex: 1;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .fi-sz {
+        font-size: 10px;
+        color: var(--tx3);
+      }
+      .fi-del {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--tx3);
+        font-size: 14px;
+        padding: 0 3px;
+      }
+      .fi-del:hover {
+        color: var(--red);
+      }
+
+      /* ── SETTINGS ─────────────────────────────────────────── */
+      .sg {
+        margin-bottom: 22px;
+      }
+      .sgl {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--tx3);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .srow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--bd);
+      }
+      .srow:last-child {
+        border-bottom: none;
+      }
+      .srl {
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .srs {
+        font-size: 11px;
+        color: var(--tx3);
+        margin-top: 1px;
+      }
+      .tog {
+        position: relative;
+        width: 34px;
+        height: 19px;
+      }
+      .tog input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .ttr {
+        position: absolute;
+        inset: 0;
+        background: var(--bd2);
+        border-radius: 19px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .tog input:checked + .ttr {
+        background: var(--tx);
+      }
+      .ttr::after {
+        content: "";
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        background: white;
+        border-radius: 50%;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.2s;
+      }
+      .tog input:checked + .ttr::after {
+        transform: translateX(15px);
+      }
+      .spta {
+        width: 100%;
+        min-height: 90px;
+        padding: 10px 12px;
+        background: var(--bg2);
+        border: 1px solid var(--bd);
+        border-radius: var(--rsm);
+        color: var(--tx);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        resize: vertical;
+        outline: none;
+      }
+      .spta:focus {
+        border-color: var(--acc);
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+      }
+      .svbtn {
+        width: 100%;
+        padding: 9px;
+        margin-top: 10px;
+        background: var(--tx);
+        color: white;
+        border: none;
+        border-radius: var(--rsm);
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .svbtn:hover {
+        opacity: 0.85;
+      }
+      .akd {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 12px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: var(--rsm);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--tx2);
+        word-break: break-all;
+        margin-bottom: 9px;
+      }
+      .ckb {
+        flex-shrink: 0;
+        padding: 5px 10px;
+        background: var(--bg);
+        border: 1px solid var(--bd);
+        border-radius: 5px;
+        font-size: 11px;
+        font-family: inherit;
+        cursor: pointer;
+        color: var(--tx2);
+        transition: background 0.1s;
+      }
+      .ckb:hover {
+        background: var(--bgh);
+      }
+      .sgrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 14px;
+      }
+      .sbox {
+        padding: 12px 14px;
+        background: var(--bg3);
+        border: 1px solid var(--bd);
+        border-radius: var(--rsm);
+      }
+      .sbl {
+        font-size: 10px;
+        color: var(--tx3);
+        margin-bottom: 3px;
+        font-weight: 500;
+      }
+      .sbv {
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .wt {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 9px 11px;
+        background: var(--accl);
+        border-radius: 5px;
+        font-size: 11px;
+        color: var(--acc2);
+        margin-top: 10px;
+      }
+
+      /* ── TOAST ────────────────────────────────────────────── */
+      .toast {
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%) translateY(18px);
+        background: var(--tx);
+        color: white;
+        padding: 9px 18px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 500;
+        opacity: 0;
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+        z-index: 9999;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--bd2);
+        border-radius: 99px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--tx3);
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        .panel {
+          width: 100%;
+        }
+        .sug-grid {
+          grid-template-columns: 1fr;
+        }
+        .topbar,
+        .input-area {
+          padding: 0 14px;
+        }
+        .input-area {
+          padding: 10px 14px 14px;
+        }
+        .chat-inner {
+          padding: 18px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast" id="toast"></div>
+
+    <!-- ═══════════════ SIGN UP ═══════════════ -->
+    <div class="auth-wrap" id="signupScreen">
+      <div class="auth-card">
+        <div class="auth-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+        </div>
+        <div class="auth-title">SPS AI Agent Studio</div>
+        <div class="auth-sub">
+          A real AI agent powered by Qwen 2.5 — create files, run code,
+          multi-step tasks — free.
+        </div>
+        <label class="flabel">Email address</label>
+        <input
+          type="email"
+          class="finput"
+          id="signupEmail"
+          placeholder="you@example.com"
+        />
+        <button class="pbtn" id="signupBtn" onclick="signup()">
+          Send Verification Code
+        </button>
+        <div class="astatus" id="signupStatus"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ OTP ═══════════════ -->
+    <div class="auth-wrap hidden" id="verifyScreen">
+      <div class="auth-card">
+        <div class="auth-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+        </div>
+        <div class="auth-title">Check your inbox</div>
+        <div class="auth-sub">
+          We sent a 6-digit code to <strong id="sentToEmail"></strong>
+        </div>
+        <label class="flabel">Verification code</label>
+        <input
+          type="text"
+          class="finput"
+          id="otpInput"
+          placeholder="000000"
+          maxlength="6"
+          style="
+            letter-spacing: 6px;
+            font-size: 20px;
+            font-family: &quot;JetBrains Mono&quot;, monospace;
+            text-align: center;
+          "
+        />
+        <button class="pbtn" id="verifyBtn" onclick="verifyOTP()">
+          Verify & Enter
+        </button>
+        <div class="astatus" id="verifyStatus"></div>
+        <div class="backl">
+          <a onclick="showScreen('signupScreen')">← Different email</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ APP ═══════════════ -->
+    <div class="app hidden" id="appScreen">
+      <div class="sidebar">
+        <div class="sb-head">
+          <div class="logo-box">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+              />
+            </svg>
+          </div>
+          <div class="logo-txt">SPS <span>AI</span></div>
+        </div>
+        <button class="new-btn" onclick="newChat()">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New conversation
+        </button>
+        <div class="sb-sec">Recent</div>
+        <div class="hist" id="histList"></div>
+        <div class="sb-foot">
+          <div class="uemail" id="sbEmail"></div>
+          <button class="sf-btn" onclick="openPanel('apiPanel')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8M12 17v4" /></svg
+            >API Key & Usage
+          </button>
+          <button class="sf-btn" onclick="openPanel('sandboxPanel')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" /></svg
+            >Sandbox & Files
+          </button>
+          <button class="sf-btn" onclick="openPanel('settingsPanel')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+              /></svg
+            >Settings
+          </button>
+          <button class="sf-btn danger" onclick="signOut()">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+              /></svg
+            >Sign out
+          </button>
+          <button class="sf-btn danger" onclick="deleteAccount()">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" /></svg
+            >Delete account
+          </button>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="topbar">
+          <div class="tb-left">
+            <div class="model-badge">
+              <div class="mdot"></div>
+              Qwen 2.5 · SPS Agent
+            </div>
+          </div>
+          <div class="tb-right">
+            <div class="upill" id="usagePill">— / 50</div>
+            <button
+              class="ib"
+              onclick="openPanel('sandboxPanel')"
+              title="Sandbox"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+            </button>
+            <button class="ib" onclick="openPanel('apiPanel')" title="API Key">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
+                />
+              </svg>
+            </button>
+            <button
+              class="ib"
+              onclick="openPanel('settingsPanel')"
+              title="Settings"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="agent-bar hidden" id="agentBar">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 12a9 9 0 11-6.219-8.56" />
+          </svg>
+          <span id="agentBarText">Agent is working…</span>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+          <div class="chat-inner" id="chatInner">
+            <div class="welcome" id="welcomeScreen">
+              <div class="w-icon">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                  />
+                </svg>
+              </div>
+              <div class="w-title">SPS AI Agent</div>
+              <div class="w-sub">
+                Powered by Qwen 2.5 7B running on your own server. Create files,
+                run code, reason step-by-step.
+              </div>
+              <div class="w-caps">
+                <div class="cap-badge">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                    />
+                    <polyline points="14 2 14 8 20 8" /></svg
+                  >Creates & downloads files
+                </div>
+                <div class="cap-badge">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" /></svg
+                  >Runs JavaScript
+                </div>
+                <div class="cap-badge">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" /></svg
+                  >Reads uploaded files
+                </div>
+                <div class="cap-badge">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" /></svg
+                  >Multi-step reasoning
+                </div>
+                <div class="cap-badge">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" />
+                    <path d="M12 8v4l3 3" /></svg
+                  >Your own server
+                </div>
+              </div>
+              <div class="sug-grid">
+                <button
+                  class="sug"
+                  onclick="
+                    useSug(
+                      'Create a fully functional HTML calculator and save it as calculator.html',
+                    )
+                  "
+                >
+                  <strong>Create a file</strong>Build & download an HTML
+                  calculator
+                </button>
+                <button
+                  class="sug"
+                  onclick="
+                    useSug(
+                      'Write a Python script to scrape a website and save it as scraper.py',
+                    )
+                  "
+                >
+                  <strong>Write code</strong>Python web scraping script
+                </button>
+                <button
+                  class="sug"
+                  onclick="
+                    useSug(
+                      'Generate a CSV dataset of 20 fictional employees with name, role, salary, department, save as employees.csv',
+                    )
+                  "
+                >
+                  <strong>Generate data</strong>Create a CSV dataset
+                </button>
+                <button
+                  class="sug"
+                  onclick="
+                    useSug(
+                      'Explain how transformers work in deep learning. Write a detailed markdown report.',
+                    )
+                  "
+                >
+                  <strong>Research & report</strong>How Transformers work
+                </button>
+              </div>
+            </div>
+            <div id="msgContainer"></div>
+          </div>
+        </div>
+
+        <div class="input-area">
+          <div class="inp-inner">
+            <div class="upload-prev" id="uploadPrev"></div>
+            <div class="composer">
+              <textarea
+                class="comp-ta"
+                id="msgInput"
+                placeholder="Ask the agent anything — create files, write code, analyse data, answer questions…"
+                rows="1"
+              ></textarea>
+              <div class="comp-actions">
+                <button class="ctb" title="Attach file">
+                  <input
+                    type="file"
+                    id="fileUp"
+                    multiple
+                    accept=".txt,.md,.json,.csv,.js,.py,.html,.css,.xml"
+                    onchange="handleFile(event)"
+                  />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"
+                    />
+                  </svg>
+                </button>
+                <button class="ctb" title="Attach image">
+                  <input
+                    type="file"
+                    id="imgUp"
+                    accept="image/*"
+                    onchange="handleFile(event)"
+                  />
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                </button>
+                <button
+                  class="ctb"
+                  title="Sandbox"
+                  onclick="openPanel('sandboxPanel')"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <polyline points="16 18 22 12 16 6" />
+                    <polyline points="8 6 2 12 8 18" />
+                  </svg>
+                </button>
+                <div class="csp"></div>
+                <button class="sbtn" id="sendBtn" onclick="sendMsg()">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="inp-hint">
+              Powered by Qwen 2.5 running on your Colab server ·
+              <span id="serverUrlHint">connecting…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PANEL: API KEY ═══════════════ -->
+    <div class="pov" id="apiPanelOverlay" onclick="closePanel('apiPanel')">
+      <div class="panel" onclick="event.stopPropagation()">
+        <div class="ph">
+          <div class="ph-title">API Key & Usage</div>
+          <button class="pc" onclick="closePanel('apiPanel')">×</button>
+        </div>
+        <div class="pb">
+          <div
+            style="
+              font-size: 11px;
+              color: var(--tx3);
+              margin-bottom: 7px;
+              font-weight: 500;
+            "
+          >
+            YOUR API KEY
+          </div>
+          <div class="akd">
+            <span
+              id="panelKey"
+              style="
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              "
+            ></span
+            ><button class="ckb" onclick="copyKey()">Copy</button>
+          </div>
+          <div class="wt">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              width="13"
+              height="13"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" /></svg
+            >Never share your API key.
+          </div>
+          <div class="sgrid">
+            <div class="sbox">
+              <div class="sbl">Daily Limit</div>
+              <div class="sbv">50</div>
+            </div>
+            <div class="sbox">
+              <div class="sbl">Remaining</div>
+              <div class="sbv" id="panelRem">—</div>
+            </div>
+            <div class="sbox">
+              <div class="sbl">Status</div>
+              <div class="sbv" style="font-size: 15px; color: var(--green)">
+                Active
+              </div>
+            </div>
+            <div class="sbox">
+              <div class="sbl">Account</div>
+              <div
+                class="sbv"
+                style="font-size: 11px; word-break: break-all"
+                id="panelEmail"
+              >
+                —
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 14px">
+            <div
+              style="
+                font-size: 10px;
+                font-weight: 600;
+                color: var(--tx3);
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                margin-bottom: 8px;
+              "
+            >
+              SERVER URL
+            </div>
+            <div style="display: flex; gap: 7px; align-items: center">
+              <input
+                type="text"
+                class="finput"
+                id="serverUrlInput"
+                placeholder="https://your-ngrok-url.ngrok-free.app"
+                style="
+                  margin-top: 0;
+                  font-size: 11px;
+                  font-family: &quot;JetBrains Mono&quot;, monospace;
+                "
+              />
+              <button
+                onclick="saveServerUrl()"
+                style="
+                  padding: 9px 14px;
+                  background: var(--tx);
+                  color: white;
+                  border: none;
+                  border-radius: var(--rsm);
+                  font-family: inherit;
+                  font-size: 11px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  white-space: nowrap;
+                "
+              >
+                Save
+              </button>
+            </div>
+            <div style="font-size: 11px; color: var(--tx3); margin-top: 6px">
+              Paste the ngrok URL printed by your Colab server here.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PANEL: SANDBOX ═══════════════ -->
+    <div
+      class="pov"
+      id="sandboxPanelOverlay"
+      onclick="closePanel('sandboxPanel')"
+    >
+      <div class="panel" onclick="event.stopPropagation()">
+        <div class="ph">
+          <div class="ph-title">Sandbox & Files</div>
+          <button class="pc" onclick="closePanel('sandboxPanel')">×</button>
+        </div>
+        <div class="pb">
+          <div class="stabs">
+            <button class="stab active" onclick="stab('jsTab', this)">
+              JavaScript
+            </button>
+            <button class="stab" onclick="stab('htmlTab', this)">
+              HTML Preview
+            </button>
+            <button class="stab" onclick="stab('filesTab', this)">Files</button>
+            <button class="stab" onclick="stab('pasteTab', this)">Paste</button>
+          </div>
+          <div class="sc active" id="jsTab">
+            <div style="font-size: 11px; color: var(--tx3); margin-bottom: 7px">
+              Live JS sandbox — unlimited runs
+            </div>
+            <textarea
+              class="ced"
+              id="jsEd"
+              placeholder="// Write and run JavaScript — unlimited!&#10;console.log('Hello from SPS AI!');&#10;const nums = [1,2,3,4,5];&#10;console.log('Sum:', nums.reduce((a,b)=>a+b,0));"
+            ></textarea>
+            <div style="display: flex; gap: 7px; flex-wrap: wrap">
+              <button class="rbtn" onclick="runJS()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3" /></svg
+                >Run
+              </button>
+              <button
+                onclick="clearJS()"
+                style="
+                  padding: 7px 12px;
+                  background: none;
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  font-family: inherit;
+                  font-size: 11px;
+                  cursor: pointer;
+                  color: var(--tx3);
+                "
+              >
+                Clear
+              </button>
+              <button
+                onclick="sendJStoAgent()"
+                style="
+                  padding: 7px 12px;
+                  background: none;
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  font-family: inherit;
+                  font-size: 11px;
+                  cursor: pointer;
+                  color: var(--tx2);
+                "
+              >
+                Ask agent to review
+              </button>
+              <button
+                onclick="downloadFromEditor()"
+                style="
+                  padding: 7px 12px;
+                  background: none;
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  font-family: inherit;
+                  font-size: 11px;
+                  cursor: pointer;
+                  color: var(--tx2);
+                "
+              >
+                Download .js
+              </button>
+            </div>
+            <div class="sout" id="jsOut">Output will appear here…</div>
+          </div>
+          <div class="sc" id="htmlTab">
+            <div style="font-size: 11px; color: var(--tx3); margin-bottom: 7px">
+              Write HTML/CSS/JS — live preview below
+            </div>
+            <textarea
+              class="ced"
+              id="htmlEd"
+              placeholder="<h1>Hello!</h1>&#10;<style>h1{color:#d97706;font-family:sans-serif}</style>"
+            ></textarea>
+            <div style="display: flex; gap: 7px; flex-wrap: wrap">
+              <button class="rbtn" onclick="runHTML()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3" /></svg
+                >Preview
+              </button>
+              <button
+                onclick="clearHTML()"
+                style="
+                  padding: 7px 12px;
+                  background: none;
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  font-family: inherit;
+                  font-size: 11px;
+                  cursor: pointer;
+                  color: var(--tx3);
+                "
+              >
+                Clear
+              </button>
+              <button
+                onclick="dlHTML()"
+                style="
+                  padding: 7px 12px;
+                  background: none;
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  font-family: inherit;
+                  font-size: 11px;
+                  cursor: pointer;
+                  color: var(--tx2);
+                "
+              >
+                Download .html
+              </button>
+            </div>
+            <iframe
+              id="htmlPrev"
+              style="
+                width: 100%;
+                height: 200px;
+                border: 1px solid var(--bd);
+                border-radius: 7px;
+                margin-top: 10px;
+                background: white;
+                display: none;
+              "
+            ></iframe>
+          </div>
+          <div class="sc" id="filesTab">
+            <div style="font-size: 11px; color: var(--tx3); margin-bottom: 9px">
+              Upload files — agent reads and uses them in context
+            </div>
+            <div class="uzone">
+              <input type="file" multiple onchange="addSandboxFiles(event)" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"
+                />
+              </svg>
+              Click or drop files here
+            </div>
+            <div id="sbFileList">
+              <div
+                style="
+                  font-size: 12px;
+                  color: var(--tx3);
+                  text-align: center;
+                  padding: 14px;
+                "
+              >
+                No files yet
+              </div>
+            </div>
+          </div>
+          <div class="sc" id="pasteTab">
+            <div style="font-size: 11px; color: var(--tx3); margin-bottom: 7px">
+              Paste large content to add to your next message
+            </div>
+            <textarea
+              class="ced"
+              id="pasteEd"
+              style="min-height: 160px"
+              placeholder="Paste any text, code, data…"
+            ></textarea>
+            <div style="display: flex; gap: 7px; margin-top: 9px">
+              <button class="rbtn" onclick="insertPaste()">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" /></svg
+                >Add to message
+              </button>
+              <button
+                onclick="document.getElementById('pasteEd').value = ''"
+                style="
+                  padding: 7px 12px;
+                  background: none;
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  font-family: inherit;
+                  font-size: 11px;
+                  cursor: pointer;
+                  color: var(--tx3);
+                "
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PANEL: SETTINGS ═══════════════ -->
+    <div
+      class="pov"
+      id="settingsPanelOverlay"
+      onclick="closePanel('settingsPanel')"
+    >
+      <div class="panel" onclick="event.stopPropagation()">
+        <div class="ph">
+          <div class="ph-title">Settings</div>
+          <button class="pc" onclick="closePanel('settingsPanel')">×</button>
+        </div>
+        <div class="pb">
+          <div class="sg">
+            <div class="sgl">Agent Behaviour</div>
+            <div class="srow">
+              <div>
+                <div class="srl">Custom system prompt</div>
+                <div class="srs">Override agent personality</div>
+              </div>
+            </div>
+            <textarea
+              class="spta"
+              id="customSP"
+              placeholder="You are a helpful AI agent…"
+            ></textarea>
+          </div>
+          <div class="sg">
+            <div class="sgl">Interface</div>
+            <div class="srow">
+              <div>
+                <div class="srl">Render markdown</div>
+                <div class="srs">Bold, code blocks, lists</div>
+              </div>
+              <label class="tog"
+                ><input type="checkbox" id="mdTog" checked />
+                <div class="ttr"></div
+              ></label>
+            </div>
+            <div class="srow">
+              <div>
+                <div class="srl">Show timestamps</div>
+                <div class="srs">Time on each message</div>
+              </div>
+              <label class="tog"
+                ><input type="checkbox" id="tsTog" />
+                <div class="ttr"></div
+              ></label>
+            </div>
+            <div class="srow">
+              <div>
+                <div class="srl">Agent thinking steps</div>
+                <div class="srs">Show tool call details</div>
+              </div>
+              <label class="tog"
+                ><input type="checkbox" id="toolTog" checked />
+                <div class="ttr"></div
+              ></label>
+            </div>
+          </div>
+          <div class="sg">
+            <div class="sgl">Memory</div>
+            <div class="srow">
+              <div>
+                <div class="srl">Context window (turns)</div>
+                <div class="srs">Messages sent as history</div>
+              </div>
+              <input
+                type="number"
+                id="memN"
+                value="10"
+                min="1"
+                max="40"
+                style="
+                  width: 56px;
+                  padding: 5px 7px;
+                  background: var(--bg3);
+                  border: 1px solid var(--bd);
+                  border-radius: 5px;
+                  color: var(--tx);
+                  font-family: inherit;
+                  font-size: 12px;
+                  outline: none;
+                  text-align: center;
+                "
+              />
+            </div>
+          </div>
+          <button class="svbtn" onclick="saveSettings()">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ╔══════════════════════════════════════════════════════════╗
+      // ║  ★  PASTE YOUR NGROK URL HERE (or set it in the panel) ║
+      // ╚══════════════════════════════════════════════════════════╝
+      const DEFAULT_SERVER = "https://juice-emporium-frozen.ngrok-free.dev";
+      // ════════════════════════════════════════════════════════════
+
+      const CLIENT_HEADER = {
+        "Content-Type": "application/json",
+        "x-sps-client": "sps_ai_web",
+      };
+      const DAILY_LIMIT = 50;
+
+      // ── STATE ───────────────────────────────────────────────────
+      let convs = {};
+      let curId = null;
+      let pendingFiles = [];
+      let sandboxFiles = [];
+      let isAgentRunning = false;
+      let virtualFS = {};
+      let pendingFileOuts = [];
+      let cfg = { md: true, ts: false, tools: true, mem: 10, sysPrompt: "" };
+
+      function getServer() {
+        return (localStorage.getItem("sps_server") || DEFAULT_SERVER).replace(
+          /\/$/,
+          "",
+        );
+      }
+
+      // ── AGENT TOOL DEFINITIONS ──────────────────────────────────
+      const TOOL_SYSTEM = `You are SPS AI Agent — a powerful, multilingual AI agent built by SPS Company.
+You are smart, helpful, and always complete tasks fully.
+
+You have access to these TOOLS. Call them using this EXACT format:
+
+<tool_call>
+{"tool": "TOOL_NAME", "params": {PARAMS_JSON}}
+</tool_call>
+
+TOOLS:
+• create_file   params: {"filename":"string","content":"string","description":"string"}
+  → Creates a downloadable file for the user. Use for HTML, Python, JS, CSV, MD, TXT, JSON files.
+
+• run_javascript  params: {"code":"string","description":"string"}
+  → Runs JavaScript code and returns console output. Use to test logic, calculate, validate.
+
+• think  params: {"reasoning":"string"}
+  → Think step by step before complex tasks. Always use this first for multi-step tasks.
+
+• read_file  params: {"filename":"string"}
+  → Read content of an uploaded file.
+
+RULES:
+1. Use create_file whenever user asks to "create", "make", "write", "generate", or "save" any file.
+2. Use think before complex or multi-step tasks.
+3. Chain multiple tool calls in one response.
+4. After tool calls, always explain what you did.
+5. Write COMPLETE, WORKING content in files — no placeholders, no "..." shortcuts.
+6. Be proactive: if asked to build a calculator, create the file AND explain it.
+7. Respond in the same language the user writes in.
+8. For code, always include comments.`;
+
+      // ── TOOL EXECUTOR ───────────────────────────────────────────
+      async function executeTool(name, params) {
+        switch (name) {
+          case "create_file": {
+            const { filename, content, description } = params;
+            if (!filename || content === undefined)
+              return { error: "filename and content required" };
+            virtualFS[filename] = content;
+            scheduleFileOutput(filename, content, description || "");
+            return {
+              success: true,
+              filename,
+              bytes: content.length,
+              msg: `File '${filename}' created. Download button shown.`,
+            };
+          }
+          case "run_javascript": {
+            const { code } = params;
+            if (!code) return { error: "code required" };
+            return safeRunJS(code);
+          }
+          case "think": {
+            return {
+              ok: true,
+              note: "Reasoning noted. Continue with the plan.",
+            };
+          }
+          case "read_file": {
+            const { filename } = params;
+            if (!filename) return { error: "filename required" };
+            if (virtualFS[filename])
+              return { content: virtualFS[filename], source: "created" };
+            const f =
+              pendingFiles.find((x) => x.name === filename) ||
+              sandboxFiles.find((x) => x.name === filename);
+            if (f)
+              return {
+                content: f.textContent || "[binary]",
+                source: "uploaded",
+              };
+            return { error: `File '${filename}' not found` };
+          }
+          default:
+            return { error: `Unknown tool: ${name}` };
+        }
+      }
+
+      // ── JS SANDBOX ──────────────────────────────────────────────
+      function safeRunJS(code) {
+        const logs = [];
+        const orig = {
+          log: console.log,
+          warn: console.warn,
+          error: console.error,
+        };
+        console.log = (...a) =>
+          logs.push(
+            a
+              .map((x) =>
+                typeof x === "object" ? JSON.stringify(x, null, 2) : String(x),
+              )
+              .join(" "),
+          );
+        console.warn = (...a) => logs.push("WARN: " + a.join(" "));
+        console.error = (...a) => logs.push("ERR: " + a.join(" "));
+        let ret,
+          err = null;
+        try {
+          ret = new Function(code)();
+        } catch (e) {
+          err = e.message;
+        }
+        Object.assign(console, orig);
+        return {
+          output: logs.join("\n"),
+          returned:
+            ret !== undefined
+              ? typeof ret === "object"
+                ? JSON.stringify(ret, null, 2)
+                : String(ret)
+              : undefined,
+          error: err,
+        };
+      }
+
+      function scheduleFileOutput(fn, content, desc) {
+        pendingFileOuts.push({ fn, content, desc });
+      }
+
+      // ── AGENT LOOP ──────────────────────────────────────────────
+      async function agentLoop(userText, userFiles) {
+        const apiKey = localStorage.getItem("sps_key");
+        if (!apiKey) {
+          showToast("Not signed in");
+          return;
+        }
+
+        isAgentRunning = true;
+        setAgentBar(true, "Thinking…");
+        pendingFileOuts = [];
+
+        // Build conversation context
+        const msgs = (convs[curId]?.messages || []).slice(
+          -(cfg.mem * 2 + 1),
+          -1,
+        );
+        let ctx = "";
+        if (msgs.length > 0) {
+          ctx =
+            "CONVERSATION HISTORY (most recent):\n" +
+            msgs
+              .map(
+                (m) =>
+                  `${m.role === "user" ? "User" : "Agent"}: ${(m.text || "").slice(0, 800)}`,
+              )
+              .join("\n") +
+            "\n\n";
+        }
+
+        // File context
+        let fileCtx = "";
+        if (userFiles && userFiles.length > 0) {
+          fileCtx =
+            "UPLOADED FILES:\n" +
+            userFiles
+              .map((f) => `[${f.name}]:\n${f.textContent || "(binary file)"}`)
+              .join("\n---\n") +
+            "\n\n";
+        }
+        if (sandboxFiles.length > 0) {
+          fileCtx += `SANDBOX FILES: ${sandboxFiles.map((f) => f.name).join(", ")}\n\n`;
+        }
+
+        const customSP = cfg.sysPrompt
+          ? `\n\nUSER CUSTOM INSTRUCTIONS:\n${cfg.sysPrompt}`
+          : "";
+        const fullMessage =
+          TOOL_SYSTEM + customSP + "\n\n" + ctx + fileCtx + "User: " + userText;
+
+        try {
+          setAgentBar(true, "Calling Qwen 2.5…");
+          const res = await fetch(getServer() + "/chat", {
+            method: "POST",
+            headers: CLIENT_HEADER,
+            body: JSON.stringify({ api_key: apiKey, message: fullMessage }),
+          });
+
+          if (!res.ok) {
+            const txt = await res.text();
+            appendAIMsg(`Server error ${res.status}: ${txt}`, true);
+            isAgentRunning = false;
+            setAgentBar(false);
+            return;
+          }
+
+          const d = await res.json();
+
+          if (!d.success) {
+            appendAIMsg(d.message || "Server returned an error.", true);
+            isAgentRunning = false;
+            setAgentBar(false);
+            return;
+          }
+
+          // Update usage
+          const rem = d.remaining ?? DAILY_LIMIT;
+          document.getElementById("usagePill").textContent =
+            `${DAILY_LIMIT - rem}/${DAILY_LIMIT}`;
+          document.getElementById("panelRem").textContent = rem;
+
+          const rawText =
+            typeof d.response === "string"
+              ? d.response
+              : d.response?.content || JSON.stringify(d.response);
+          await processAgentResponse(rawText);
+        } catch (e) {
+          if (e.message.includes("fetch")) {
+            appendAIMsg(
+              `❌ Cannot connect to server.\n\nMake sure:\n1. Your Colab server is running\n2. The ngrok URL is set correctly in the API Key panel\n\nCurrent server: ${getServer()}`,
+              true,
+            );
+          } else {
+            appendAIMsg(`Error: ${e.message}`, true);
+          }
+        }
+
+        isAgentRunning = false;
+        setAgentBar(false);
+      }
+
+      async function processAgentResponse(raw) {
+        const tcRe = /<tool_call>([\s\S]*?)<\/tool_call>/g;
+        const calls = [];
+        let m;
+        while ((m = tcRe.exec(raw)) !== null) {
+          try {
+            calls.push(JSON.parse(m[1].trim()));
+          } catch {}
+        }
+
+        const cleanText = raw
+          .replace(/<tool_call>[\s\S]*?<\/tool_call>/g, "")
+          .trim();
+
+        if (calls.length > 0) {
+          if (cleanText) appendAIMsg(cleanText);
+          for (const tc of calls) {
+            const { tool, params } = tc;
+            setAgentBar(true, `Using tool: ${tool}…`);
+            const blk = appendToolBlock(tool, params);
+            try {
+              const result = await executeTool(tool, params || {});
+              updateToolBlock(blk, result, false);
+            } catch (e) {
+              updateToolBlock(blk, { error: e.message }, true);
+            }
+          }
+          for (const fo of pendingFileOuts)
+            appendFileOutput(fo.fn, fo.content, fo.desc);
+          pendingFileOuts = [];
+        } else {
+          appendAIMsg(raw);
+          for (const fo of pendingFileOuts)
+            appendFileOutput(fo.fn, fo.content, fo.desc);
+          pendingFileOuts = [];
+        }
+      }
+
+      // ── UI ──────────────────────────────────────────────────────
+      function appendAIMsg(text, isErr) {
+        const conv = convs[curId];
+        if (!conv) return;
+        const msg = { role: "ai", text, time: fmtTime() };
+        conv.messages.push(msg);
+        saveConvs();
+        appendMsgDOM(msg, isErr);
+      }
+
+      function appendMsgDOM(m, isErr) {
+        const container = document.getElementById("msgContainer");
+        const isUser = m.role === "user";
+        const div = document.createElement("div");
+        div.className = "msg-group";
+        let fHTML = "";
+        if (m.files && m.files.length) {
+          fHTML = m.files
+            .map((f) => {
+              if (f.dataUrl && f.type?.startsWith("image/"))
+                return `<img class="msg-img" src="${f.dataUrl}" alt="${esc(f.name)}"/>`;
+              return `<div class="file-chip ${isUser ? "" : "light"}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${esc(f.name)}</div>`;
+            })
+            .join("");
+        }
+        const content = isUser
+          ? fHTML + (m.text ? esc(m.text).replace(/\n/g, "<br>") : "")
+          : m.text
+            ? renderMD(m.text)
+            : "";
+        const ts = cfg.ts ? `<span>${m.time || ""}</span>` : "";
+        const copy = !isUser
+          ? `<button class="mab" onclick="cpMsg(this)" data-t="${esc(m.text || "")}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copy</button>`
+          : "";
+        div.innerHTML = `<div class="msg-row ${isUser ? "user" : "ai"}"><div class="av ${isUser ? "user" : "ai"}">${isUser ? "U" : "AI"}</div><div class="bwrap"><div class="bubble ${isUser ? "user" : "ai"}">${content}</div><div class="mmeta">${ts}${copy}</div></div></div>`;
+        container.appendChild(div);
+        scrollBot();
+      }
+
+      function appendToolBlock(toolName, params) {
+        const container = document.getElementById("msgContainer");
+        const div = document.createElement("div");
+        div.className = "msg-group";
+        const label =
+          {
+            create_file: "Creating file",
+            run_javascript: "Running code",
+            think: "Thinking",
+            read_file: "Reading file",
+          }[toolName] || toolName;
+        const blockId =
+          "tb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        const paramsStr = params ? JSON.stringify(params, null, 2) : "{}";
+        if (!cfg.tools) {
+          div.innerHTML = `<div class="msg-row ai"><div class="av ai">AI</div><div class="bwrap"><div style="font-size:11px;color:var(--tx3);padding:4px 2px">⚙ ${label}…</div></div></div>`;
+          document.getElementById("msgContainer").appendChild(div);
+          scrollBot();
+          return { id: blockId };
+        }
+        div.innerHTML = `<div class="msg-row ai"><div class="av ai">AI</div><div class="bwrap" style="max-width:92%"><div class="tool-block" id="${blockId}"><div class="tool-header" onclick="toggleTB('${blockId}')">⚙ ${label} <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg2);padding:2px 5px;border-radius:3px">${toolName}</code><span class="tool-status running">running</span></div><div class="tool-body">Params:\n${esc(paramsStr)}</div></div></div></div>`;
+        container.appendChild(div);
+        scrollBot();
+        return { id: blockId };
+      }
+
+      function updateToolBlock(block, result, isErr) {
+        const el = document.getElementById(block.id);
+        if (!el) return;
+        const status = el.querySelector(".tool-status");
+        const body = el.querySelector(".tool-body");
+        if (status) {
+          status.className = "tool-status " + (isErr ? "error" : "done");
+          status.textContent = isErr ? "error" : "done";
+        }
+        if (body)
+          body.textContent += "\n\nResult:\n" + JSON.stringify(result, null, 2);
+        scrollBot();
+      }
+
+      function toggleTB(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("open");
+      }
+
+      function appendFileOutput(filename, content, desc) {
+        const container = document.getElementById("msgContainer");
+        const div = document.createElement("div");
+        div.className = "msg-group";
+        const ext = filename.split(".").pop().toLowerCase();
+        const isText = [
+          "txt",
+          "md",
+          "csv",
+          "json",
+          "html",
+          "css",
+          "js",
+          "py",
+          "xml",
+          "ts",
+        ].includes(ext);
+        const preview = isText
+          ? `<div class="fo-preview">${esc(content.slice(0, 600))}${content.length > 600 ? "\n…" : ""}` +
+            "</div>"
+          : "";
+        window._dlFiles = window._dlFiles || {};
+        window._dlFiles[filename] = content;
+        const safe = filename.replace(/'/g, "\\'");
+        div.innerHTML = `<div class="msg-row ai"><div class="av ai">AI</div><div class="bwrap" style="max-width:92%">${desc ? `<div class="bubble ai" style="margin-bottom:8px">${renderMD(desc)}</div>` : ""}<div class="file-out-card"><div class="fo-head"><div class="fo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="fo-name">${esc(filename)}</div><div class="fo-size">${fmtBytes(content.length)}</div><button class="fo-dl" onclick="dlFile('${safe}')">Download</button></div>${preview}</div></div></div>`;
+        container.appendChild(div);
+        scrollBot();
+        const conv = convs[curId];
+        if (conv) {
+          conv.messages.push({
+            role: "ai",
+            text: `Created file: ${filename}`,
+            time: fmtTime(),
+            isFile: true,
+            filename,
+            fileContent: content,
+          });
+          saveConvs();
+        }
+      }
+
+      function dlFile(fn) {
+        const c = (window._dlFiles || {})[fn] || virtualFS[fn];
+        if (!c) {
+          showToast("File not found");
+          return;
+        }
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([c], { type: "text/plain" }));
+        a.download = fn;
+        a.click();
+        showToast(`Downloaded ${fn}`);
+      }
+
+      // ── SEND ────────────────────────────────────────────────────
+      async function sendMsg() {
+        if (isAgentRunning) {
+          showToast("Agent is busy…");
+          return;
+        }
+        const inp = document.getElementById("msgInput");
+        const text = inp.value.trim();
+        if (!text && !pendingFiles.length) return;
+        document.getElementById("welcomeScreen").style.display = "none";
+        const userMsg = {
+          role: "user",
+          text,
+          files: pendingFiles.map((f) => ({
+            name: f.name,
+            type: f.type,
+            dataUrl: f.dataUrl,
+          })),
+          time: fmtTime(),
+        };
+        convs[curId].messages.push(userMsg);
+        if (convs[curId].title === "New conversation" && text)
+          convs[curId].title =
+            text.slice(0, 42) + (text.length > 42 ? "…" : "");
+        saveConvs();
+        appendMsgDOM(userMsg);
+        const filesForAgent = [...pendingFiles];
+        inp.value = "";
+        inp.style.height = "auto";
+        pendingFiles = [];
+        renderUploadPrev();
+        appendTyping();
+        renderHist();
+        await agentLoop(text, filesForAgent);
+        removeTyping();
+      }
+
+      function appendTyping() {
+        const c = document.getElementById("msgContainer");
+        const d = document.createElement("div");
+        d.className = "msg-group";
+        d.id = "typing";
+        d.innerHTML = `<div class="msg-row ai"><div class="av ai">AI</div><div class="bwrap"><div class="typing-bub"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div></div>`;
+        c.appendChild(d);
+        scrollBot();
+      }
+      function removeTyping() {
+        const t = document.getElementById("typing");
+        if (t) t.remove();
+      }
+
+      // ── AUTH ────────────────────────────────────────────────────
+      function showScreen(id) {
+        ["signupScreen", "verifyScreen", "appScreen"].forEach((s) =>
+          document.getElementById(s).classList.toggle("hidden", s !== id),
+        );
+      }
+
+      async function signup() {
+        const email = document.getElementById("signupEmail").value.trim();
+        const btn = document.getElementById("signupBtn");
+        if (!email) {
+          setAS("signupStatus", "Enter your email", "err");
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "Sending…";
+        try {
+          const r = await fetch(getServer() + "/signup", {
+            method: "POST",
+            headers: CLIENT_HEADER,
+            body: JSON.stringify({ email }),
+          });
+          const d = await r.json();
+          if (d.success) {
+            localStorage.setItem("sps_em", email);
+            document.getElementById("sentToEmail").textContent = email;
+            setAS("signupStatus", "Code sent! Check your inbox.", "ok");
+            setTimeout(() => showScreen("verifyScreen"), 800);
+          } else setAS("signupStatus", d.message || "Failed", "err");
+        } catch (e) {
+          setAS(
+            "signupStatus",
+            `Cannot connect to server: ${getServer()}\n\nMake sure Colab server is running and ngrok URL is correct.`,
+            "err",
+          );
+        }
+        btn.disabled = false;
+        btn.textContent = "Send Verification Code";
+      }
+
+      async function verifyOTP() {
+        const email = localStorage.getItem("sps_em");
+        const otp = document.getElementById("otpInput").value.trim();
+        const btn = document.getElementById("verifyBtn");
+        if (!otp) {
+          setAS("verifyStatus", "Enter your 6-digit code", "err");
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = "Verifying…";
+        try {
+          const r = await fetch(getServer() + "/verify", {
+            method: "POST",
+            headers: CLIENT_HEADER,
+            body: JSON.stringify({ email, otp }),
+          });
+          const d = await r.json();
+          if (d.success) {
+            localStorage.setItem("sps_key", d.api_key);
+            setAS("verifyStatus", "Verified! Welcome to SPS AI.", "ok");
+            setTimeout(initApp, 600);
+          } else setAS("verifyStatus", d.message || "Wrong code", "err");
+        } catch (e) {
+          setAS("verifyStatus", "Connection failed", "err");
+        }
+        btn.disabled = false;
+        btn.textContent = "Verify & Enter";
+      }
+
+      function setAS(id, msg, type) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.style.display = "block";
+        el.className =
+          "astatus " + (type === "err" ? "err" : type === "ok" ? "ok" : "");
+      }
+
+      // ── INIT ────────────────────────────────────────────────────
+      async function initApp() {
+        showScreen("appScreen");
+        const email = localStorage.getItem("sps_em") || "";
+        document.getElementById("sbEmail").textContent = email;
+        document.getElementById("panelEmail").textContent = email;
+        document.getElementById("panelKey").textContent =
+          localStorage.getItem("sps_key") || "";
+        document.getElementById("serverUrlInput").value = getServer();
+        document.getElementById("serverUrlHint").textContent = getServer();
+        loadCfg();
+        loadConvs();
+        await refreshUsage();
+        if (!curId) newChat();
+      }
+
+      async function refreshUsage() {
+        const k = localStorage.getItem("sps_key");
+        if (!k) return;
+        try {
+          const r = await fetch(getServer() + "/apikey", {
+            method: "POST",
+            headers: CLIENT_HEADER,
+            body: JSON.stringify({ api_key: k }),
+          });
+          const d = await r.json();
+          if (d.success) {
+            document.getElementById("usagePill").textContent =
+              `${d.used_today}/${d.daily_limit}`;
+            document.getElementById("panelRem").textContent = d.remaining;
+          }
+        } catch {}
+      }
+
+      function saveServerUrl() {
+        const url = document.getElementById("serverUrlInput").value.trim();
+        if (!url) {
+          showToast("Enter a URL");
+          return;
+        }
+        localStorage.setItem("sps_server", url);
+        document.getElementById("serverUrlHint").textContent = url;
+        showToast("Server URL saved! Reload to reconnect.");
+        closePanel("apiPanel");
+      }
+
+      // ── CONVERSATIONS ───────────────────────────────────────────
+      function newChat() {
+        curId = "c" + Date.now();
+        convs[curId] = { title: "New conversation", messages: [] };
+        saveConvs();
+        document.getElementById("msgContainer").innerHTML = "";
+        document.getElementById("welcomeScreen").style.display = "";
+        renderHist();
+      }
+      function loadConvs() {
+        try {
+          const s = localStorage.getItem("sps_cvs");
+          if (s) convs = JSON.parse(s);
+        } catch {}
+        renderHist();
+      }
+      function saveConvs() {
+        try {
+          const ids = Object.keys(convs).slice(-30);
+          const t = {};
+          ids.forEach((id) => {
+            t[id] = {
+              title: convs[id].title,
+              messages: convs[id].messages
+                .slice(-40)
+                .map((m) => ({
+                  role: m.role,
+                  text: (m.text || "").slice(0, 3000),
+                  time: m.time,
+                  files: m.files,
+                  isFile: m.isFile,
+                  filename: m.filename,
+                  fileContent: m.fileContent?.slice?.(0, 50000),
+                })),
+            };
+          });
+          localStorage.setItem("sps_cvs", JSON.stringify(t));
+        } catch {}
+      }
+      function renderHist() {
+        const list = document.getElementById("histList");
+        const ids = Object.keys(convs).reverse().slice(0, 25);
+        if (!ids.length) {
+          list.innerHTML =
+            '<div style="padding:9px 11px;font-size:11px;color:var(--tx3)">No conversations</div>';
+          return;
+        }
+        list.innerHTML = ids
+          .map(
+            (id) =>
+              `<div class="hi${id === curId ? " active" : ""}" onclick="loadConv('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>${esc(convs[id].title)}</div>`,
+          )
+          .join("");
+      }
+      function loadConv(id) {
+        curId = id;
+        document.getElementById("welcomeScreen").style.display = "none";
+        document.getElementById("msgContainer").innerHTML = "";
+        convs[id].messages.forEach((m) => {
+          if (m.isFile && m.filename && m.fileContent) {
+            window._dlFiles = window._dlFiles || {};
+            window._dlFiles[m.filename] = m.fileContent;
+            appendFileOutput(m.filename, m.fileContent, "");
+          } else appendMsgDOM(m);
+        });
+        renderHist();
+      }
+
+      // ── FILE HANDLING ───────────────────────────────────────────
+      function handleFile(e) {
+        Array.from(e.target.files).forEach((file) => {
+          const isImg = file.type.startsWith("image/");
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const pf = {
+              name: file.name,
+              type: file.type,
+              dataUrl: isImg ? ev.target.result : null,
+              textContent: null,
+            };
+            if (!isImg) {
+              const tr = new FileReader();
+              tr.onload = (te) => {
+                pf.textContent = te.target.result;
+              };
+              tr.readAsText(file);
+            }
+            pendingFiles.push(pf);
+            renderUploadPrev();
+          };
+          reader.readAsDataURL(file);
+        });
+        e.target.value = "";
+      }
+      function renderUploadPrev() {
+        const el = document.getElementById("uploadPrev");
+        if (!pendingFiles.length) {
+          el.innerHTML = "";
+          return;
+        }
+        el.innerHTML = pendingFiles
+          .map((f, i) => {
+            const img =
+              f.dataUrl && f.type?.startsWith("image/")
+                ? `<img src="${f.dataUrl}" style="width:26px;height:26px;object-fit:cover;border-radius:3px"/>`
+                : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+            return `<div class="uthumb">${img}${esc(f.name)}<button class="urm" onclick="rmFile(${i})">×</button></div>`;
+          })
+          .join("");
+      }
+      function rmFile(i) {
+        pendingFiles.splice(i, 1);
+        renderUploadPrev();
+      }
+      function addSandboxFiles(e) {
+        Array.from(e.target.files).forEach((file) => {
+          sandboxFiles.push(file);
+          const tr = new FileReader();
+          tr.onload = (ev) => {
+            const sf = sandboxFiles.find((x) => x.name === file.name);
+            if (sf) sf.textContent = ev.target.result;
+          };
+          tr.readAsText(file);
+        });
+        renderSBFiles();
+        e.target.value = "";
+      }
+      function renderSBFiles() {
+        const el = document.getElementById("sbFileList");
+        if (!sandboxFiles.length) {
+          el.innerHTML =
+            '<div style="font-size:12px;color:var(--tx3);text-align:center;padding:12px">No files</div>';
+          return;
+        }
+        el.innerHTML = sandboxFiles
+          .map(
+            (f, i) =>
+              `<div class="fitem"><div class="fi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="fi-name">${esc(f.name)}</div><div class="fi-sz">${fmtBytes(f.size)}</div><button class="fi-del" onclick="rmSBFile(${i})">×</button></div>`,
+          )
+          .join("");
+      }
+      function rmSBFile(i) {
+        sandboxFiles.splice(i, 1);
+        renderSBFiles();
+      }
+
+      // ── SANDBOX ─────────────────────────────────────────────────
+      function runJS() {
+        const r = safeRunJS(document.getElementById("jsEd").value);
+        const out = document.getElementById("jsOut");
+        let txt = "";
+        if (r.output) txt += r.output;
+        if (r.returned !== undefined)
+          txt += (txt ? "\n" : "") + "→ " + r.returned;
+        if (r.error) txt += (txt ? "\n" : "") + "⚠ " + r.error;
+        out.textContent = txt || "(no output)";
+        out.style.color = r.error ? "var(--red)" : "var(--tx2)";
+      }
+      function clearJS() {
+        document.getElementById("jsOut").textContent =
+          "Output will appear here…";
+      }
+      function runHTML() {
+        const code = document.getElementById("htmlEd").value;
+        const iframe = document.getElementById("htmlPrev");
+        iframe.style.display = "block";
+        iframe.srcdoc = code;
+      }
+      function clearHTML() {
+        const iframe = document.getElementById("htmlPrev");
+        iframe.srcdoc = "";
+        iframe.style.display = "none";
+      }
+      function sendJStoAgent() {
+        const code = document.getElementById("jsEd").value;
+        if (!code.trim()) return;
+        document.getElementById("msgInput").value =
+          "Review and improve this JavaScript:\n```js\n" + code + "\n```";
+        closePanel("sandboxPanel");
+      }
+      function downloadFromEditor() {
+        const code = document.getElementById("jsEd").value;
+        if (!code.trim()) return;
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(
+          new Blob([code], { type: "text/javascript" }),
+        );
+        a.download = "script.js";
+        a.click();
+        showToast("Downloaded script.js");
+      }
+      function dlHTML() {
+        const code = document.getElementById("htmlEd").value;
+        if (!code.trim()) return;
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([code], { type: "text/html" }));
+        a.download = "page.html";
+        a.click();
+        showToast("Downloaded page.html");
+      }
+      function insertPaste() {
+        const c = document.getElementById("pasteEd").value.trim();
+        if (!c) return;
+        const inp = document.getElementById("msgInput");
+        inp.value = (inp.value ? inp.value + "\n\n" : "") + c;
+        closePanel("sandboxPanel");
+        showToast("Added to message");
+      }
+
+      // ── SETTINGS ────────────────────────────────────────────────
+      function loadCfg() {
+        try {
+          const s = localStorage.getItem("sps_cfg");
+          if (s) cfg = { ...cfg, ...JSON.parse(s) };
+        } catch {}
+        document.getElementById("mdTog").checked = cfg.md !== false;
+        document.getElementById("tsTog").checked = !!cfg.ts;
+        document.getElementById("toolTog").checked = cfg.tools !== false;
+        document.getElementById("memN").value = cfg.mem || 10;
+        document.getElementById("customSP").value = cfg.sysPrompt || "";
+      }
+      function saveSettings() {
+        cfg.md = document.getElementById("mdTog").checked;
+        cfg.ts = document.getElementById("tsTog").checked;
+        cfg.tools = document.getElementById("toolTog").checked;
+        cfg.mem = parseInt(document.getElementById("memN").value) || 10;
+        cfg.sysPrompt = document.getElementById("customSP").value.trim();
+        localStorage.setItem("sps_cfg", JSON.stringify(cfg));
+        showToast("Settings saved");
+        closePanel("settingsPanel");
+      }
+
+      // ── PANELS ───────────────────────────────────────────────────
+      function openPanel(n) {
+        document.getElementById(n + "Overlay").classList.add("open");
+      }
+      function closePanel(n) {
+        document.getElementById(n + "Overlay").classList.remove("open");
+      }
+      function stab(tabId, btn) {
+        document
+          .querySelectorAll(".sc")
+          .forEach((c) => c.classList.remove("active"));
+        document
+          .querySelectorAll(".stab")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(tabId).classList.add("active");
+        if (btn) btn.classList.add("active");
+      }
+      function setAgentBar(on, text) {
+        document.getElementById("agentBar").classList.toggle("hidden", !on);
+        if (text) document.getElementById("agentBarText").textContent = text;
+      }
+
+      // ── AUTH ACTIONS ─────────────────────────────────────────────
+      function signOut() {
+        localStorage.removeItem("sps_key");
+        localStorage.removeItem("sps_em");
+        location.reload();
+      }
+      async function deleteAccount() {
+        if (!confirm("Permanently delete your account?")) return;
+        const k = localStorage.getItem("sps_key");
+        try {
+          const r = await fetch(getServer() + "/delete-account", {
+            method: "POST",
+            headers: CLIENT_HEADER,
+            body: JSON.stringify({ api_key: k }),
+          });
+          const d = await r.json();
+          showToast(d.message || "Deleted.");
+          setTimeout(() => {
+            localStorage.clear();
+            location.reload();
+          }, 1500);
+        } catch {
+          showToast("Delete failed.");
+        }
+      }
+
+      // ── HELPERS ──────────────────────────────────────────────────
+      function renderMD(text) {
+        if (!cfg.md) return esc(text);
+        let s = esc(text);
+        s = s.replace(
+          /```(\w+)?\n?([\s\S]*?)```/g,
+          (_, l, c) => `<pre><code>${c.trim()}</code></pre>`,
+        );
+        s = s.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+        s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        s = s.replace(/\*(.+?)\*/g, "<em>$1</em>");
+        s = s.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+        s = s.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+        s = s.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+        s = s.replace(/^[\-\*] (.+)$/gm, "<li>$1</li>");
+        s = s.replace(/^\d+\. (.+)$/gm, "<li>$1</li>");
+        s = s.replace(
+          /\[([^\]]+)\]\(([^)]+)\)/g,
+          '<a href="$2" target="_blank">$1</a>',
+        );
+        s = s
+          .split(/\n\n+/)
+          .map((p) => {
+            if (
+              p.startsWith("<h") ||
+              p.startsWith("<pre") ||
+              p.startsWith("<li")
+            )
+              return p;
+            return "<p>" + p.replace(/\n/g, "<br>") + "</p>";
+          })
+          .join("\n");
+        return s;
+      }
+      function esc(s) {
+        if (!s) return "";
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function fmtTime() {
+        const d = new Date();
+        return (
+          d.getHours().toString().padStart(2, "0") +
+          ":" +
+          d.getMinutes().toString().padStart(2, "0")
+        );
+      }
+      function fmtBytes(b) {
+        if (b < 1024) return b + "B";
+        if (b < 1048576) return (b / 1024).toFixed(1) + "KB";
+        return (b / 1048576).toFixed(1) + "MB";
+      }
+      function scrollBot() {
+        document.getElementById("chatArea").scrollTop =
+          document.getElementById("chatArea").scrollHeight;
+      }
+      function showToast(msg, dur = 2400) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), dur);
+      }
+      function cpMsg(btn) {
+        navigator.clipboard
+          .writeText(btn.getAttribute("data-t") || "")
+          .then(() => showToast("Copied!"));
+      }
+      function copyKey() {
+        navigator.clipboard
+          .writeText(localStorage.getItem("sps_key") || "")
+          .then(() => showToast("API key copied!"));
+      }
+      function useSug(text) {
+        document.getElementById("msgInput").value = text;
+        sendMsg();
+      }
+
+      // ── INPUT EVENTS ─────────────────────────────────────────────
+      document
+        .getElementById("msgInput")
+        .addEventListener("input", function () {
+          this.style.height = "auto";
+          this.style.height = Math.min(this.scrollHeight, 180) + "px";
+        });
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          document.activeElement.id === "msgInput"
+        ) {
+          e.preventDefault();
+          sendMsg();
+        }
+      });
+      document
+        .getElementById("signupEmail")
+        .addEventListener("keydown", (e) => {
+          if (e.key === "Enter") signup();
+        });
+      document.getElementById("otpInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") verifyOTP();
+      });
+
+      // ── BOOT ─────────────────────────────────────────────────────
+      window.onload = () => {
+        const k = localStorage.getItem("sps_key");
+        if (k) initApp();
+        else showScreen("signupScreen");
+      };
+    </script>
+  </body>
+</html>
