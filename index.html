@@ -1727,395 +1727,7 @@
         display: block;
       }
 
-      /* ══════════════════════════════════════════════════════
-   LIVE SANDBOX PANEL — new feature
-══════════════════════════════════════════════════════ */
-      .sandbox-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 350;
-        display: none;
-        align-items: flex-start;
-        justify-content: flex-end;
-      }
-      .sandbox-overlay.open {
-        display: flex;
-      }
-      .sandbox-panel {
-        background: #07070d;
-        border-left: 1px solid var(--bd);
-        width: 640px;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        animation: slin 0.18s ease;
-      }
-      @keyframes slin {
-        from {
-          transform: translateX(30px);
-          opacity: 0;
-        }
-        to {
-          transform: none;
-          opacity: 1;
-        }
-      }
-      .sbx-head {
-        padding: 10px 14px;
-        border-bottom: 1px solid #1a1a2e;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-shrink: 0;
-        background: #0a0a14;
-      }
-      .sbx-title {
-        font-size: 13px;
-        font-weight: 700;
-        color: #c8c8ff;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-      }
-      .sbx-status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #3a3a55;
-        flex-shrink: 0;
-        transition: background 0.3s;
-      }
-      .sbx-status-dot.active {
-        background: var(--green);
-        box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
-        animation: pulse 1.5s infinite;
-      }
-      .sbx-status-dot.error {
-        background: var(--red);
-      }
-      .sbx-status-dot.done {
-        background: var(--cyan);
-      }
-      .sbx-badge {
-        padding: 2px 8px;
-        border-radius: 10px;
-        font-size: 10px;
-        font-weight: 700;
-        background: rgba(34, 211, 238, 0.12);
-        color: var(--cyan);
-        border: 1px solid rgba(34, 211, 238, 0.2);
-      }
-      .sbx-tabs {
-        display: flex;
-        gap: 2px;
-        padding: 6px 10px;
-        border-bottom: 1px solid #1a1a2e;
-        flex-shrink: 0;
-        background: #080810;
-      }
-      .sbx-tab {
-        padding: 5px 12px;
-        border-radius: 5px;
-        border: none;
-        background: transparent;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        font-weight: 500;
-        cursor: pointer;
-        color: #4a4a6a;
-        white-space: nowrap;
-        transition:
-          background 0.1s,
-          color 0.1s;
-      }
-      .sbx-tab.active {
-        background: #1a1a28;
-        color: #c8c8ff;
-      }
-      .sbx-tab:hover:not(.active) {
-        color: #8080a0;
-      }
-      .sbx-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        overflow: hidden;
-      }
-      .sbx-section {
-        display: none;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-      }
-      .sbx-section.active {
-        display: flex;
-      }
-      /* Terminal */
-      .sbx-terminal {
-        flex: 1;
-        overflow-y: auto;
-        padding: 12px 14px;
-        background: #020206;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11.5px;
-        line-height: 1.75;
-        min-height: 0;
-      }
-      .sbx-line {
-        display: block;
-        word-break: break-word;
-      }
-      .sbx-line.prompt {
-        color: #4a9eff;
-      }
-      .sbx-line.cmd {
-        color: #ffffff;
-        font-weight: 500;
-      }
-      .sbx-line.stdout {
-        color: #98fb98;
-      }
-      .sbx-line.stderr {
-        color: #ff6b6b;
-      }
-      .sbx-line.info {
-        color: #888;
-      }
-      .sbx-line.step {
-        color: #a89fff;
-      }
-      .sbx-line.create {
-        color: #7dd3fc;
-      }
-      .sbx-line.install {
-        color: #fde68a;
-      }
-      .sbx-line.success {
-        color: #4ade80;
-      }
-      .sbx-line.error {
-        color: #f87171;
-      }
-      .sbx-line.sep {
-        color: #2a2a40;
-        user-select: none;
-      }
-      .sbx-cursor {
-        display: inline-block;
-        width: 8px;
-        height: 13px;
-        background: #4a9eff;
-        vertical-align: text-bottom;
-        animation: blink 0.8s infinite;
-        margin-left: 2px;
-      }
-      /* File tree */
-      .sbx-filetree {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-        background: #050509;
-      }
-      .sbx-ftitem {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 8px;
-        border-radius: 6px;
-        margin-bottom: 3px;
-        cursor: pointer;
-        transition: background 0.1s;
-      }
-      .sbx-ftitem:hover {
-        background: #1a1a2a;
-      }
-      .sbx-ftitem.new-file {
-        animation: ftpop 0.4s ease;
-      }
-      @keyframes ftpop {
-        0% {
-          background: #1a2a1a;
-          transform: scaleY(0.8);
-          opacity: 0;
-        }
-        50% {
-          background: #1e3a1e;
-        }
-        100% {
-          background: transparent;
-          transform: none;
-          opacity: 1;
-        }
-      }
-      .sbx-fticon {
-        font-size: 14px;
-        flex-shrink: 0;
-        width: 20px;
-        text-align: center;
-      }
-      .sbx-ftname {
-        font-size: 12px;
-        font-family: "JetBrains Mono", monospace;
-        color: #c0c0d8;
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .sbx-ftsize {
-        font-size: 10px;
-        color: #3a3a55;
-        flex-shrink: 0;
-      }
-      .sbx-ftstatus {
-        font-size: 10px;
-        font-weight: 700;
-        flex-shrink: 0;
-      }
-      .sbx-ftstatus.ok {
-        color: var(--green);
-      }
-      .sbx-ftstatus.fail {
-        color: var(--red);
-      }
-      .sbx-ftstatus.running {
-        color: var(--yellow);
-      }
-      /* Run log */
-      .sbx-runlog {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px 14px;
-        background: #03030a;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        line-height: 1.7;
-      }
-      .sbx-run-item {
-        margin-bottom: 10px;
-        border: 1px solid #1a1a28;
-        border-radius: 6px;
-        overflow: hidden;
-      }
-      .sbx-run-head {
-        padding: 6px 10px;
-        background: #0f0f1e;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .sbx-run-cmd {
-        flex: 1;
-        font-size: 11px;
-        color: #a0a0c0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .sbx-run-exit {
-        font-size: 10px;
-        font-weight: 700;
-        padding: 2px 7px;
-        border-radius: 4px;
-      }
-      .sbx-run-exit.ok {
-        background: rgba(34, 197, 94, 0.15);
-        color: var(--green);
-      }
-      .sbx-run-exit.fail {
-        background: rgba(239, 68, 68, 0.15);
-        color: var(--red);
-      }
-      .sbx-run-exit.run {
-        background: rgba(234, 179, 8, 0.1);
-        color: var(--yellow);
-        animation: pulse 1s infinite;
-      }
-      .sbx-run-body {
-        padding: 8px 10px;
-        white-space: pre-wrap;
-        word-break: break-all;
-        max-height: 150px;
-        overflow-y: auto;
-      }
-      .sbx-run-body.stdout {
-        color: #98fb98;
-        background: #030308;
-      }
-      .sbx-run-body.stderr {
-        color: #ff8080;
-        background: #0a0304;
-      }
-      /* Footer */
-      .sbx-foot {
-        padding: 8px 14px;
-        border-top: 1px solid #1a1a2e;
-        background: #0a0a14;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .sbx-stat {
-        font-size: 10px;
-        color: #3a3a55;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .sbx-stat strong {
-        color: #6060a0;
-      }
-      .sbx-clear-btn {
-        padding: 4px 10px;
-        background: transparent;
-        border: 1px solid #2a2a3e;
-        border-radius: 4px;
-        font-size: 10px;
-        font-family: "JetBrains Mono", monospace;
-        color: #4a4a6a;
-        cursor: pointer;
-        transition:
-          border-color 0.1s,
-          color 0.1s;
-        margin-left: auto;
-      }
-      .sbx-clear-btn:hover {
-        border-color: var(--acc);
-        color: var(--acc2);
-      }
-
-      /* open button in topbar */
-      .sbx-open-btn {
-        padding: 4px 10px;
-        background: rgba(34, 211, 238, 0.08);
-        border: 1px solid rgba(34, 211, 238, 0.25);
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--cyan);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-family: inherit;
-        transition: background 0.15s;
-      }
-      .sbx-open-btn:hover {
-        background: rgba(34, 211, 238, 0.15);
-      }
-      .sbx-open-btn .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--cyan);
-        animation: pulse 1.5s infinite;
-      }
-
-      /* ── FILE VIEWER & AI LOG PANEL (read-only) ── */
+      /* ── FILE VIEWER (read-only, replaces sandbox) ── */
       .file-viewer-overlay {
         position: fixed;
         inset: 0;
@@ -2191,9 +1803,7 @@
       }
       .fvp-content {
         flex: 1;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
+        overflow: auto;
         min-height: 0;
       }
       .fvp-section {
@@ -2205,6 +1815,8 @@
       .fvp-section.active {
         display: flex;
       }
+
+      /* ── AI LIVE LOG (read-only terminal) ── */
       .ai-live-log {
         flex: 1;
         padding: 12px 14px;
@@ -2255,6 +1867,8 @@
         margin-top: 4px;
         font-style: italic;
       }
+
+      /* ── FILE LIST IN VIEWER ── */
       .fv-file-list {
         flex: 1;
         overflow-y: auto;
@@ -3143,9 +2757,6 @@
         .file-viewer-panel {
           width: 100%;
         }
-        .sandbox-panel {
-          width: 100%;
-        }
         .panel {
           width: 100%;
         }
@@ -3217,12 +2828,6 @@
           <span class="shortcut-desc">Open File Viewer</span>
           <div class="shortcut-keys">
             <span class="kbd">Ctrl</span><span class="kbd">`</span>
-          </div>
-        </div>
-        <div class="shortcut-row">
-          <span class="shortcut-desc">Live Sandbox</span>
-          <div class="shortcut-keys">
-            <span class="kbd">Ctrl</span><span class="kbd">S</span>
           </div>
         </div>
         <div class="shortcut-row">
@@ -3373,9 +2978,8 @@
         </div>
         <div class="auth-title">Autonomous AI Studio v5</div>
         <div class="auth-sub">
-          Powered by Qwen2.5-Coder. Creates files, runs tests in Linux sandbox,
-          fixes bugs, zips and delivers — fully autonomous with live sandbox
-          viewer.
+          Powered by Qwen2.5-Coder. Creates files, runs tests in sandbox, fixes
+          bugs, zips and delivers — fully autonomous.
         </div>
         <label class="flabel">Email address</label>
         <input
@@ -3460,20 +3064,6 @@
         <div class="hist" id="histList"></div>
         <div class="sb-foot">
           <div class="uemail" id="sbEmail"></div>
-          <button class="sf-btn" onclick="openSandbox()">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              width="13"
-              height="13"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M9 9l6 6M15 9l-6 6" />
-            </svg>
-            Live Sandbox
-          </button>
           <button class="sf-btn" onclick="openFileViewer()">
             <svg
               viewBox="0 0 24 24"
@@ -3643,15 +3233,6 @@
             <div class="network-dot" id="networkDot"></div>
           </div>
           <div class="tb-right">
-            <button
-              class="sbx-open-btn"
-              onclick="openSandbox()"
-              title="Live Sandbox (Ctrl+S)"
-              id="sandboxOpenBtn"
-            >
-              <span class="dot" id="sbxTopDot" style="display: none"></span>
-              🐧 Live Sandbox
-            </button>
             <div class="upill" id="usagePill" onclick="openPanel('apiPanel')">
               — / 500
             </div>
@@ -3796,16 +3377,16 @@
                   <div class="w-title">SPS Agent Studio v5</div>
                   <div class="w-sub">
                     Qwen2.5-Coder runs autonomously — plans, creates every file,
-                    tests in Linux sandbox, fixes errors, then delivers a zip.
-                    Watch it all live in the Sandbox panel.
+                    tests in Docker/udocker sandbox, fixes errors, then delivers
+                    a zip for download.
                   </div>
                   <div class="w-chips">
                     <span class="chip">🧠 Plans first</span>
                     <span class="chip">📁 Multi-file</span>
-                    <span class="chip">🐧 Linux Sandbox</span>
+                    <span class="chip">🐳 Docker/udocker</span>
                     <span class="chip">✅ Tests &amp; fixes</span>
                     <span class="chip">📦 Zip delivery</span>
-                    <span class="chip">🔴 Live viewer</span>
+                    <span class="chip">🔁 Agentic loops</span>
                   </div>
                   <div class="sug-grid">
                     <button
@@ -3893,7 +3474,7 @@
                   <textarea
                     class="comp-ta"
                     id="msgInput"
-                    placeholder="Ask me to build anything — I'll plan, create every file, test in Linux sandbox, fix bugs, zip and deliver automatically…"
+                    placeholder="Ask me to build anything — I'll plan, create every file, test in sandbox, fix bugs, zip and deliver automatically…"
                     rows="1"
                   ></textarea>
                   <div class="comp-actions">
@@ -3914,22 +3495,6 @@
                         <path
                           d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"
                         />
-                      </svg>
-                    </button>
-                    <button
-                      class="ctb"
-                      title="Live Sandbox"
-                      onclick="openSandbox()"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        style="color: var(--cyan)"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <path d="M9 9l6 6M15 9l-6 6" />
                       </svg>
                     </button>
                     <button
@@ -4005,7 +3570,7 @@
                 </div>
                 <div class="inp-hint">
                   <span id="networkStatus" style="color: var(--green)">●</span>
-                  Autonomous Agent · Linux Sandbox ·
+                  Autonomous Agent · Docker/udocker Sandbox ·
                   <span id="serverUrlHint">connecting…</span> ·
                   <a
                     style="
@@ -4085,174 +3650,6 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-     LIVE SANDBOX PANEL — read-only real-time view
-══════════════════════════════════════════════════════ -->
-    <div
-      class="sandbox-overlay"
-      id="sandboxOverlay"
-      onclick="if (event.target === this) closeSandbox();"
-    >
-      <div class="sandbox-panel">
-        <div class="sbx-head">
-          <div class="sbx-title">
-            <span class="sbx-status-dot" id="sbxDot"></span>
-            🐧 Linux Sandbox — Live View
-            <span class="sbx-badge" id="sbxModeBadge">idle</span>
-          </div>
-          <div style="display: flex; gap: 6px; align-items: center">
-            <span
-              style="
-                font-size: 10px;
-                color: #3a3a55;
-                font-family: &quot;JetBrains Mono&quot;, monospace;
-              "
-              id="sbxElapsed"
-            ></span>
-            <button
-              onclick="sbxClearAll()"
-              style="
-                padding: 3px 8px;
-                background: transparent;
-                border: 1px solid #2a2a3e;
-                border-radius: 4px;
-                font-size: 10px;
-                font-family: &quot;JetBrains Mono&quot;, monospace;
-                color: #4a4a6a;
-                cursor: pointer;
-              "
-            >
-              clear
-            </button>
-            <button
-              onclick="closeSandbox()"
-              style="
-                background: none;
-                border: none;
-                color: #4a4a6a;
-                cursor: pointer;
-                font-size: 18px;
-                line-height: 1;
-                padding: 0 4px;
-              "
-            >
-              ×
-            </button>
-          </div>
-        </div>
-        <div class="sbx-tabs">
-          <button
-            class="sbx-tab active"
-            onclick="sbxTab('sbxTerminalSec', this)"
-            id="sbxTabTerm"
-          >
-            ⬛ Terminal
-          </button>
-          <button
-            class="sbx-tab"
-            onclick="sbxTab('sbxFilesSec', this)"
-            id="sbxTabFiles"
-          >
-            📁 Files <span id="sbxFileCount" style="opacity: 0.6"></span>
-          </button>
-          <button
-            class="sbx-tab"
-            onclick="sbxTab('sbxRunsSec', this)"
-            id="sbxTabRuns"
-          >
-            ▶ Runs <span id="sbxRunCount" style="opacity: 0.6"></span>
-          </button>
-        </div>
-        <div class="sbx-content">
-          <!-- TERMINAL -->
-          <div class="sbx-section active" id="sbxTerminalSec">
-            <div class="sbx-terminal" id="sbxTerminal">
-              <span class="sbx-line info"
-                >╔══════════════════════════════════════════════╗</span
-              >
-              <span class="sbx-line info"
-                >║ SPS Linux Sandbox — Live Read-Only View ║</span
-              >
-              <span class="sbx-line info">║ Waiting for agent to start… ║</span>
-              <span class="sbx-line info"
-                >╚══════════════════════════════════════════════╝</span
-              >
-              <span class="sbx-line sep"
-                >──────────────────────────────────────────────</span
-              >
-            </div>
-          </div>
-          <!-- FILES -->
-          <div class="sbx-section" id="sbxFilesSec">
-            <div
-              style="
-                padding: 8px 12px;
-                border-bottom: 1px solid #1a1a28;
-                font-size: 10px;
-                color: #3a3a55;
-                font-family: &quot;JetBrains Mono&quot;, monospace;
-                background: #050509;
-                flex-shrink: 0;
-              "
-            >
-              sandbox workspace / — <span id="sbxWsSize">0 B</span>
-            </div>
-            <div class="sbx-filetree" id="sbxFileTree">
-              <div
-                style="
-                  color: #2a2a40;
-                  font-size: 11px;
-                  font-family: &quot;JetBrains Mono&quot;, monospace;
-                  padding: 20px;
-                  text-align: center;
-                "
-              >
-                no files yet
-              </div>
-            </div>
-          </div>
-          <!-- RUNS -->
-          <div class="sbx-section" id="sbxRunsSec">
-            <div class="sbx-runlog" id="sbxRunLog">
-              <div
-                style="
-                  color: #2a2a40;
-                  font-size: 11px;
-                  font-family: &quot;JetBrains Mono&quot;, monospace;
-                  padding: 20px;
-                  text-align: center;
-                "
-              >
-                no runs yet
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="sbx-foot">
-          <div class="sbx-stat">
-            Files: <strong id="sbxStatFiles">0</strong>
-          </div>
-          <div class="sbx-stat">Runs: <strong id="sbxStatRuns">0</strong></div>
-          <div class="sbx-stat">
-            Installs: <strong id="sbxStatInstalls">0</strong>
-          </div>
-          <div class="sbx-stat">
-            Errors: <strong id="sbxStatErrors">0</strong>
-          </div>
-          <div
-            style="
-              margin-left: auto;
-              font-size: 10px;
-              color: #2a2a40;
-              font-family: &quot;JetBrains Mono&quot;, monospace;
-            "
-          >
-            read-only · auto-scrolls
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- FILE VIEWER & AI LOG PANEL (read-only) -->
     <div
       class="file-viewer-overlay"
@@ -4308,6 +3705,7 @@
             min-height: 0;
           "
         >
+          <!-- FILES -->
           <div class="fvp-section active" id="fvpFilesSection">
             <div
               style="
@@ -4379,6 +3777,7 @@
               id="fvpFileStats"
             ></div>
             <div class="fv-file-list" id="fvpFileList"></div>
+            <!-- File preview area -->
             <div
               id="fvpPreviewArea"
               style="
@@ -4428,6 +3827,7 @@
               <div class="fv-code-view" id="fvpCodeView"></div>
             </div>
           </div>
+          <!-- AI LIVE LOG -->
           <div class="fvp-section" id="fvpLogSection">
             <div
               style="
@@ -4473,6 +3873,7 @@
               >
             </div>
           </div>
+          <!-- AGENT MEMORY -->
           <div class="fvp-section" id="fvpNotesSection">
             <div
               style="
@@ -4526,6 +3927,7 @@
               </div>
             </div>
           </div>
+          <!-- STATS -->
           <div class="fvp-section" id="fvpStatsSection">
             <div style="padding: 16px; flex: 1; overflow-y: auto">
               <div
@@ -4773,16 +4175,6 @@
             </div>
             <div class="srow">
               <div>
-                <div class="srl">Auto open sandbox</div>
-                <div class="srs">Open live sandbox when agent starts</div>
-              </div>
-              <label class="tog"
-                ><input type="checkbox" id="autoSandboxTog" checked />
-                <div class="ttr"></div
-              ></label>
-            </div>
-            <div class="srow">
-              <div>
                 <div class="srl">Typewriter effect</div>
                 <div class="srs">Stream AI response word by word</div>
               </div>
@@ -4982,7 +4374,7 @@
       // ════════════════════════════════════════════════════════════
       //  CONFIG
       // ════════════════════════════════════════════════════════════
-      const DEFAULT_SERVER = "https://juice-emporium-frozen.ngrok-free.dev";
+      const DEFAULT_SERVER = "https://juice-emporium-frozen.ngrok-free.dev"; // <-- SET YOUR NGROK URL
       const CLIENT_HEADER = {
         "Content-Type": "application/json",
         "x-sps-client": "sps_ai_web",
@@ -5015,7 +4407,6 @@
         rt: true,
         draft: true,
         ph: true,
-        autoSandbox: true,
       };
       var templates = [
         {
@@ -5053,393 +4444,12 @@
         },
         { label: "Open Files & AI Log viewer", done: false, key: "viewer" },
         { label: "Download a created file", done: false, key: "download" },
-        { label: "Try the Live Sandbox panel", done: false, key: "sandbox" },
         { label: "Try the Command Palette (Ctrl+P)", done: false, key: "cmd" },
       ];
       var currentTheme = "dark",
         keyHidden = true,
         t0agent = 0;
       var fvpFileFilter = "";
-
-      // ════════════════════════════════════════════════════════════
-      //  LIVE SANDBOX STATE
-      // ════════════════════════════════════════════════════════════
-      var sbx = {
-        open: false,
-        files: {}, // filename -> {content, size, status, time}
-        runs: [], // [{cmd, stdout, stderr, exitCode, duration, time, status}]
-        installs: [], // [{pkgs, time, ok}]
-        termLines: [], // rendered lines
-        fileCount: 0,
-        runCount: 0,
-        installCount: 0,
-        errorCount: 0,
-        startTime: null,
-        elapsedTimer: null,
-      };
-
-      function openSandbox() {
-        document.getElementById("sandboxOverlay").classList.add("open");
-        sbx.open = true;
-        sbxRefreshAll();
-        markOnboard("sandbox");
-      }
-      function closeSandbox() {
-        document.getElementById("sandboxOverlay").classList.remove("open");
-        sbx.open = false;
-      }
-
-      function sbxTab(secId, btn) {
-        document.querySelectorAll(".sbx-section").forEach(function (s) {
-          s.classList.remove("active");
-        });
-        document.querySelectorAll(".sbx-tab").forEach(function (b) {
-          b.classList.remove("active");
-        });
-        var sec = document.getElementById(secId);
-        if (sec) sec.classList.add("active");
-        if (btn) btn.classList.add("active");
-      }
-
-      function sbxClearAll() {
-        sbx.files = {};
-        sbx.runs = [];
-        sbx.installs = [];
-        sbx.termLines = [];
-        sbx.fileCount = 0;
-        sbx.runCount = 0;
-        sbx.installCount = 0;
-        sbx.errorCount = 0;
-        var t = document.getElementById("sbxTerminal");
-        if (t) t.innerHTML = '<span class="sbx-line info">// cleared</span>';
-        sbxRefreshFiles();
-        sbxRefreshRuns();
-        sbxUpdateStats();
-      }
-
-      function sbxRefreshAll() {
-        sbxRefreshFiles();
-        sbxRefreshRuns();
-        sbxUpdateStats();
-      }
-
-      // ── Sandbox terminal append ───────────────────────────────
-      function sbxTerm(text, cls, scroll) {
-        cls = cls || "info";
-        var t = document.getElementById("sbxTerminal");
-        if (!t) return;
-        var span = document.createElement("span");
-        span.className = "sbx-line " + cls;
-        span.textContent = text;
-        t.appendChild(span);
-        t.appendChild(document.createTextNode("\n"));
-        if (scroll !== false) t.scrollTop = t.scrollHeight;
-      }
-
-      function sbxTermPrompt(cmd) {
-        sbxTerm("$ " + cmd, "cmd");
-      }
-
-      function sbxTermSep() {
-        sbxTerm("──────────────────────────────────────────────", "sep");
-      }
-
-      // ── Called when agent starts a new task ─────────────────
-      function sbxAgentStart(taskText) {
-        sbx.startTime = Date.now();
-        sbxSetStatus("active", "running");
-        if (sbx.elapsedTimer) clearInterval(sbx.elapsedTimer);
-        sbx.elapsedTimer = setInterval(function () {
-          if (!sbx.startTime) return;
-          var el = (Date.now() - sbx.startTime) / 1000;
-          var s = document.getElementById("sbxElapsed");
-          if (s) s.textContent = el.toFixed(1) + "s";
-        }, 200);
-        // show dot on topbar
-        var d = document.getElementById("sbxTopDot");
-        if (d) d.style.display = "inline-block";
-        sbxTermSep();
-        sbxTerm("▶ NEW TASK — " + new Date().toLocaleTimeString(), "step");
-        sbxTerm("  " + (taskText || "").slice(0, 80), "info");
-        sbxTermSep();
-        if (cfg.autoSandbox) openSandbox();
-      }
-
-      // ── Called when agent finishes ───────────────────────────
-      function sbxAgentDone(elapsed) {
-        sbxSetStatus("done", "done ✓");
-        if (sbx.elapsedTimer) {
-          clearInterval(sbx.elapsedTimer);
-          sbx.elapsedTimer = null;
-        }
-        var s = document.getElementById("sbxElapsed");
-        if (s) s.textContent = elapsed + "s total";
-        sbxTermSep();
-        sbxTerm("✅ TASK COMPLETE (" + elapsed + "s)", "success");
-        sbxTermSep();
-        var d = document.getElementById("sbxTopDot");
-        if (d) d.style.display = "none";
-      }
-
-      // ── Called when agent hits an error ─────────────────────
-      function sbxAgentError(msg) {
-        sbxSetStatus("error", "error");
-        sbxTerm("❌ ERROR: " + (msg || ""), "error");
-        sbx.errorCount++;
-        sbxUpdateStats();
-      }
-
-      // ── File created in sandbox ──────────────────────────────
-      function sbxFileCreated(filename, content, language) {
-        var size = (content || "").length;
-        sbx.files[filename] = {
-          content: content,
-          size: size,
-          language: language || "",
-          time: new Date().toLocaleTimeString(),
-          status: "ok",
-        };
-        sbx.fileCount++;
-        sbxTerm(
-          "📁 CREATE " + filename + " (" + fmtBytes(size) + ")",
-          "create",
-        );
-        // show file content preview in terminal
-        var preview = (content || "").split("\n").slice(0, 4).join("\n");
-        if (preview) {
-          preview.split("\n").forEach(function (line) {
-            sbxTerm("   " + line.slice(0, 80), "info");
-          });
-          if ((content || "").split("\n").length > 4) sbxTerm("   …", "info");
-        }
-        sbxUpdateFileCount();
-        if (sbx.open) sbxRefreshFiles();
-      }
-
-      // ── Package install ──────────────────────────────────────
-      function sbxInstall(packages) {
-        sbx.installCount++;
-        sbxTerm("📦 INSTALL: pip install " + packages.join(" "), "install");
-        sbxUpdateStats();
-      }
-
-      // ── Sandbox run ─────────────────────────────────────────
-      function sbxRunStart(command, language) {
-        sbxTerm("", "info");
-        sbxTermPrompt(command);
-        sbx.runs.push({
-          cmd: command,
-          language: language || "",
-          stdout: "",
-          stderr: "",
-          exitCode: null,
-          duration: null,
-          time: new Date().toLocaleTimeString(),
-          status: "running",
-          idx: sbx.runs.length,
-        });
-        sbx.runCount++;
-        sbxUpdateRunCount();
-        return sbx.runs.length - 1;
-      }
-
-      function sbxRunDone(runIdx, stdout, stderr, exitCode, duration) {
-        var run = sbx.runs[runIdx];
-        if (!run) return;
-        run.stdout = stdout || "";
-        run.stderr = stderr || "";
-        run.exitCode = exitCode;
-        run.duration = duration;
-        run.status = exitCode === 0 ? "ok" : "error";
-        // Print output to terminal
-        if (stdout && stdout.trim()) {
-          stdout
-            .split("\n")
-            .slice(0, 30)
-            .forEach(function (line) {
-              sbxTerm(line, "stdout");
-            });
-          if (stdout.split("\n").length > 30)
-            sbxTerm("…(" + stdout.split("\n").length + " lines total)", "info");
-        }
-        if (stderr && stderr.trim()) {
-          sbxTerm("── stderr ──", "sep");
-          stderr
-            .split("\n")
-            .slice(0, 15)
-            .forEach(function (line) {
-              if (line.trim()) sbxTerm(line, "stderr");
-            });
-        }
-        var exitColor = exitCode === 0 ? "success" : "error";
-        sbxTerm(
-          "⬤ exit " + exitCode + " (" + (duration || "?") + "s)",
-          exitColor,
-        );
-        sbxTerm("", "info");
-        if (exitCode !== 0) {
-          sbx.errorCount++;
-        }
-        sbxUpdateStats();
-        if (sbx.open) sbxRefreshRuns();
-      }
-
-      function sbxEditFile(filename, content) {
-        if (sbx.files[filename]) {
-          sbx.files[filename].content = content;
-          sbx.files[filename].size = (content || "").length;
-          sbx.files[filename].status = "edited";
-        } else {
-          sbxFileCreated(filename, content, "");
-          return;
-        }
-        sbxTerm("✏️  EDIT  " + filename, "install");
-        if (sbx.open) sbxRefreshFiles();
-      }
-
-      function sbxSetStatus(dotCls, badgeText) {
-        var dot = document.getElementById("sbxDot");
-        var badge = document.getElementById("sbxModeBadge");
-        if (dot) {
-          dot.className = "sbx-status-dot " + (dotCls || "");
-        }
-        if (badge) {
-          badge.textContent = badgeText || "";
-        }
-      }
-
-      function sbxUpdateFileCount() {
-        var c = document.getElementById("sbxFileCount");
-        if (c) c.textContent = "(" + Object.keys(sbx.files).length + ")";
-        sbxUpdateStats();
-      }
-      function sbxUpdateRunCount() {
-        var c = document.getElementById("sbxRunCount");
-        if (c) c.textContent = "(" + sbx.runs.length + ")";
-        sbxUpdateStats();
-      }
-      function sbxUpdateStats() {
-        var sf = document.getElementById("sbxStatFiles");
-        if (sf) sf.textContent = Object.keys(sbx.files).length;
-        var sr = document.getElementById("sbxStatRuns");
-        if (sr) sr.textContent = sbx.runs.length;
-        var si = document.getElementById("sbxStatInstalls");
-        if (si) si.textContent = sbx.installCount;
-        var se = document.getElementById("sbxStatErrors");
-        if (se) se.textContent = sbx.errorCount;
-        // workspace size
-        var total = 0;
-        Object.values(sbx.files).forEach(function (f) {
-          total += f.size || 0;
-        });
-        var ws = document.getElementById("sbxWsSize");
-        if (ws) ws.textContent = fmtBytes(total);
-      }
-
-      function sbxRefreshFiles() {
-        var el = document.getElementById("sbxFileTree");
-        if (!el) return;
-        var names = Object.keys(sbx.files);
-        if (!names.length) {
-          el.innerHTML =
-            "<div style=\"color:#2a2a40;font-size:11px;font-family:'JetBrains Mono',monospace;padding:20px;text-align:center\">no files yet</div>";
-          return;
-        }
-        el.innerHTML = names
-          .map(function (n) {
-            var f = sbx.files[n];
-            var statusCls =
-              f.status === "ok"
-                ? "ok"
-                : f.status === "error"
-                  ? "fail"
-                  : f.status === "edited"
-                    ? "ok"
-                    : "running";
-            var statusIcon =
-              f.status === "ok"
-                ? "✓"
-                : f.status === "error"
-                  ? "✗"
-                  : f.status === "edited"
-                    ? "✎"
-                    : "…";
-            return (
-              '<div class="sbx-ftitem">' +
-              '<div class="sbx-fticon">' +
-              getFileIcon(n) +
-              "</div>" +
-              '<div class="sbx-ftname">' +
-              esc(n) +
-              "</div>" +
-              '<div class="sbx-ftsize">' +
-              fmtBytes(f.size) +
-              "</div>" +
-              '<div class="sbx-ftstatus ' +
-              statusCls +
-              '">' +
-              statusIcon +
-              "</div>" +
-              "</div>"
-            );
-          })
-          .join("");
-        sbxUpdateFileCount();
-      }
-
-      function sbxRefreshRuns() {
-        var el = document.getElementById("sbxRunLog");
-        if (!el) return;
-        if (!sbx.runs.length) {
-          el.innerHTML =
-            "<div style=\"color:#2a2a40;font-size:11px;font-family:'JetBrains Mono',monospace;padding:20px;text-align:center\">no runs yet</div>";
-          return;
-        }
-        el.innerHTML = sbx.runs
-          .slice()
-          .reverse()
-          .map(function (r, i) {
-            var exitCls =
-              r.status === "running" ? "run" : r.exitCode === 0 ? "ok" : "fail";
-            var exitLabel =
-              r.status === "running"
-                ? "running"
-                : r.exitCode === 0
-                  ? "exit 0"
-                  : "exit " + r.exitCode;
-            return (
-              '<div class="sbx-run-item">' +
-              '<div class="sbx-run-head">' +
-              "<span style=\"font-size:10px;color:#3a3a55;font-family:'JetBrains Mono',monospace;flex-shrink:0\">" +
-              r.time +
-              "</span>" +
-              '<div class="sbx-run-cmd">' +
-              esc(r.cmd) +
-              "</div>" +
-              '<span class="sbx-run-exit ' +
-              exitCls +
-              '">' +
-              exitLabel +
-              (r.duration ? " · " + r.duration + "s" : "") +
-              "</span>" +
-              "</div>" +
-              (r.stdout
-                ? '<div class="sbx-run-body stdout">' +
-                  esc(r.stdout.slice(0, 2000)) +
-                  "</div>"
-                : "") +
-              (r.stderr && r.stderr.trim()
-                ? '<div class="sbx-run-body stderr">' +
-                  esc(r.stderr.slice(0, 500)) +
-                  "</div>"
-                : "") +
-              "</div>"
-            );
-          })
-          .join("");
-        el.scrollTop = 0;
-        sbxUpdateRunCount();
-      }
 
       function getServer() {
         return (localStorage.getItem("sps_server") || DEFAULT_SERVER).replace(
@@ -5448,10 +4458,12 @@
         );
       }
 
-      // ── LIVE LOG ─────────────────────────────────────────────
+      // ── LIVE LOG ────────────────────────────────────────────────
+      // Appends a line to BOTH the in-chat console and the mirror panel
       function liveLog(text, cls) {
         cls = cls || "tool";
         var t = fmtTime2();
+        // console strip
         var clog = document.getElementById("aiLiveLog");
         if (clog) {
           var line = document.createElement("div");
@@ -5467,7 +4479,6 @@
               answer: "💬",
               system: "·",
               tool: "⚙",
-              done: "✅",
             }[cls] || "⚙";
           line.innerHTML =
             '<div class="ac-log-icon">' +
@@ -5484,6 +4495,7 @@
           clog.appendChild(line);
           clog.scrollTop = clog.scrollHeight;
         }
+        // mirror panel
         var mlog = document.getElementById("fvpMirrorLog");
         if (mlog) {
           var span = document.createElement("span");
@@ -5505,7 +4517,7 @@
         );
       }
 
-      // ── DOWNLOAD ─────────────────────────────────────────────
+      // ── DOWNLOAD ────────────────────────────────────────────────
       function dlContent(fn, content) {
         var a = document.createElement("a");
         a.href = URL.createObjectURL(
@@ -5529,7 +4541,7 @@
         markOnboard("download");
       }
 
-      // ── SERVER FILE SYNC ─────────────────────────────────────
+      // ── SERVER FILE SYNC ────────────────────────────────────────
       async function loadFilesFromServer() {
         var k = localStorage.getItem("sps_key");
         if (!k) return;
@@ -5648,7 +4660,7 @@
         }
       }
 
-      // ── FILE VIEWER PANEL ─────────────────────────────────────
+      // ── FILE VIEWER PANEL ────────────────────────────────────────
       function openFileViewer() {
         document.getElementById("fileViewerOverlay").classList.add("open");
         refreshFvpFileList();
@@ -5671,10 +4683,12 @@
         if (secId === "fvpStatsSection") updateFvpStats();
         if (secId === "fvpFilesSection") refreshFvpFileList();
       }
+
       function fvpFilterFiles(q) {
         fvpFileFilter = q.toLowerCase();
         refreshFvpFileList();
       }
+
       function refreshFvpFileList() {
         var el = document.getElementById("fvpFileList");
         if (!el) return;
@@ -5716,14 +4730,18 @@
           })
           .join("");
       }
+
       function fvpOpenFile(name) {
         var content = virtualFS[name] || "";
         if (content.startsWith("__ZIP")) {
           showToast("ZIP file — click ⬇ to download", "warn");
           return;
         }
+        // Show preview area
         var pa = document.getElementById("fvpPreviewArea");
+        var fl = document.getElementById("fvpFileList");
         pa.style.display = "flex";
+        // show file list smaller
         document.getElementById("fvpPreviewName").textContent = name;
         document.getElementById("fvpCodeView").textContent = content;
       }
@@ -5739,7 +4757,7 @@
         if (sr) sr.textContent = stats.runs || 0;
       }
 
-      // ── AGENT NOTES ───────────────────────────────────────────
+      // ── AGENT NOTES ───────────────────────────────────────────────
       async function loadNotes() {
         var k = localStorage.getItem("sps_key");
         if (!k) return;
@@ -5773,7 +4791,7 @@
         } catch (e) {}
       }
 
-      // ── HELPERS ───────────────────────────────────────────────
+      // ── HELPERS ───────────────────────────────────────────────────
       function getFileIcon(name) {
         var ext = (name || "").split(".").pop().toLowerCase();
         var m = {
@@ -5825,7 +4843,7 @@
         if (a) a.scrollTop = a.scrollHeight;
       }
 
-      // ── SPLIT SCREEN ──────────────────────────────────────────
+      // ── SPLIT SCREEN ──────────────────────────────────────────────
       function openFileInSplit(filename) {
         fpCurrentFile = filename;
         fpShowPreview = false;
@@ -5939,7 +4957,7 @@
         await zipAllFiles();
       }
 
-      // ── UPLOAD ────────────────────────────────────────────────
+      // ── UPLOAD ────────────────────────────────────────────────────
       function handleFile(e) {
         Array.from(e.target.files).forEach(function (file) {
           var pf = { name: file.name, type: file.type, textContent: null };
@@ -5988,7 +5006,7 @@
           .join("");
       }
 
-      // ── SEND MESSAGE ──────────────────────────────────────────
+      // ── SEND MESSAGE ──────────────────────────────────────────────
       async function sendMsg() {
         if (isRunning) {
           showToast("Agent is working…");
@@ -6040,14 +5058,12 @@
         renderHist();
         updateBreadcrumb();
 
-        // Init sandbox for this task
-        sbxAgentStart(text);
-
         appendTyping();
         setRunning(true);
         stopFlag = false;
         t0agent = Date.now();
 
+        // Clear the live log for new request
         var clog = document.getElementById("aiLiveLog");
         if (clog) clog.innerHTML = "";
         liveLog(
@@ -6061,7 +5077,6 @@
         removeTyping();
         setRunning(false);
         var elapsed = ((Date.now() - t0agent) / 1000).toFixed(1);
-        sbxAgentDone(elapsed);
         liveLog("✅ Completed in " + elapsed + "s", "done");
         if (cfg.rt) showToast("Completed in " + elapsed + "s", "ok");
         if (cfg.sound) {
@@ -6086,10 +5101,9 @@
         stopFlag = true;
         showToast("Stopping after current step…", "warn");
         liveLog("⚠ Stop requested by user", "error");
-        sbxTerm("⚠ STOPPED by user", "error");
       }
 
-      // ── AGENT CALL ────────────────────────────────────────────
+      // ── AGENT CALL ────────────────────────────────────────────────
       async function agentCall(userText, userFiles) {
         var apiKey = localStorage.getItem("sps_key");
         if (!apiKey) {
@@ -6144,7 +5158,6 @@
 
         setAgentStep("🧠 Thinking…", "Sending to server", 5);
         liveLog("→ Sending to Qwen2.5-Coder via server…", "system");
-        sbxTerm("→ Sending request to Qwen2.5-Coder…", "step");
 
         var t00 = Date.now();
         try {
@@ -6161,14 +5174,12 @@
             var t = await res.text();
             appendAIMsg("Server error " + res.status + ": " + t, true);
             liveLog("Server error: " + res.status, "error");
-            sbxAgentError("Server error " + res.status);
             return;
           }
           var d = await res.json();
           if (!d.success) {
             appendAIMsg(d.message || "Server error.", true);
             liveLog("Error: " + (d.message || "unknown"), "error");
-            sbxAgentError(d.message || "unknown error");
             return;
           }
           var rem = d.remaining != null ? d.remaining : DAILY_LIMIT;
@@ -6185,14 +5196,6 @@
               " steps",
             "system",
           );
-          sbxTerm(
-            "← Response: " +
-              (d.steps || []).length +
-              " steps · " +
-              latency +
-              "ms",
-            "step",
-          );
           await processSteps(d.steps || []);
         } catch (e) {
           var msg = "";
@@ -6208,11 +5211,10 @@
           else msg = "Error: " + e.message;
           appendAIMsg(msg, true);
           liveLog("Connection error: " + e.message, "error");
-          sbxAgentError("Connection error: " + e.message);
         }
       }
 
-      // ── PROCESS STEPS ─────────────────────────────────────────
+      // ── PROCESS STEPS (this is the core — parses server response) ─
       async function processSteps(steps) {
         var total = Math.max(steps.length, 1);
         for (var i = 0; i < steps.length; i++) {
@@ -6222,13 +5224,14 @@
           setAgentStep(getStepLabel(step), getStepDesc(step), pct);
 
           if (step.type === "answer") {
+            // Final AI answer text — display it
             liveLog(
               "💬 Agent answer (" + (step.content || "").length + " chars)",
               "answer",
             );
-            sbxTerm("💬 Delivering answer…", "step");
             if (cfg.typewriter) await appendAITyped(step.content || "");
             else appendAIMsg(step.content || "");
+            // Save to conv
             var conv = convs[curId];
             if (conv) {
               conv.messages.push({
@@ -6239,11 +5242,13 @@
               saveConvs();
             }
           } else if (step.type === "text") {
+            // Intermediate text (thinking aloud)
             if (step.content && step.content.trim()) {
               liveLog("💭 " + step.content.slice(0, 80), "think");
               appendAIInline(step.content);
             }
           } else if (step.type === "tool") {
+            // Tool execution result — show block and handle file/zip/run
             processToolStep(step);
           }
 
@@ -6273,14 +5278,11 @@
               " steps)",
             "think",
           );
-          sbxTerm("🧠 PLAN: " + (params.title || "Planning"), "step");
-          (params.steps || []).forEach(function (s, i) {
-            sbxTerm("  " + (i + 1) + ". " + s, "info");
-          });
           if (cfg.tools) appendThinkBlock(params, result);
           return;
         }
 
+        // Log the tool
         var logCls =
           {
             create_file: "create",
@@ -6301,7 +5303,7 @@
         if (tool === "create_file")
           logMsg = "📁 Creating: " + (result.filename || params.filename || "");
         else if (tool === "run_in_sandbox")
-          logMsg = "🐧 Sandbox: " + (result.command || params.command || "");
+          logMsg = "🐳 Sandbox: " + (result.command || params.command || "");
         else if (tool === "edit_file")
           logMsg = "✏️ Editing: " + (params.filename || "");
         else if (tool === "create_zip")
@@ -6329,14 +5331,12 @@
           );
         }
 
-        // ── Handle tools with sandbox integration ──
-
+        // Handle file creation
         if (tool === "create_file") {
           var filename = result.filename || params.filename;
           var content =
             result.content != null ? result.content : params.content;
           var description = result.description || params.description || "";
-          var language = result.language || params.language || "";
           if (filename && content != null) {
             virtualFS[filename] = content;
             refreshFvpFileList();
@@ -6352,55 +5352,22 @@
                 ")",
               "create",
             );
-            // SANDBOX: show file creation
-            sbxFileCreated(filename, content, language);
             appendFileOutput(filename, content, description);
             if (cfg.autoSplit) openFileInSplit(filename);
           }
           return;
         }
 
-        if (tool === "install_packages") {
-          var packages = params.packages || [];
-          if (packages.length) {
-            sbxInstall(packages);
-            var results = result.results || {};
-            var ok = Object.entries(results)
-              .filter(function (e) {
-                return e[1] === "installed";
-              })
-              .map(function (e) {
-                return e[0];
-              });
-            var fail = Object.entries(results)
-              .filter(function (e) {
-                return e[1] !== "installed";
-              })
-              .map(function (e) {
-                return e[0];
-              });
-            if (ok.length)
-              sbxTerm("  ✓ installed: " + ok.join(", "), "success");
-            if (fail.length) sbxTerm("  ✗ failed: " + fail.join(", "), "error");
-          }
-          return;
-        }
-
+        // Handle sandbox run
         if (tool === "run_in_sandbox") {
-          var command = params.command || "";
-          var language = params.language || "python";
           var stdout = result.stdout || "",
-            stderr = result.stderr || "";
-          var exit_code = result.exit_code,
-            mode = result.mode || "local";
-          var duration = result.duration || 0;
+            stderr = result.stderr || "",
+            exit_code = result.exit_code,
+            mode = result.mode || "",
+            cmd = result.command || params.command || "";
           var isErr = !!(stderr.trim() && exit_code !== 0);
-          // SANDBOX: run tracking
-          var runIdx = sbxRunStart(command, language);
-          // small delay feel for "running" state
-          sbxRunDone(runIdx, stdout, stderr, exit_code, duration);
           if (stdout || stderr)
-            appendCodeOutput(params.language || "", command, stdout, stderr);
+            appendCodeOutput(params.language || "", cmd, stdout, stderr);
           stats.runs++;
           saveStats();
           updateFvpStats();
@@ -6410,16 +5377,7 @@
           return;
         }
 
-        if (tool === "run_bash") {
-          var bcmd = params.command || "";
-          var bstdout = result.stdout || "",
-            bstderr = result.stderr || "";
-          var bexit = result.exit_code;
-          var bRunIdx = sbxRunStart("bash: " + bcmd, "bash");
-          sbxRunDone(bRunIdx, bstdout, bstderr, bexit, null);
-          return;
-        }
-
+        // Handle zip creation
         if (tool === "create_zip") {
           var ok = result.ok,
             zn = result.zip_name || params.zip_name,
@@ -6430,21 +5388,12 @@
             refreshFvpFileList();
             updateSplitTabs();
             liveLog("  → ZIP ready: " + zn + " (" + fmtBytes(sz) + ")", "zip");
-            sbxTerm(
-              "📦 ZIP: " +
-                zn +
-                " (" +
-                fmtBytes(sz) +
-                ") [" +
-                files.length +
-                " files]",
-              "success",
-            );
             appendZipOutput(zn, files, sz);
           }
           return;
         }
 
+        // Handle edit_file — update virtualFS
         if (tool === "edit_file") {
           var fn = result.filename || params.filename,
             uc = result.content;
@@ -6453,11 +5402,11 @@
             refreshFvpFileList();
             if (fpCurrentFile === fn) renderSplitContent();
             liveLog("  → Updated '" + fn + "'", "edit");
-            sbxEditFile(fn, uc);
           }
           return;
         }
 
+        // Handle read_file — cache content
         if (tool === "read_file") {
           var rfn = result.filename,
             rc = result.content;
@@ -6465,48 +5414,6 @@
             virtualFS[rfn] = rc;
             refreshFvpFileList();
           }
-          sbxTerm("📖 READ: " + (rfn || params.filename || "?"), "info");
-          return;
-        }
-
-        if (tool === "validate_syntax") {
-          var vfn = result.filename || params.filename;
-          var valid = result.valid;
-          sbxTerm(
-            (valid ? "✓" : "✗") +
-              " SYNTAX CHECK: " +
-              vfn +
-              (result.message ? " — " + result.message : ""),
-            valid ? "success" : "error",
-          );
-          return;
-        }
-
-        if (tool === "create_requirements") {
-          var reqContent = result.content || "";
-          sbxTerm("📋 CREATE requirements.txt", "create");
-          if (reqContent)
-            reqContent.split("\n").forEach(function (line) {
-              if (line.trim()) sbxTerm("   " + line, "info");
-            });
-          return;
-        }
-
-        if (tool === "web_fetch") {
-          sbxTerm("🌐 FETCH: " + (params.url || "").slice(0, 60), "install");
-          return;
-        }
-
-        if (tool === "math") {
-          sbxTerm(
-            "🔢 MATH: " + params.expression + " = " + result.result,
-            "stdout",
-          );
-          return;
-        }
-
-        if (tool === "remember") {
-          sbxTerm("🧠 REMEMBER: " + params.key + " = " + params.value, "step");
           return;
         }
       }
@@ -6517,7 +5424,7 @@
         var labels = {
           think: "🧠 Planning",
           create_file: "📁 Creating file",
-          run_in_sandbox: "🐧 Linux sandbox run",
+          run_in_sandbox: "🐳 Sandbox run",
           edit_file: "✏️ Editing file",
           validate_syntax: "✅ Syntax check",
           web_fetch: "🌐 Fetching URL",
@@ -6547,7 +5454,7 @@
         return "";
       }
 
-      // ── TYPEWRITER ────────────────────────────────────────────
+      // ── TYPEWRITER ────────────────────────────────────────────────
       async function appendAITyped(text) {
         var container = document.getElementById("msgContainer");
         var bubId =
@@ -6578,6 +5485,7 @@
         var meta = document.getElementById(bubId + "_meta");
         if (meta)
           meta.innerHTML = buildMsgMeta({ text: text, time: fmtTime() }, false);
+        // Add copy buttons to pre blocks
         bub.querySelectorAll("pre").forEach(function (pre) {
           if (!pre.querySelector(".copy-pre-btn")) {
             var btn = document.createElement("button");
@@ -6745,7 +5653,7 @@
         div.className = "msg-group";
         var labels = {
           create_file: "Creating file",
-          run_in_sandbox: "Running in Linux sandbox",
+          run_in_sandbox: "Running in Docker sandbox",
           edit_file: "Editing file",
           read_file: "Reading file",
           validate_syntax: "Syntax check",
@@ -6771,7 +5679,7 @@
         };
         var emojis = {
           create_file: "📁",
-          run_in_sandbox: "🐧",
+          run_in_sandbox: "🐳",
           edit_file: "✏️",
           read_file: "📖",
           validate_syntax: "✅",
@@ -6993,8 +5901,8 @@
           id +
           '">' +
           '<div class="co-head" onclick="this.parentElement.classList.toggle(\'open\')">' +
-          '<div class="tool-icon sandbox">🐧</div>' +
-          '<div class="tool-name-label" style="font-size:12px;font-weight:600;color:var(--tx2)">Linux sandbox output <code style="font-size:10px">' +
+          '<div class="tool-icon sandbox">🐳</div>' +
+          '<div class="tool-name-label" style="font-size:12px;font-weight:600;color:var(--tx2)">Sandbox output <code style="font-size:10px">' +
           esc(lang || "") +
           "</code></div>" +
           '<span class="tool-status ' +
@@ -7040,7 +5948,7 @@
         if (el) el.classList.toggle("open");
       }
 
-      // ── REGEN ─────────────────────────────────────────────────
+      // ── REGEN ─────────────────────────────────────────────────────
       async function regenMsg() {
         if (isRunning) return;
         var conv = convs[curId];
@@ -7070,18 +5978,15 @@
         if (!lastUser) return;
         saveConvs();
         renderHist();
-        sbxAgentStart("(retry) " + (lastUser.text || "").slice(0, 60));
         appendTyping();
         setRunning(true);
         stopFlag = false;
         await agentCall(lastUser.text || "", []);
         removeTyping();
         setRunning(false);
-        var elapsed = ((Date.now() - t0agent) / 1000).toFixed(1);
-        sbxAgentDone(elapsed);
       }
 
-      // ── AUTH ──────────────────────────────────────────────────
+      // ── AUTH ──────────────────────────────────────────────────────
       function showScreen(id) {
         ["signupScreen", "verifyScreen", "appScreen"].forEach(function (s) {
           document.getElementById(s).classList.toggle("hidden", s !== id);
@@ -7157,7 +6062,7 @@
           "astatus " + (type === "err" ? "err" : type === "ok" ? "ok" : "");
       }
 
-      // ── INIT ──────────────────────────────────────────────────
+      // ── INIT ──────────────────────────────────────────────────────
       async function initApp() {
         showScreen("appScreen");
         var email = localStorage.getItem("sps_em") || "";
@@ -7248,9 +6153,9 @@
             },
             { label: "Model", ok: !!d.model, val: d.model || "Unknown" },
             {
-              label: "Sandbox",
-              ok: true,
-              val: d.udocker ? "udocker" : "local subprocess",
+              label: "udocker",
+              ok: !!d.udocker,
+              val: d.udocker ? "Available" : "Not available",
             },
             { label: "Latency", ok: latency < 2000, val: latency + "ms" },
           ];
@@ -7358,7 +6263,7 @@
           : "🙈";
       }
 
-      // ── CONVERSATIONS ─────────────────────────────────────────
+      // ── CONVERSATIONS ─────────────────────────────────────────────
       function newChat() {
         curId = "c" + Date.now();
         convs[curId] = {
@@ -7501,7 +6406,7 @@
         closeModal("renameModal");
       }
 
-      // ── SETTINGS ──────────────────────────────────────────────
+      // ── SETTINGS ──────────────────────────────────────────────────
       function loadCfg() {
         try {
           var s = localStorage.getItem("sps_cfg");
@@ -7513,8 +6418,6 @@
         document.getElementById("soundTog").checked = !!cfg.sound;
         document.getElementById("autoSplitTog").checked =
           cfg.autoSplit !== false;
-        document.getElementById("autoSandboxTog").checked =
-          cfg.autoSandbox !== false;
         document.getElementById("typewriterTog").checked =
           cfg.typewriter !== false;
         document.getElementById("confettiTog").checked = cfg.confetti !== false;
@@ -7539,7 +6442,6 @@
         cfg.tools = document.getElementById("thinkTog").checked;
         cfg.sound = document.getElementById("soundTog").checked;
         cfg.autoSplit = document.getElementById("autoSplitTog").checked;
-        cfg.autoSandbox = document.getElementById("autoSandboxTog").checked;
         cfg.typewriter = document.getElementById("typewriterTog").checked;
         cfg.confetti = document.getElementById("confettiTog").checked;
         cfg.rt = document.getElementById("rtTog").checked;
@@ -7595,7 +6497,7 @@
         location.reload();
       }
 
-      // ── THEME ─────────────────────────────────────────────────
+      // ── THEME ─────────────────────────────────────────────────────
       var THEMES = ["dark", "light", "midnight", "forest", "ocean"];
       function setTheme(t, silent) {
         currentTheme = t;
@@ -7621,7 +6523,7 @@
         if (!silent) showToast("Font: " + sz);
       }
 
-      // ── PROMPT TEMPLATES ──────────────────────────────────────
+      // ── PROMPT TEMPLATES ──────────────────────────────────────────
       function loadTemplates() {
         try {
           var s = localStorage.getItem("sps_tpls");
@@ -7695,7 +6597,7 @@
         markOnboard("sug");
       }
 
-      // ── PROMPT HISTORY ────────────────────────────────────────
+      // ── PROMPT HISTORY ────────────────────────────────────────────
       function renderPromptHistChips() {
         var el = document.getElementById("promptHistChips");
         if (!el) return;
@@ -7725,7 +6627,7 @@
         document.getElementById("msgInput").focus();
       }
 
-      // ── ONBOARDING ────────────────────────────────────────────
+      // ── ONBOARDING ────────────────────────────────────────────────
       function renderOnboard() {
         var el = document.getElementById("obList");
         if (!el) return;
@@ -7768,7 +6670,7 @@
         }
       }
 
-      // ── MESSAGE SEARCH ────────────────────────────────────────
+      // ── MESSAGE SEARCH ────────────────────────────────────────────
       function doSearch() {
         var q = (document.getElementById("searchInp").value || "")
           .trim()
@@ -7819,7 +6721,7 @@
           .join("");
       }
 
-      // ── COMMAND PALETTE ───────────────────────────────────────
+      // ── COMMAND PALETTE ───────────────────────────────────────────
       var CMD_ITEMS = [
         {
           icon: "💬",
@@ -7827,14 +6729,6 @@
           kb: "Ctrl+K",
           fn: function () {
             newChat();
-          },
-        },
-        {
-          icon: "🐧",
-          label: "Open Live Sandbox",
-          kb: "Ctrl+S",
-          fn: function () {
-            openSandbox();
           },
         },
         {
@@ -8016,7 +6910,7 @@
         document.getElementById("cmdPalette").classList.remove("open");
       }
 
-      // ── IMPORT/EXPORT ─────────────────────────────────────────
+      // ── IMPORT/EXPORT ─────────────────────────────────────────────
       function exportChat() {
         var conv = convs[curId];
         if (!conv || !conv.messages.length) {
@@ -8077,7 +6971,7 @@
         }
       }
 
-      // ── CONFETTI ──────────────────────────────────────────────
+      // ── CONFETTI ──────────────────────────────────────────────────
       function launchConfetti() {
         if (!cfg.confetti) return;
         var colors = [
@@ -8103,7 +6997,7 @@
         }
       }
 
-      // ── PANELS ────────────────────────────────────────────────
+      // ── PANELS ────────────────────────────────────────────────────
       function openPanel(n) {
         document.getElementById(n + "Overlay").classList.add("open");
       }
@@ -8160,7 +7054,7 @@
         }
       }
 
-      // ── MARKDOWN ─────────────────────────────────────────────
+      // ── MARKDOWN ─────────────────────────────────────────────────
       function renderMD(text) {
         if (!cfg.md) return esc(text);
         var s = esc(text || "");
@@ -8214,7 +7108,7 @@
         return s;
       }
 
-      // ── VOICE ─────────────────────────────────────────────────
+      // ── VOICE ─────────────────────────────────────────────────────
       var recognition = null;
       function startVoice() {
         if (
@@ -8254,11 +7148,10 @@
         recognition.start();
       }
 
-      // ── KEYBOARD SHORTCUTS ────────────────────────────────────
+      // ── KEYBOARD SHORTCUTS ────────────────────────────────────────
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape") {
           closeFileViewer();
-          closeSandbox();
           closePanel("apiPanel");
           closePanel("settingsPanel");
           closePanel("templatesPanel");
@@ -8272,10 +7165,6 @@
         if (e.ctrlKey && e.key === "`") {
           e.preventDefault();
           openFileViewer();
-        }
-        if (e.ctrlKey && e.key === "s" && !e.shiftKey) {
-          e.preventDefault();
-          openSandbox();
         }
         if (e.ctrlKey && e.key === "k") {
           e.preventDefault();
@@ -8376,7 +7265,7 @@
           );
       }
 
-      // ── TOAST ─────────────────────────────────────────────────
+      // ── TOAST ─────────────────────────────────────────────────────
       function showToast(msg, type) {
         type = type || "";
         var stack = document.getElementById("toastStack");
@@ -8415,7 +7304,7 @@
         sendMsg();
       }
 
-      // ── BOOT ──────────────────────────────────────────────────
+      // ── BOOT ──────────────────────────────────────────────────────
       window.onload = function () {
         var k = localStorage.getItem("sps_key");
         loadTemplates();
