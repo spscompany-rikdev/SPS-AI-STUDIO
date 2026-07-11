@@ -236,24 +236,81 @@
         font-weight: 700;
         cursor: pointer;
       }
-      .pbtn:disabled { opacity:.4; cursor:not-allowed; }
-      .auth-divider { display:flex;align-items:center;gap:10px;margin:14px 0 8px; }
-      .auth-divider::before,.auth-divider::after { content:"";flex:1;height:1px;background:var(--bd); }
-      .auth-divider span { color:var(--tx3);font-size:11px;font-weight:600;white-space:nowrap; }
-      .gbtn {
-        width:100%;padding:11px 14px;
-        background:var(--bg3);color:var(--tx);
-        border:1.5px solid var(--bd);border-radius:var(--rsm);
-        font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;
-        display:flex;align-items:center;justify-content:center;gap:10px;
-        transition:border-color .18s,background .18s;
+      .pbtn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
       }
-      .gbtn:hover { border-color:var(--acc);background:var(--bg2); }
       /* word diff stats */
-      .msg-stats { display:inline-flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap; }
-      .stat-add { background:rgba(52,199,89,.15);color:#34c759;border-radius:4px;padding:1px 7px;font-size:10.5px;font-weight:700; }
-      .stat-rem { background:rgba(255,59,48,.15);color:#ff3b30;border-radius:4px;padding:1px 7px;font-size:10.5px;font-weight:700; }
-      .stat-tok { color:var(--tx3);font-size:10.5px; }
+      .stat-add {
+        background: rgba(52, 199, 89, 0.15);
+        color: #34c759;
+        border-radius: 4px;
+        padding: 1px 7px;
+        font-size: 10.5px;
+        font-weight: 700;
+      }
+      .stat-rem {
+        background: rgba(255, 59, 48, 0.15);
+        color: #ff3b30;
+        border-radius: 4px;
+        padding: 1px 7px;
+        font-size: 10.5px;
+        font-weight: 700;
+      }
+      .stat-tok {
+        color: var(--tx3);
+        font-size: 10.5px;
+      }
+      .msg-stats {
+        display: inline-flex;
+        gap: 5px;
+        align-items: center;
+        margin-top: 4px;
+        flex-wrap: wrap;
+      }
+      /* auth divider + google button */
+      .auth-divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 14px 0 8px;
+      }
+      .auth-divider::before,
+      .auth-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--bd);
+      }
+      .auth-divider span {
+        color: var(--tx3);
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .gbtn {
+        width: 100%;
+        padding: 11px 14px;
+        background: var(--bg3);
+        color: var(--tx);
+        border: 1.5px solid var(--bd);
+        border-radius: var(--rsm);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition:
+          border-color 0.18s,
+          background 0.18s;
+      }
+      .gbtn:hover {
+        border-color: var(--acc);
+        background: var(--bg2);
+      }
       .astatus {
         margin-top: 12px;
         padding: 10px 14px;
@@ -3213,6 +3270,7 @@
         margin-top: -2px;
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   </head>
   <body>
     <div class="toast-stack" id="toastStack"></div>
@@ -3402,11 +3460,68 @@
       </div>
     </div>
 
-    <!-- SPLASH WELCOME SCREEN -->
-    <div id="splashScreen" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity .6s">
-      <div id="splashLogo" style="width:72px;height:72px;background:linear-gradient(135deg,var(--acc),var(--pink));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 60px rgba(108,99,255,.4);margin-bottom:24px;opacity:0;transform:scale(.7);transition:all .5s cubic-bezier(.34,1.56,.64,1)">🤖</div>
-      <div id="splashText" style="font-size:32px;font-weight:900;letter-spacing:-1px;opacity:0;transform:translateY(10px);transition:all .5s .15s;background:linear-gradient(90deg,var(--tx),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Welcome</div>
-      <div id="splashSub" style="font-size:13px;color:var(--tx3);margin-top:8px;opacity:0;transition:opacity .4s .35s">SPS Agent Studio</div>
+    <div
+      id="splashScreen"
+      style="
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.6s;
+      "
+    >
+      <div
+        id="splashLogo"
+        style="
+          width: 72px;
+          height: 72px;
+          background: linear-gradient(135deg, var(--acc), var(--pink));
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+          box-shadow: 0 0 60px rgba(108, 99, 255, 0.4);
+          margin-bottom: 24px;
+          opacity: 0;
+          transform: scale(0.7);
+          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        "
+      >
+        🤖
+      </div>
+      <div
+        id="splashText"
+        style="
+          font-size: 32px;
+          font-weight: 900;
+          letter-spacing: -1px;
+          opacity: 0;
+          transform: translateY(10px);
+          transition: all 0.5s 0.15s;
+          background: linear-gradient(90deg, var(--tx), var(--acc));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        "
+      >
+        Welcome
+      </div>
+      <div
+        id="splashSub"
+        style="
+          font-size: 13px;
+          color: var(--tx3);
+          margin-top: 8px;
+          opacity: 0;
+          transition: opacity 0.4s 0.35s;
+        "
+      >
+        SPS Agent Studio
+      </div>
     </div>
 
     <div class="auth-wrap" id="signupScreen">
@@ -3434,15 +3549,31 @@
         </button>
         <div class="auth-divider"><span>or</span></div>
         <button class="gbtn" id="googleBtn" onclick="triggerGoogleSignIn()">
-          <svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 48 48"
+            style="flex-shrink: 0"
+          >
+            <path
+              fill="#EA4335"
+              d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+            />
+            <path
+              fill="#4285F4"
+              d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+            />
+            <path
+              fill="#34A853"
+              d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+            />
+          </svg>
           Continue with Google
         </button>
-        <!-- Google One Tap render target -->
-        <div id="g_id_onload"
-          data-client_id=""
-          data-callback="handleGoogleCredential"
-          data-auto_prompt="false">
-        </div>
         <div class="astatus" id="signupStatus"></div>
       </div>
     </div>
@@ -3508,6 +3639,33 @@
             oninput="filterHistory(this.value)"
           />
         </div>
+        <div
+          class="sb-sec"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          "
+        >
+          <span>📁 Projects</span>
+          <button
+            onclick="newProject()"
+            style="
+              background: none;
+              border: none;
+              color: var(--acc);
+              cursor: pointer;
+              font-size: 11px;
+              padding: 0;
+            "
+          >
+            + New
+          </button>
+        </div>
+        <div
+          id="projectsList"
+          style="margin-bottom: 4px; font-size: 12px; padding: 0 4px"
+        ></div>
         <div class="sb-sec">Conversations</div>
         <div class="hist" id="histList"></div>
         <div class="sb-foot">
@@ -3652,9 +3810,31 @@
                 <line x1="3" y1="18" x2="21" y2="18" />
               </svg>
             </button>
-            <div class="model-badge" onclick="checkHealth()">
+            <div
+              class="model-badge"
+              onclick="checkHealth()"
+              title="Click to check server status · Dual-Model Router: DeepSeek-R1 (code) + Llama3.1 (tools)"
+            >
               <div class="mdot on" id="healthDot"></div>
-              <span id="modelLabel">Qwen2.5-Coder · SPS v7</span>
+              <span id="modelLabel">📐 Triple-Router · SPS</span>
+            </div>
+            <div
+              id="engineBadge"
+              style="
+                display: none;
+                padding: 3px 8px;
+                border-radius: 20px;
+                font-size: 10px;
+                font-weight: 700;
+                white-space: nowrap;
+                flex-shrink: 0;
+                transition: all 0.3s;
+                background: var(--purplel);
+                color: var(--purple);
+                border: 1px solid rgba(168, 85, 247, 0.25);
+              "
+            >
+              🤖 Agent Engine
             </div>
             <span class="sandbox-mode-badge local" id="sandboxBadge"
               >local</span
@@ -3665,9 +3845,17 @@
             <button
               class="sbx-open-btn"
               onclick="openSandbox()"
-              title="Live Sandbox (Ctrl+S)"
+              title="Live Sandbox"
             >
               🐧 Sandbox
+            </button>
+            <button
+              class="sbx-open-btn"
+              onclick="shareChat()"
+              title="Share chat"
+              style="margin-left: 4px"
+            >
+              🔗 Share
             </button>
             <div class="upill" id="usagePill" onclick="openPanel('apiPanel')">
               — / 500
@@ -3795,7 +3983,7 @@
             </div>
             <button class="ac-stop" onclick="stopAgent()">■ Stop</button>
           </div>
-          <div class="ac-log" id="aiLiveLog"></div>
+          <div class="ac-log" id="aiLiveLog" style="display: none"></div>
         </div>
 
         <div class="breadcrumb">
@@ -3808,22 +3996,38 @@
             <div class="chat-area" id="chatArea">
               <div class="chat-inner" id="chatInner">
                 <div class="welcome" id="welcomeScreen">
-                  <div class="w-glow"><span>🤖</span></div>
+                  <div class="w-glow"><span>📐</span></div>
                   <div class="w-title">SPS Agent Studio v7</div>
                   <div class="w-sub">
-                    Qwen2.5-Coder thinks deeply, searches the real web, creates
-                    every file, tests in your VPS/Docker/Linux sandbox, fixes
-                    all errors automatically, then delivers a clean zip. Watch
-                    everything live.
+                    <strong style="color: var(--cyan)">🧠 DeepSeek-R1</strong>
+                    architects multi-file codebases with deep reasoning ·
+                    <strong style="color: var(--purple)">🤖 Llama 3.1</strong>
+                    orchestrates tools &amp; JSON with temperature=0 precision.
+                    The router automatically picks the right engine per step —
+                    keeping VRAM safe with q4_0 + keep_alive.
                   </div>
                   <div class="w-chips">
-                    <span class="chip">🧠 Deep planning</span>
+                    <span
+                      class="chip"
+                      style="
+                        color: var(--cyan);
+                        border-color: rgba(34, 211, 238, 0.3);
+                      "
+                      >🧠 DeepSeek-R1 coding</span
+                    >
+                    <span
+                      class="chip"
+                      style="
+                        color: var(--purple);
+                        border-color: rgba(168, 85, 247, 0.3);
+                      "
+                      >🤖 Llama3.1 tools</span
+                    >
                     <span class="chip">🌐 Real web search</span>
                     <span class="chip">🖥 VPS SSH</span>
                     <span class="chip">🐳 Docker fallback</span>
-                    <span class="chip">🐧 Linux sandbox</span>
                     <span class="chip">✅ Auto-fix errors</span>
-                    <span class="chip">🗑 Auto-cleanup</span>
+                    <span class="chip">🔒 keep_alive=-1 VRAM</span>
                     <span class="chip">📦 ZIP delivery</span>
                   </div>
                   <div class="sug-grid">
@@ -3836,8 +4040,11 @@
                       "
                     >
                       <span class="sug-icon">🐍</span
-                      ><strong>Flask REST API</strong>Auth, CRUD, SQLite, tests,
-                      docs
+                      ><strong>Flask REST API</strong
+                      ><span style="font-size: 9px; color: var(--cyan)"
+                        >DeepSeek-R1</span
+                      >
+                      · Auth, CRUD, SQLite, tests
                     </button>
                     <button
                       class="sug"
@@ -3848,8 +4055,11 @@
                       "
                     >
                       <span class="sug-icon">🧮</span
-                      ><strong>Advanced Calculator</strong>Scientific, keyboard,
-                      history
+                      ><strong>Advanced Calculator</strong
+                      ><span style="font-size: 9px; color: var(--cyan)"
+                        >DeepSeek-R1</span
+                      >
+                      · Scientific, keyboard
                     </button>
                     <button
                       class="sug"
@@ -3860,8 +4070,11 @@
                       "
                     >
                       <span class="sug-icon">📊</span
-                      ><strong>Data Analysis Suite</strong>Pandas, matplotlib,
-                      HTML report
+                      ><strong>Data Analysis Suite</strong
+                      ><span style="font-size: 9px; color: var(--cyan)"
+                        >DeepSeek-R1</span
+                      >
+                      · Pandas, charts
                     </button>
                     <button
                       class="sug"
@@ -3872,8 +4085,11 @@
                       "
                     >
                       <span class="sug-icon">✅</span
-                      ><strong>Full-Stack Todo App</strong>Node.js + Express +
-                      SQLite
+                      ><strong>Full-Stack Todo App</strong
+                      ><span style="font-size: 9px; color: var(--cyan)"
+                        >DeepSeek-R1</span
+                      >
+                      · Node + SQLite
                     </button>
                     <button
                       class="sug"
@@ -3883,9 +4099,12 @@
                         )
                       "
                     >
-                      <span class="sug-icon">🔍</span
-                      ><strong>Web Search + Doc</strong>Latest Python features
-                      from web
+                      <span class="sug-icon">🌐</span
+                      ><strong>Web Search + Doc</strong
+                      ><span style="font-size: 9px; color: var(--purple)"
+                        >Llama3.1</span
+                      >
+                      · Live web data
                     </button>
                     <button
                       class="sug"
@@ -3896,8 +4115,11 @@
                       "
                     >
                       <span class="sug-icon">💬</span
-                      ><strong>WebSocket Chat Server</strong>Rooms, history,
-                      dark UI
+                      ><strong>WebSocket Chat Server</strong
+                      ><span style="font-size: 9px; color: var(--cyan)"
+                        >DeepSeek-R1</span
+                      >
+                      · Rooms, history
                     </button>
                   </div>
                 </div>
@@ -5050,7 +5272,7 @@
         "x-sps-client": "sps_ai_web",
         "ngrok-skip-browser-warning": "true",
       };
-      const DAILY_LIMIT = 500;
+      const DAILY_LIMIT = 40;
       const PASTE_THRESHOLD = 500;
 
       var convs = {},
@@ -6045,39 +6267,70 @@
         var text = e.clipboardData && e.clipboardData.getData("text");
         if (!text || text.length <= PASTE_THRESHOLD) return;
         e.preventDefault();
-        var ts = new Date().toISOString().replace(/[:.]/g,"-").slice(0,19);
-        var t  = text.trimStart();
-        var ext = (t.startsWith("{") || t.startsWith("[")) ? "json"
-          : t.startsWith("<") ? "html"
-          : (t.includes("def ") || t.includes("import ")) ? "py"
-          : (t.includes("function") || t.includes("const ")) ? "js" : "txt";
+        var ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+        var t = text.trimStart();
+        var ext =
+          t.startsWith("{") || t.startsWith("[")
+            ? "json"
+            : t.startsWith("<")
+              ? "html"
+              : t.includes("def ") || t.includes("import ")
+                ? "py"
+                : t.includes("function") || t.includes("const ")
+                  ? "js"
+                  : "txt";
         var fname = "paste-" + ts + "." + ext;
-        pendingFiles.push({ name:fname, type:"text/plain", textContent:text, rawFile:null, isPaste:true });
+        pendingFiles.push({
+          name: fname,
+          type: "text/plain",
+          textContent: text,
+          rawFile: null,
+          isPaste: true,
+        });
         renderUploadPrev();
-        var notice   = document.getElementById("pasteNotice");
-        var noticeText = document.getElementById("pasteNoticeText");
+        var notice = document.getElementById("pasteNotice"),
+          noticeText = document.getElementById("pasteNoticeText");
         if (notice && noticeText) {
-          noticeText.textContent = "Pasted " + text.length.toLocaleString() + " chars saved as: " + fname;
+          noticeText.textContent =
+            "Pasted " + text.length.toLocaleString() + " chars → " + fname;
           notice.classList.remove("hidden");
-          setTimeout(function() { notice.classList.add("hidden"); }, 6000);
+          setTimeout(function () {
+            notice.classList.add("hidden");
+          }, 6000);
         }
-        liveLog("Paste captured as " + fname + " (" + text.length + " chars)", "system");
       }
 
       function renderUploadPrev() {
         var el = document.getElementById("uploadPrev");
-        if (!pendingFiles.length) { el.innerHTML = ""; return; }
-        el.innerHTML = pendingFiles.map(function(f, i) {
-          var icon = f.isPaste ? "📋" : getFileIcon(f.name);
-          var sz = f.textContent
-            ? ' <span style="color:var(--tx3);font-size:10px">(' + (f.textContent.length>1024?(f.textContent.length/1024).toFixed(1)+"K":f.textContent.length) + " chars)</span>"
-            : "";
-          return '<div class="uthumb">' + icon
-            + '<span class="uthumb-name" title="' + esc(f.name) + '">' + esc(f.name) + "</span>"
-            + sz
-            + '<button class="urm" onclick="pendingFiles.splice(' + i + ',1);renderUploadPrev()">×</button>'
-            + "</div>";
-        }).join("");
+        if (!pendingFiles.length) {
+          el.innerHTML = "";
+          return;
+        }
+        el.innerHTML = pendingFiles
+          .map(function (f, i) {
+            var icon = f.isPaste ? "📋" : getFileIcon(f.name);
+            var sz = f.textContent
+              ? ' <span style="color:var(--tx3);font-size:10px">(' +
+                (f.textContent.length > 1024
+                  ? (f.textContent.length / 1024).toFixed(1) + "K"
+                  : f.textContent.length) +
+                " chars)</span>"
+              : "";
+            return (
+              '<div class="uthumb">' +
+              icon +
+              '<span class="uthumb-name" title="' +
+              esc(f.name) +
+              '">' +
+              esc(f.name) +
+              "</span>" +
+              sz +
+              '<button class="urm" onclick="pendingFiles.splice(' +
+              i +
+              ',1);renderUploadPrev()">×</button></div>'
+            );
+          })
+          .join("");
       }
 
       // ═══════════════════════════════════════════════════════════
@@ -6214,11 +6467,7 @@
           for (var uf of userFiles) {
             if (uf.textContent)
               lastContent +=
-                "\n[File: " +
-                uf.name +
-                "]\n```\n" +
-                uf.textContent +
-                "\n```";
+                "\n[File: " + uf.name + "]\n```\n" + uf.textContent + "\n```";
             else
               lastContent +=
                 "\n[File: " + uf.name + " — binary, uploaded to server]";
@@ -6230,7 +6479,8 @@
         messages.push({ role: "user", content: lastContent });
 
         setAgentStep("🧠 Thinking deeply…", "Sending to server", 5);
-        liveLog("→ Sending to Qwen2.5-Coder…", "system");
+        showEngineBadge("agent"); // starts with agent engine routing
+        liveLog("→ Thinking… [📐 Dual-Router active]", "system");
         sbxTerm("→ Request sent to server…", "step");
 
         var t00 = Date.now();
@@ -6308,10 +6558,6 @@
           setAgentStep(getStepLabel(step), getStepDesc(step), pct);
 
           if (step.type === "answer") {
-            liveLog(
-              "💬 Answer (" + (step.content || "").length + " chars)",
-              "answer",
-            );
             sbxTerm("💬 Delivering answer…", "step");
             if (cfg.typewriter) await appendAITyped(step.content || "");
             else appendAIMsg(step.content || "");
@@ -6326,15 +6572,49 @@
             }
           } else if (step.type === "text") {
             if (step.content && step.content.trim()) {
-              liveLog("💭 " + step.content.slice(0, 80), "think");
               appendAIInline(step.content);
             }
+          } else if (step.type === "image") {
+            var _iw = document.createElement("div");
+            _iw.className = "msg-group";
+            _iw.innerHTML =
+              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap"><div class="bubble ai" style="padding:10px">' +
+              '<img src="' +
+              esc(step.image_url || "") +
+              '" style="max-width:100%;border-radius:8px;display:block" loading="lazy"/>' +
+              '<div style="font-size:11px;color:var(--tx3);margin-top:4px">' +
+              esc(step.prompt || "") +
+              "</div>" +
+              '<a href="' +
+              esc(step.image_url || "") +
+              '" download="ai-image.jpg" target="_blank" style="display:inline-block;margin-top:6px;padding:4px 12px;background:var(--acc);color:#fff;border-radius:6px;font-size:11px;text-decoration:none">⬇ Download</a>' +
+              "</div></div></div>";
+            document.getElementById("msgContainer").appendChild(_iw);
+            scrollBot();
+          } else if (step.type === "diagram") {
+            var _dw = document.createElement("div");
+            _dw.className = "msg-group";
+            var _mId = "mmd_" + Date.now();
+            _dw.innerHTML =
+              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap"><div class="bubble ai"><pre class="mermaid" id="' +
+              _mId +
+              '">' +
+              esc(step.mermaid || "") +
+              "</pre></div></div></div>";
+            document.getElementById("msgContainer").appendChild(_dw);
+            if (window.mermaid) {
+              try {
+                mermaid.run({ nodes: [document.getElementById(_mId)] });
+              } catch (_e) {}
+            }
+            scrollBot();
           } else if (step.type === "tool") {
             processToolStep(step);
           }
           await sleep(15);
         }
         setAgentStep("✅ Done", "", 100);
+        hideEngineBadge();
         await sleep(350);
       }
 
@@ -6342,10 +6622,64 @@
         return new Promise((r) => setTimeout(r, ms));
       }
 
+      // ── Dual-Model Engine Badge ────────────────────────────────
+      // Shows which engine is active during a step (coding vs agent)
+      function showEngineBadge(engine) {
+        var el = document.getElementById("engineBadge");
+        if (!el) return;
+        if (!engine) {
+          el.style.display = "none";
+          return;
+        }
+        el.style.display = "";
+        if (engine === "coding") {
+          el.style.background = "rgba(34,211,238,0.12)";
+          el.style.color = "var(--cyan)";
+          el.style.borderColor = "rgba(34,211,238,0.3)";
+          el.textContent = "🧠 DeepSeek-R1";
+        } else {
+          el.style.background = "var(--purplel)";
+          el.style.color = "var(--purple)";
+          el.style.borderColor = "rgba(168,85,247,0.25)";
+          el.textContent = "🤖 Llama3.1";
+        }
+      }
+      function hideEngineBadge() {
+        var el = document.getElementById("engineBadge");
+        if (el) el.style.display = "none";
+      }
+
       function processToolStep(step) {
         var tool = step.tool,
           params = step.params || {},
           result = step.result || {};
+
+        // Show which engine is handling this step
+        var CODING_TOOLS = [
+          "create_file",
+          "edit_file",
+          "run_in_sandbox",
+          "run_bash",
+          "validate_syntax",
+          "create_zip",
+          "create_requirements",
+        ];
+        var AGENT_TOOLS = [
+          "think",
+          "web_search",
+          "web_fetch",
+          "install_packages",
+          "math",
+          "remember",
+          "set_env",
+          "check_vps",
+          "read_file",
+          "list_files",
+          "http_request",
+        ];
+        if (CODING_TOOLS.indexOf(tool) !== -1) showEngineBadge("coding");
+        else if (AGENT_TOOLS.indexOf(tool) !== -1) showEngineBadge("agent");
+        else showEngineBadge("agent");
 
         if (tool === "think") {
           liveLog(
@@ -6382,6 +6716,55 @@
             appendSearchResults(query, results);
           return;
         }
+
+        // Show compact tool progress inline in chat with engine prefix
+        var toolEmoji = {
+          create_file: "📝",
+          run_in_sandbox: "⚡",
+          edit_file: "✏️",
+          web_search: "🌐",
+          web_fetch: "🔗",
+          install_packages: "📦",
+          think: "🧠",
+          read_file: "📖",
+          create_zip: "📦",
+          diff_files: "📊",
+          list_files: "📁",
+          http_request: "🌍",
+          validate_syntax: "✔️",
+          run_bash: "💻",
+          math: "🔢",
+        };
+        // Engine tag shown in tool chip
+        var CODING_TOOLS_SET = {
+          create_file: 1,
+          edit_file: 1,
+          run_in_sandbox: 1,
+          run_bash: 1,
+          validate_syntax: 1,
+          create_zip: 1,
+          create_requirements: 1,
+        };
+        var engineTag = CODING_TOOLS_SET[tool]
+          ? "<span style=\"font-size:9px;padding:1px 5px;background:rgba(34,211,238,0.12);color:var(--cyan);border-radius:3px;margin-right:4px;font-family:'JetBrains Mono',monospace\">DeepSeek-R1</span>"
+          : "<span style=\"font-size:9px;padding:1px 5px;background:var(--purplel);color:var(--purple);border-radius:3px;margin-right:4px;font-family:'JetBrains Mono',monospace\">Llama3.1</span>";
+        var toolLabel = toolEmoji[tool] || "🔧";
+        var toolMsg = engineTag + toolLabel + " " + tool.replace(/_/g, " ");
+        if (params.filename) toolMsg += ": " + params.filename;
+        else if (params.query) toolMsg += ": " + params.query.slice(0, 50);
+        else if (params.command) toolMsg += ": " + params.command.slice(0, 40);
+        // Show diff stats for edit_file
+        if (tool === "edit_file" && result && result.ok) {
+          var oldW = ((params.old_content || "").match(/\S+/g) || []).length;
+          var newW = ((params.new_content || "").match(/\S+/g) || []).length;
+          var added = Math.max(0, newW - oldW),
+            removed = Math.max(0, oldW - newW);
+          toolMsg +=
+            " " +
+            (added ? '<span class="stat-add">+' + added + "</span> " : "") +
+            (removed ? '<span class="stat-rem">-' + removed + "</span>" : "");
+        }
+        appendToolStep(toolMsg, result);
 
         var logCls =
           {
@@ -6612,23 +6995,26 @@
         if (step.type === "answer") return "✅ Delivering answer";
         if (step.type === "text") return "💭 Reasoning";
         var m = {
-          think: "🧠 Planning deeply",
-          create_file: "📁 Creating file",
-          run_in_sandbox: "🐧 Sandbox run",
-          edit_file: "✏️ Fixing file",
-          validate_syntax: "✅ Syntax check",
-          web_fetch: "🌍 Fetching URL",
-          web_search: "🌐 Web searching",
-          math: "🔢 Calculating",
-          remember: "🧠 Storing note",
-          read_file: "📖 Reading file",
-          search_files: "🔍 Searching files",
-          install_packages: "📦 Installing",
-          create_zip: "📦 Creating ZIP",
-          run_bash: "⬛ Bash command",
-          set_env: "🔑 Setting env",
-          create_requirements: "📋 requirements.txt",
-          check_vps: "🖥 Checking VPS",
+          // 🤖 Llama3.1 — Agent Engine (tools, JSON, orchestration)
+          think: "🤖 Llama3.1 · Planning",
+          web_search: "🤖 Llama3.1 · Web searching",
+          web_fetch: "🤖 Llama3.1 · Fetching URL",
+          install_packages: "🤖 Llama3.1 · Installing packages",
+          math: "🤖 Llama3.1 · Calculating",
+          remember: "🤖 Llama3.1 · Storing note",
+          set_env: "🤖 Llama3.1 · Setting env",
+          check_vps: "🤖 Llama3.1 · Checking VPS",
+          read_file: "🤖 Llama3.1 · Reading file",
+          list_files: "🤖 Llama3.1 · Listing files",
+          search_files: "🤖 Llama3.1 · Searching files",
+          // 🧠 DeepSeek-R1 — Coding Engine (files, code, architecture)
+          create_file: "🧠 DeepSeek-R1 · Creating file",
+          edit_file: "🧠 DeepSeek-R1 · Editing file",
+          run_in_sandbox: "🧠 DeepSeek-R1 · Running sandbox",
+          run_bash: "🧠 DeepSeek-R1 · Bash command",
+          validate_syntax: "🧠 DeepSeek-R1 · Syntax check",
+          create_zip: "🧠 DeepSeek-R1 · Creating ZIP",
+          create_requirements: "🧠 DeepSeek-R1 · requirements.txt",
         };
         return m[step.tool] || "⚙ " + (step.tool || "Working");
       }
@@ -6651,6 +7037,62 @@
       // ═══════════════════════════════════════════════════════════
       //  TYPEWRITER
       // ═══════════════════════════════════════════════════════════
+      // Live streaming bubble
+      var _sBubId = null,
+        _sBubTxt = "";
+      function _startStreamBub() {
+        var c = document.getElementById("msgContainer");
+        _sBubTxt = "";
+        _sBubId = "sb_" + Date.now();
+        var d = document.createElement("div");
+        d.className = "msg-group";
+        d.innerHTML =
+          '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap"><div class="bubble ai" id="' +
+          _sBubId +
+          '"></div><div class="mmeta" id="' +
+          _sBubId +
+          '_meta"></div></div></div>';
+        c.appendChild(d);
+        scrollBot();
+      }
+      function appendStreamToken(tok) {
+        if (!_sBubId) _startStreamBub();
+        _sBubTxt += tok;
+        var b = document.getElementById(_sBubId);
+        if (b) {
+          b.innerHTML = renderMD(_sBubTxt);
+          scrollBot();
+        }
+      }
+      function finalizeStream(fullText) {
+        if (!_sBubId) return;
+        var b = document.getElementById(_sBubId),
+          m = document.getElementById(_sBubId + "_meta");
+        if (b) {
+          b.innerHTML = renderMD(fullText || _sBubTxt);
+          b.querySelectorAll("pre").forEach(function (p) {
+            if (!p.querySelector(".copy-pre")) {
+              var btn = document.createElement("button");
+              btn.className = "copy-pre";
+              btn.textContent = "Copy";
+              btn.onclick = function () {
+                navigator.clipboard.writeText(p.textContent || "");
+                showToast("Copied!", "ok");
+              };
+              p.appendChild(btn);
+            }
+          });
+        }
+        if (m)
+          m.innerHTML = buildMsgMeta(
+            { text: fullText || _sBubTxt, time: fmtTime() },
+            false,
+          );
+        _sBubId = null;
+        _sBubTxt = "";
+        scrollBot();
+      }
+
       async function appendAITyped(text) {
         var container = document.getElementById("msgContainer");
         var bubId =
@@ -6668,25 +7110,34 @@
           "</div></div>";
         container.appendChild(div);
         var bub = document.getElementById(bubId);
-        var words = text.split(" ");
         var built = "";
-        for (var i = 0; i < words.length; i++) {
+        // Stream word by word like Claude - fast for code, normal for text
+        var chunks = text.split(" ");
+        var isCode =
+          text.includes("```") || text.includes("    ") || text.includes("	");
+        var delay = isCode ? 3 : 18; // code streams faster
+        for (var i = 0; i < chunks.length; i++) {
           if (stopFlag) break;
-          built += words[i] + (i < words.length - 1 ? " " : "");
-          bub.innerHTML = renderMD(built);
-          scrollBot();
-          await sleep(9);
+          built += chunks[i] + (i < chunks.length - 1 ? " " : "");
+          // Render every 3 words for smoothness
+          if (i % 3 === 0 || i === chunks.length - 1) {
+            bub.innerHTML = renderMD(built);
+            scrollBot();
+            await sleep(delay);
+          }
         }
+        bub.innerHTML = renderMD(built);
         bub.classList.remove("stream-cursor");
         var meta = document.getElementById(bubId + "_meta");
         if (meta)
           meta.innerHTML = buildMsgMeta({ text: text, time: fmtTime() }, false);
-        bub.querySelectorAll("pre").forEach((pre) => {
+        // Add copy buttons to code blocks
+        bub.querySelectorAll("pre").forEach(function (pre) {
           if (!pre.querySelector(".copy-pre")) {
             var btn = document.createElement("button");
             btn.className = "copy-pre";
             btn.textContent = "Copy";
-            btn.onclick = () => {
+            btn.onclick = function () {
               navigator.clipboard.writeText(pre.textContent || "");
               showToast("Copied!", "ok");
             };
@@ -6711,6 +7162,31 @@
           buildMsgMeta({ text: text, time: fmtTime() }, false) +
           "</div>" +
           "</div></div>";
+        container.appendChild(div);
+        scrollBot();
+      }
+
+      function appendToolStep(html, result) {
+        var container = document.getElementById("msgContainer");
+        var ok = result && (result.ok || result.exit_code === 0);
+        var err =
+          result &&
+          (result.error || (result.exit_code && result.exit_code !== 0));
+        var color = err ? "var(--red)" : ok ? "var(--green)" : "var(--tx3)";
+        var div = document.createElement("div");
+        div.className = "msg-group";
+        div.innerHTML =
+          '<div class="msg-row ai"><div class="av ai" style="opacity:.4">✦</div><div class="bwrap">' +
+          '<div class="bubble ai" style="background:transparent;border:1px dashed var(--bd);font-size:11.5px;padding:5px 10px;color:' +
+          color +
+          '">' +
+          html +
+          (err
+            ? ' — <span style="color:var(--red)">' +
+              (result.error || "error") +
+              "</span>"
+            : "") +
+          "</div></div></div>";
         container.appendChild(div);
         scrollBot();
       }
@@ -6782,43 +7258,117 @@
         scrollBot();
       }
 
-      function countWords(text) {
-        return (text || "").trim().split(/\s+/).filter(Boolean).length;
+      function countWords(t) {
+        return (t || "").trim().split(/\s+/).filter(Boolean).length;
       }
 
       function buildMsgMeta(m, isUser) {
         var ts = cfg.ts ? "<span>" + (m.time || "") + "</span>" : "";
         var t = esc(m.text || "").replace(/"/g, "&quot;");
         var copy = !isUser
-          ? '<button class="mab" onclick="cpMsg(this)" data-t="' + t + '">📋 Copy</button>'
+          ? '<button class="mab" onclick="cpMsg(this)" data-t="' +
+            t +
+            '">📋 Copy</button>'
           : "";
         var regen = !isUser
           ? '<button class="mab" onclick="regenMsg()">↺ Retry</button>'
           : "";
-        // Word diff stats like Claude AI (+ added - removed words vs prev AI msg)
+        var share = !isUser
+          ? '<button class="mab" onclick="shareMsg(this)" data-t="' +
+            t +
+            '">↗ Share</button>'
+          : "";
+        var print = !isUser
+          ? '<button class="mab" onclick="printChat()">🖨 Print</button>'
+          : "";
+        // Word diff stats
         var stats = "";
         if (!isUser && m.text) {
           var wc = countWords(m.text);
           var lines = (m.text.match(/\n/g) || []).length + 1;
-          // Compare with previous AI message words
-          var msgs = Object.values(convs[curId] || {messages:[]}).length ? (convs[curId].messages || []) : [];
+          var msgs = convs[curId] ? convs[curId].messages || [] : [];
           var prevAI = null;
           for (var i = msgs.length - 1; i >= 0; i--) {
-            if (msgs[i].role === "assistant" && msgs[i].text !== m.text) { prevAI = msgs[i]; break; }
+            if (msgs[i].role === "ai" && msgs[i].text !== m.text) {
+              prevAI = msgs[i];
+              break;
+            }
           }
-          var added = wc, removed = 0;
+          var added = wc,
+            removed = 0;
           if (prevAI) {
-            var prevWc = countWords(prevAI.text);
-            added   = Math.max(0, wc - prevWc);
-            removed = Math.max(0, prevWc - wc);
+            var pw = countWords(prevAI.text);
+            added = Math.max(0, wc - pw);
+            removed = Math.max(0, pw - wc);
           }
-          stats = '<span class="msg-stats">'
-            + (added   > 0 ? '<span class="stat-add">+' + added   + ' words</span>' : "")
-            + (removed > 0 ? '<span class="stat-rem">-' + removed + ' words</span>' : "")
-            + '<span class="stat-tok">' + wc + ' words · ' + lines + ' lines</span>'
-            + '</span>';
+          stats =
+            '<span class="msg-stats">' +
+            (added > 0
+              ? '<span class="stat-add">+' + added + " words</span>"
+              : "") +
+            (removed > 0
+              ? '<span class="stat-rem">-' + removed + " words</span>"
+              : "") +
+            '<span class="stat-tok">' +
+            wc +
+            " words · " +
+            lines +
+            " lines</span>" +
+            "</span>";
         }
-        return ts + copy + regen + (stats ? "<br>" + stats : "");
+        return (
+          ts + copy + regen + share + print + (stats ? "<br>" + stats : "")
+        );
+      }
+
+      function shareMsg(btn) {
+        var text = (btn.dataset.t || "")
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'");
+        if (navigator.share) {
+          navigator
+            .share({ title: "SPS Agent", text: text })
+            .catch(function () {});
+        } else {
+          navigator.clipboard.writeText(text);
+          showToast("Copied to clipboard!", "ok");
+        }
+      }
+
+      function printChat() {
+        var msgs = document.getElementById("msgContainer");
+        if (!msgs) return;
+        var w = window.open("", "_blank");
+        var css =
+          "body{font-family:sans-serif;max-width:860px;margin:0 auto;padding:20px;background:#fff;color:#111}" +
+          ".u{background:#f0f4ff;border-radius:8px;padding:10px;margin:8px 0}" +
+          ".a{background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:10px;margin:8px 0}" +
+          "pre{background:#1e1e1e;color:#fff;padding:10px;border-radius:6px;overflow-x:auto;white-space:pre-wrap}" +
+          "code{background:#eee;padding:2px 4px;border-radius:3px}";
+        var html =
+          '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>SPS Chat</title><style>' +
+          css +
+          "</style></head><body>";
+        html += '<h2 style="margin-bottom:16px">SPS Agent Chat</h2>';
+        msgs.querySelectorAll(".msg-group").forEach(function (g) {
+          var isUser = g.querySelector(".msg-row.user");
+          var bub = g.querySelector(".bubble");
+          if (bub)
+            html +=
+              '<div class="' +
+              (isUser ? "u" : "a") +
+              '">' +
+              (isUser ? "<b>You</b><br>" : "<b>AI</b><br>") +
+              bub.innerHTML +
+              "</div>";
+        });
+        html += "</body></html>";
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+        setTimeout(function () {
+          w.print();
+        }, 500);
       }
 
       function appendThinkBlock(params, result) {
@@ -7309,7 +7859,7 @@
       //  AUTH
       // ═══════════════════════════════════════════════════════════
       function showScreen(id) {
-        ["signupScreen", "verifyScreen", "appScreen"].forEach(function(s) {
+        ["signupScreen", "verifyScreen", "appScreen"].forEach((s) => {
           document.getElementById(s).classList.toggle("hidden", s !== id);
         });
       }
@@ -7345,55 +7895,6 @@
         btn.disabled = false;
         btn.textContent = "Send Verification Code →";
       }
-      function triggerGoogleSignIn() {
-        // Try Google Identity Services popup first
-        if (window.google && window.google.accounts && GOOGLE_CLIENT_ID) {
-          window.google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleGoogleCredential,
-            auto_select: false,
-          });
-          window.google.accounts.id.prompt(function(notification) {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              // Fallback to manual email entry
-              googleSignInFallback();
-            }
-          });
-        } else {
-          // No client ID set — fallback to email OTP
-          googleSignInFallback();
-        }
-      }
-
-      async function googleSignInFallback() {
-        var email = prompt("Enter your Google account email:");
-        if (!email || !email.includes("@")) return;
-        email = email.trim().toLowerCase();
-        var btn = document.getElementById("googleBtn");
-        if (btn) { btn.disabled = true; btn.textContent = "Sending code..."; }
-        try {
-          var r = await fetch(getServer() + "/signup", {
-            method: "POST", headers: CH,
-            body: JSON.stringify({ email: email })
-          });
-          var d = await r.json();
-          if (d.success) {
-            localStorage.setItem("sps_em", email);
-            document.getElementById("sentToEmail").textContent = email;
-            setAS("signupStatus", "Code sent to " + email, "ok");
-            setTimeout(function() { showScreen("verifyScreen"); }, 700);
-          } else {
-            setAS("signupStatus", d.message || "Failed", "err");
-          }
-        } catch(e) {
-          setAS("signupStatus", "Cannot reach server. Set Server URL first.", "err");
-        }
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google';
-        }
-      }
-
       async function verifyOTP() {
         var email = localStorage.getItem("sps_em");
         var otp = document.getElementById("otpInput").value.trim();
@@ -7541,7 +8042,16 @@
               ok: !!d.ollama,
               val: d.ollama ? "Running" : "⚠ Not running — run: ollama serve &",
             },
-            { label: "Model", ok: !!d.model, val: d.model || "?" },
+            {
+              label: "🧠 Coder",
+              ok: !!d.ollama,
+              val: "deepseek-r1:7b · temp=0.6 · architecture & files",
+            },
+            {
+              label: "🤖 Agent",
+              ok: !!d.ollama,
+              val: "llama3.1:8b · temp=0.0 · tools & JSON · keep_alive=-1",
+            },
             {
               label: "Web Search",
               ok: true,
@@ -7582,10 +8092,23 @@
                   "</div>",
               )
               .join("") + vpsWarn;
-          document.getElementById("healthDot").className = d.ollama ? "mdot on" : "mdot red";
+          document.getElementById("healthDot").className = d.ollama
+            ? "mdot on"
+            : "mdot red";
           if (d.model) {
-            var ml = document.getElementById("modelLabel");
-            if (ml) { var sh = d.model.split("/").pop().split(":")[0]; ml.textContent = sh + " · SPS v6"; }
+            var _ml2 = document.getElementById("modelLabel");
+            if (_ml2) {
+              _ml2.textContent =
+                "📐 " +
+                d.model.split("|")[0].trim().split("/").pop().split(":")[0] +
+                " · SPS v6";
+            }
+          }
+          var ml = document.getElementById("modelLabel");
+          if (ml) {
+            ml.textContent = d.ollama
+              ? "📐 Dual-Router · SPS"
+              : "⚠ Offline · SPS";
           }
         } catch (e) {
           el.innerHTML =
@@ -8861,68 +9384,186 @@
       // ═══════════════════════════════════════════════════════════
       //  BOOT
       // ═══════════════════════════════════════════════════════════
-      // ── GOOGLE OAUTH SETUP ─────────────────────────────────
-      var GOOGLE_CLIENT_ID = "";  // set this to your Google OAuth client ID
+      var GOOGLE_CLIENT_ID = ""; // set your Google OAuth client ID here
+
+      function triggerGoogleSignIn() {
+        if (window.google && window.google.accounts && GOOGLE_CLIENT_ID) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleCredential,
+            auto_select: false,
+          });
+          window.google.accounts.id.prompt(function (n) {
+            if (n.isNotDisplayed() || n.isSkippedMoment())
+              googleSignInFallback();
+          });
+        } else googleSignInFallback();
+      }
+
+      async function googleSignInFallback() {
+        var email = prompt("Enter your Google account email:");
+        if (!email || !email.includes("@")) return;
+        email = email.trim().toLowerCase();
+        var btn = document.getElementById("googleBtn");
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = "Sending code...";
+        }
+        try {
+          var r = await fetch(getServer() + "/signup", {
+            method: "POST",
+            headers: CH,
+            body: JSON.stringify({ email: email }),
+          });
+          var d = await r.json();
+          if (d.success) {
+            localStorage.setItem("sps_em", email);
+            document.getElementById("sentToEmail").textContent = email;
+            setAS("signupStatus", "Code sent to " + email, "ok");
+            setTimeout(function () {
+              showScreen("verifyScreen");
+            }, 700);
+          } else setAS("signupStatus", d.message || "Failed", "err");
+        } catch (e) {
+          setAS(
+            "signupStatus",
+            "Cannot reach server. Set Server URL first.",
+            "err",
+          );
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML =
+            '<svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google';
+        }
+      }
+
+      function handleGoogleCredential(response) {
+        fetch(getServer() + "/auth/google", {
+          method: "POST",
+          headers: CH,
+          body: JSON.stringify({ id_token: response.credential }),
+        })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (d) {
+            if (d.success) {
+              localStorage.setItem("sps_key", d.api_key);
+              localStorage.setItem("sps_em", d.email);
+              initApp();
+            } else {
+              setAS("signupStatus", d.message || "Google login failed", "err");
+              showScreen("signupScreen");
+            }
+          })
+          .catch(function () {
+            setAS("signupStatus", "Server unreachable", "err");
+            showScreen("signupScreen");
+          });
+      }
 
       function loadGoogleScript() {
         var s = document.createElement("script");
         s.src = "https://accounts.google.com/gsi/client";
-        s.async = true; s.defer = true;
+        s.async = true;
+        s.defer = true;
         document.head.appendChild(s);
       }
 
-      function handleGoogleCredential(response) {
-        var idToken = response.credential;
-        // Decode name from token for welcome
-        try {
-          var payload = JSON.parse(atob(idToken.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
-          var name = payload.name || payload.email.split("@")[0];
-          localStorage.setItem("sps_gname", name);
-        } catch(e) {}
-        // Send to server
-        fetch(getServer() + "/auth/google", {
-          method: "POST", headers: CH,
-          body: JSON.stringify({ id_token: idToken })
-        }).then(function(r) { return r.json(); }).then(function(d) {
-          if (d.success) {
-            localStorage.setItem("sps_key", d.api_key);
-            localStorage.setItem("sps_em", d.email);
-            if (d.name) localStorage.setItem("sps_gname", d.name);
-            initApp();
-          } else {
-            setAS("signupStatus", d.message || "Google login failed", "err");
-            showScreen("signupScreen");
-          }
-        }).catch(function(e) {
-          setAS("signupStatus", "Server unreachable. Set Server URL first.", "err");
-          showScreen("signupScreen");
+      function shareChat() {
+        var msgs = document.getElementById("msgContainer");
+        if (!msgs) return;
+        var text = "";
+        msgs.querySelectorAll(".msg-group").forEach(function (g) {
+          var isU = g.querySelector(".msg-row.user");
+          var b = g.querySelector(".bubble");
+          if (b)
+            text +=
+              (isU ? "You: " : "AI: ") + (b.textContent || "").trim() + "\n\n";
         });
+        if (navigator.share) {
+          navigator
+            .share({ title: "SPS Agent Chat", text: text.slice(0, 2000) })
+            .catch(function () {});
+        } else {
+          navigator.clipboard.writeText(text);
+          showToast("Chat copied to clipboard!", "ok");
+        }
       }
 
-      // ── SPLASH + INIT ──────────────────────────────────────
+      function _renderProj() {
+        var el = document.getElementById("projectsList");
+        if (!el) return;
+        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
+        if (!projs.length) {
+          el.innerHTML =
+            '<div style="color:var(--tx3);font-size:11px;padding:4px 4px 2px">No projects yet</div>';
+          return;
+        }
+        el.innerHTML = projs
+          .map(function (p, i) {
+            return (
+              '<div style="display:flex;align-items:center;gap:5px;padding:4px 4px;border-radius:5px;cursor:pointer;color:var(--tx2)" ' +
+              "onmouseenter=\"this.style.background='var(--bg3)'\" onmouseleave=\"this.style.background=''\">" +
+              '<span style="font-size:11px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📁 ' +
+              esc(p.name) +
+              "</span>" +
+              "<button onclick=\"(function(e,i){e.stopPropagation();var ps=JSON.parse(localStorage.getItem('sps_projects')||'[]');ps.splice(i,1);localStorage.setItem('sps_projects',JSON.stringify(ps));_renderProj();showToast('Project deleted','ok');})(event," +
+              i +
+              ')" ' +
+              'style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:12px;padding:0 2px;line-height:1" title="Delete project">×</button>' +
+              "</div>"
+            );
+          })
+          .join("");
+      }
+
+      function newProject() {
+        var n = prompt("Project name:");
+        if (!n) return;
+        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
+        projs.push({ name: n, created: Date.now() });
+        localStorage.setItem("sps_projects", JSON.stringify(projs));
+        _renderProj();
+        showToast("Project '" + n + "' created!", "ok");
+      }
+
       window.onload = function () {
         loadTemplates();
+        _renderProj();
         loadGoogleScript();
+        // Splash screen
         var splash = document.getElementById("splashScreen");
-        var logo   = document.getElementById("splashLogo");
-        var txt    = document.getElementById("splashText");
-        var sub    = document.getElementById("splashSub");
-        // Animate in
-        setTimeout(function() {
-          logo.style.opacity = "1"; logo.style.transform = "scale(1)";
-          txt.style.opacity  = "1"; txt.style.transform  = "translateY(0)";
-          sub.style.opacity  = "1";
-        }, 80);
-        // Hold then fade out
-        setTimeout(function() {
-          splash.style.opacity = "0";
-          setTimeout(function() {
-            splash.style.display = "none";
-            var k = localStorage.getItem("sps_key");
-            if (k) initApp();
-            else showScreen("signupScreen");
-          }, 650);
-        }, 1800);
+        if (splash) {
+          var logo = document.getElementById("splashLogo"),
+            txt = document.getElementById("splashText"),
+            sub = document.getElementById("splashSub");
+          setTimeout(function () {
+            if (logo) {
+              logo.style.opacity = "1";
+              logo.style.transform = "scale(1)";
+            }
+            if (txt) {
+              txt.style.opacity = "1";
+              txt.style.transform = "translateY(0)";
+            }
+            if (sub) sub.style.opacity = "1";
+          }, 80);
+          setTimeout(function () {
+            splash.style.opacity = "0";
+            setTimeout(function () {
+              splash.style.display = "none";
+              var k = localStorage.getItem("sps_key");
+              if (k) initApp();
+              else showScreen("signupScreen");
+            }, 650);
+          }, 1800);
+        } else {
+          var k = localStorage.getItem("sps_key");
+          if (k) initApp();
+          else showScreen("signupScreen");
+        }
       };
     </script>
   </body>
