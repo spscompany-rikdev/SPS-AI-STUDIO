@@ -236,10 +236,12 @@
         font-weight: 700;
         cursor: pointer;
       }
-      .pbtn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-      }
+      .pbtn:disabled { opacity:.4; cursor:not-allowed; }
+      .auth-divider { display:flex;align-items:center;gap:10px;margin:14px 0 8px; }
+      .auth-divider::before,.auth-divider::after { content:"";flex:1;height:1px;background:var(--bd); }
+      .auth-divider span { color:var(--tx3);font-size:11px;font-weight:600; }
+      .gbtn { width:100%;padding:11px 14px;background:var(--bg3);color:var(--tx);border:1.5px solid var(--bd);border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color .18s; }
+      .gbtn:hover { border-color:var(--acc);background:var(--bg2); }
       /* word diff stats */
       .stat-add {
         background: rgba(52, 199, 89, 0.15);
@@ -3666,6 +3668,8 @@
           id="projectsList"
           style="margin-bottom: 4px; font-size: 12px; padding: 0 4px"
         ></div>
+        <div class="sb-sec" style="display:flex;align-items:center;justify-content:space-between"><span>📁 Projects</span><button onclick="newProject()" style="background:none;border:none;color:var(--acc);cursor:pointer;font-size:11px;padding:0">+ New</button></div>
+        <div id="projectsList" style="margin-bottom:4px;font-size:12px;padding:0 4px"></div>
         <div class="sb-sec">Conversations</div>
         <div class="hist" id="histList"></div>
         <div class="sb-foot">
@@ -6559,8 +6563,13 @@
 
           if (step.type === "answer") {
             sbxTerm("💬 Delivering answer…", "step");
-            if (cfg.typewriter) await appendAITyped(step.content || "");
-            else appendAIMsg(step.content || "");
+            if (_sBubId) {
+              finalizeStream(step.content || "");
+            } else if (cfg.typewriter) {
+              await appendAITyped(step.content || "");
+            } else {
+              appendAIMsg(step.content || "");
+            }
             var conv = convs[curId];
             if (conv) {
               conv.messages.push({
@@ -6607,6 +6616,26 @@
                 mermaid.run({ nodes: [document.getElementById(_mId)] });
               } catch (_e) {}
             }
+            scrollBot();
+          } else if (step.type === "image") {
+            var _iw = document.createElement("div"); _iw.className = "msg-group";
+            var _iu = esc(step.image_url || ""); var _ip = esc(step.prompt || "");
+            _iw.innerHTML = '<div class="msg-row ai"><div class="av ai">❆</div><div class="bwrap">'
+              + '<div class="bubble ai" style="padding:10px">'
+              + '<img src="' + _iu + '" style="max-width:100%;border-radius:8px;display:block" loading="lazy" />'
+              + '<div style="font-size:11px;color:var(--tx3);margin-top:4px">' + _ip + '</div>'
+              + '<a href="' + _iu + '" download="ai-image.jpg" target="_blank"'
+              + ' style="display:inline-block;margin-top:6px;padding:4px 12px;background:var(--acc);color:#fff;border-radius:6px;font-size:11px;text-decoration:none">⬇ Download</a>'
+              + '</div></div></div>';
+            document.getElementById("msgContainer").appendChild(_iw); scrollBot();
+          } else if (step.type === "diagram") {
+            var _dw = document.createElement("div"); _dw.className = "msg-group";
+            var _mId = "mmd_" + Date.now();
+            _dw.innerHTML = '<div class="msg-row ai"><div class="av ai">❆</div><div class="bwrap">'
+              + '<div class="bubble ai"><pre class="mermaid" id="' + _mId + '">' + esc(step.mermaid || "") + '</pre></div>'
+              + '</div></div>';
+            document.getElementById("msgContainer").appendChild(_dw);
+            if (window.mermaid) { try { mermaid.run({ nodes: [document.getElementById(_mId)] }); } catch (_e) {} }
             scrollBot();
           } else if (step.type === "tool") {
             processToolStep(step);
@@ -7090,6 +7119,42 @@
           );
         _sBubId = null;
         _sBubTxt = "";
+        scrollBot();
+      }
+
+      var _sBubId = null, _sBubTxt = "";
+      function _startStreamBub() {
+        _sBubTxt = ""; _sBubId = "sb_" + Date.now();
+        var d = document.createElement("div"); d.className = "msg-group";
+        d.innerHTML = '<div class="msg-row ai"><div class="av ai">❆</div><div class="bwrap">'
+          + '<div class="bubble ai" id="' + _sBubId + '"></div>'
+          + '<div class="mmeta" id="' + _sBubId + '_meta"></div></div></div>';
+        document.getElementById("msgContainer").appendChild(d);
+        scrollBot();
+      }
+      function appendStreamToken(tok) {
+        if (!_sBubId) _startStreamBub();
+        _sBubTxt += tok;
+        var b = document.getElementById(_sBubId);
+        if (b) { b.innerHTML = renderMD(_sBubTxt); scrollBot(); }
+      }
+      function finalizeStream(fullText) {
+        if (!_sBubId) return;
+        var b = document.getElementById(_sBubId);
+        var m = document.getElementById(_sBubId + "_meta");
+        if (b) {
+          b.innerHTML = renderMD(fullText || _sBubTxt);
+          b.querySelectorAll("pre").forEach(function(p) {
+            if (!p.querySelector(".copy-pre")) {
+              var btn = document.createElement("button");
+              btn.className = "copy-pre"; btn.textContent = "Copy";
+              btn.onclick = function() { navigator.clipboard.writeText(p.textContent || ""); showToast("Copied!", "ok"); };
+              p.appendChild(btn);
+            }
+          });
+        }
+        if (m) m.innerHTML = buildMsgMeta({ text: fullText || _sBubTxt, time: fmtTime() }, false);
+        _sBubId = null; _sBubTxt = "";
         scrollBot();
       }
 
@@ -8092,9 +8157,14 @@
                   "</div>",
               )
               .join("") + vpsWarn;
-          document.getElementById("healthDot").className = d.ollama
-            ? "mdot on"
-            : "mdot red";
+          document.getElementById("healthDot").className = d.ollama ? "mdot on" : "mdot red";
+          if (d.model) {
+            var _ml = document.getElementById("modelLabel");
+            if (_ml) {
+              var _mn = d.model.split("|")[0].trim().split("/").pop().split(":")[0];
+              _ml.textContent = "📐 " + _mn + " · SPS v6";
+            }
+          }
           if (d.model) {
             var _ml2 = document.getElementById("modelLabel");
             if (_ml2) {
@@ -9527,6 +9597,106 @@
         localStorage.setItem("sps_projects", JSON.stringify(projs));
         _renderProj();
         showToast("Project '" + n + "' created!", "ok");
+      }
+
+      // ── GOOGLE SIGN IN ─────────────────────────────────────
+      async function googleSignIn() {
+        var email = prompt("Enter your Google account email:");
+        if (!email || !email.includes("@")) return;
+        email = email.trim().toLowerCase();
+        var btn = document.getElementById("googleBtn");
+        if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+        try {
+          var r = await fetch(getServer() + "/signup", {
+            method: "POST", headers: CH, body: JSON.stringify({ email: email })
+          });
+          var d = await r.json();
+          if (d.success) {
+            localStorage.setItem("sps_em", email);
+            document.getElementById("sentToEmail").textContent = email;
+            setAS("signupStatus", "Code sent to " + email, "ok");
+            setTimeout(function() { showScreen("verifyScreen"); }, 700);
+          } else { setAS("signupStatus", d.message || "Failed", "err"); }
+        } catch (e) { setAS("signupStatus", "Cannot reach server. Set Server URL first.", "err"); }
+        if (btn) { btn.disabled = false; btn.innerHTML = '✓ Continue with Google'; }
+      }
+
+      // ── SHARE CHAT ──────────────────────────────────────────
+      function shareChat() {
+        var msgs = document.getElementById("msgContainer");
+        if (!msgs) return;
+        var text = "";
+        msgs.querySelectorAll(".msg-group").forEach(function(g) {
+          var isU = g.querySelector(".msg-row.user");
+          var b = g.querySelector(".bubble");
+          if (b) text += (isU ? "You: " : "AI: ") + (b.textContent || "").trim() + "\n\n";
+        });
+        if (navigator.share) {
+          navigator.share({ title: "SPS Agent Chat", text: text.slice(0, 2000) }).catch(function() {});
+        } else {
+          navigator.clipboard.writeText(text);
+          showToast("Chat copied to clipboard!", "ok");
+        }
+      }
+
+      // ── PROJECTS ────────────────────────────────────────────
+      function _renderProj() {
+        var el = document.getElementById("projectsList");
+        if (!el) return;
+        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
+        if (!projs.length) {
+          el.innerHTML = '<div style="color:var(--tx3);font-size:11px;padding:2px 8px">No projects yet</div>';
+          return;
+        }
+        el.innerHTML = projs.map(function(p, i) {
+          return '<div style="display:flex;align-items:center;padding:3px 8px;border-radius:6px;cursor:pointer;gap:4px" onclick="_openProj(' + i + ')">'
+            + '<span>📂</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">'
+            + esc(p.name) + '</span>'
+            + '<button onclick="event.stopPropagation();_delProj(' + i + ')" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:10px">×</button>'
+            + '</div>';
+        }).join("");
+      }
+      function newProject() {
+        var n = prompt("Project name:");
+        if (!n) return;
+        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
+        projs.push({ name: n, created: Date.now() });
+        localStorage.setItem("sps_projects", JSON.stringify(projs));
+        _renderProj();
+        showToast("Project created!", "ok");
+      }
+      function _openProj(i) {
+        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
+        showToast("Project: " + (projs[i] || { name: "?" }).name, "ok");
+      }
+      function _delProj(i) {
+        if (!confirm("Delete project?")) return;
+        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
+        projs.splice(i, 1);
+        localStorage.setItem("sps_projects", JSON.stringify(projs));
+        _renderProj();
+      }
+
+      // ── PRINT CHAT ──────────────────────────────────────────
+      function printChat() {
+        var msgs = document.getElementById("msgContainer");
+        if (!msgs) return;
+        var w = window.open("", "_blank");
+        var css = "body{font-family:sans-serif;max-width:860px;margin:0 auto;padding:20px;background:#fff;color:#111}"
+          + ".u{background:#f0f4ff;border-radius:8px;padding:10px;margin:8px 0}"
+          + ".a{background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:10px;margin:8px 0}"
+          + "pre{background:#1e1e1e;color:#fff;padding:10px;border-radius:6px;overflow-x:auto;white-space:pre-wrap}";
+        var html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>SPS Chat</title><style>" + css + "</style></head><body>";
+        html += "<h2>SPS Agent Chat</h2>";
+        msgs.querySelectorAll(".msg-group").forEach(function(g) {
+          var isU = g.querySelector(".msg-row.user");
+          var b = g.querySelector(".bubble");
+          if (b) html += "<div class=\"" + (isU ? "u" : "a") + "\">"
+            + (isU ? "<b>You</b>" : "<b>AI</b>") + "<br>" + b.innerHTML + "</div>";
+        });
+        html += "</body></html>";
+        w.document.open(); w.document.write(html); w.document.close();
+        setTimeout(function() { w.print(); }, 500);
       }
 
       window.onload = function () {
