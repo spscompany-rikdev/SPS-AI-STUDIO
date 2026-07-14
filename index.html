@@ -236,12 +236,10 @@
         font-weight: 700;
         cursor: pointer;
       }
-      .pbtn:disabled { opacity:.4; cursor:not-allowed; }
-      .auth-divider { display:flex;align-items:center;gap:10px;margin:14px 0 8px; }
-      .auth-divider::before,.auth-divider::after { content:"";flex:1;height:1px;background:var(--bd); }
-      .auth-divider span { color:var(--tx3);font-size:11px;font-weight:600; }
-      .gbtn { width:100%;padding:11px 14px;background:var(--bg3);color:var(--tx);border:1.5px solid var(--bd);border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color .18s; }
-      .gbtn:hover { border-color:var(--acc);background:var(--bg2); }
+      .pbtn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
       /* word diff stats */
       .stat-add {
         background: rgba(52, 199, 89, 0.15);
@@ -3668,8 +3666,6 @@
           id="projectsList"
           style="margin-bottom: 4px; font-size: 12px; padding: 0 4px"
         ></div>
-        <div class="sb-sec" style="display:flex;align-items:center;justify-content:space-between"><span>📁 Projects</span><button onclick="newProject()" style="background:none;border:none;color:var(--acc);cursor:pointer;font-size:11px;padding:0">+ New</button></div>
-        <div id="projectsList" style="margin-bottom:4px;font-size:12px;padding:0 4px"></div>
         <div class="sb-sec">Conversations</div>
         <div class="hist" id="histList"></div>
         <div class="sb-foot">
@@ -6023,15 +6019,21 @@
           return;
         }
         el.innerHTML = names
-          .map((n) => {
+          .map(function (n) {
             var isZip =
               n.endsWith(".zip") || (virtualFS[n] || "").startsWith("__ZIP");
             var sn = n.replace(/'/g, "\\'");
             var ext = (n.split(".").pop() || "").toLowerCase();
+            var ctxAttr =
+              'oncontextmenu="event.preventDefault();showFileCtxMenu(event,&apos;' +
+              n.replace(/'/g, "&apos;") +
+              '&apos;)"';
             return (
               '<div class="fv-file-item" onclick="fvpOpenFile(\'' +
               sn +
-              "')\">" +
+              "')\" " +
+              ctxAttr +
+              ">" +
               '<div class="fv-file-ico">' +
               getFileIcon(n) +
               "</div>" +
@@ -6044,14 +6046,145 @@
               '<div class="fv-file-sz">' +
               (isZip ? "ZIP" : fmtBytes((virtualFS[n] || "").length)) +
               "</div>" +
-              '<button class="fv-dl" onclick="event.stopPropagation();downloadFileFromServer(\'' +
+              '<button class="fv-dl" title="Download" onclick="event.stopPropagation();downloadFileFromServer(\'' +
               sn +
-              "')\">⬇</button>" +
+              "')\">\u2b07</button>" +
+              '<button class="fv-dl" title="Actions" style="padding:0 5px;font-size:15px" onclick="event.stopPropagation();showFileCtxMenu(event,\'' +
+              sn +
+              "')\">\u22ee</button>" +
               "</div>"
             );
           })
           .join("");
       }
+      // ── File context menu (right-click or ⋮ button) ──────────
+      var _ctxMenuFile = null;
+      function showFileCtxMenu(event, filename) {
+        // Remove any existing menu
+        var old = document.getElementById("fileCtxMenu");
+        if (old) old.remove();
+        _ctxMenuFile = filename;
+        var ext = (filename.split(".").pop() || "").toLowerCase();
+        var isCode = [
+          "py",
+          "js",
+          "ts",
+          "html",
+          "css",
+          "java",
+          "go",
+          "rs",
+          "cpp",
+          "c",
+          "rb",
+          "php",
+          "sh",
+        ].includes(ext);
+        var menu = document.createElement("div");
+        menu.id = "fileCtxMenu";
+        menu.style.cssText =
+          "position:fixed;z-index:9999;background:var(--bg2);border:1px solid var(--brd);" +
+          "border-radius:10px;padding:6px 0;min-width:190px;box-shadow:0 8px 32px rgba(0,0,0,.45);font-size:13px";
+        var items = [
+          { icon: "📖", label: "Open / View", fn: "fvpOpenFile" },
+          { icon: "⬇", label: "Download", fn: "_ctxDownload" },
+          { sep: true },
+          { icon: "🔄", label: "Rename…", fn: "_ctxRename" },
+          { icon: "🗑️", label: "Delete", fn: "_ctxDelete" },
+        ];
+        if (isCode) {
+          items.splice(
+            2,
+            0,
+            { icon: "🔍", label: "Review code", fn: "_ctxReview" },
+            { icon: "🧪", label: "Generate tests", fn: "_ctxTests" },
+            { icon: "✨", label: "Format code", fn: "_ctxFormat" },
+            { icon: "🔢", label: "Count tokens", fn: "_ctxTokens" },
+          );
+        }
+        items.forEach(function (it) {
+          if (it.sep) {
+            var hr = document.createElement("div");
+            hr.style.cssText = "height:1px;background:var(--brd);margin:4px 0";
+            menu.appendChild(hr);
+            return;
+          }
+          var btn = document.createElement("div");
+          btn.style.cssText =
+            "display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;" +
+            "color:var(--tx1);transition:background .1s";
+          btn.innerHTML =
+            '<span style="font-size:15px">' + it.icon + "</span>" + it.label;
+          btn.onmouseover = function () {
+            this.style.background = "var(--purplel)";
+          };
+          btn.onmouseout = function () {
+            this.style.background = "";
+          };
+          btn.onclick = function () {
+            menu.remove();
+            window[it.fn] && window[it.fn](filename);
+          };
+          menu.appendChild(btn);
+        });
+        document.body.appendChild(menu);
+        // Position near click
+        var x = event.clientX,
+          y = event.clientY;
+        var mw = 200,
+          mh = items.length * 38;
+        if (x + mw > window.innerWidth) x = window.innerWidth - mw - 8;
+        if (y + mh > window.innerHeight) y = window.innerHeight - mh - 8;
+        menu.style.left = x + "px";
+        menu.style.top = y + "px";
+        setTimeout(function () {
+          document.addEventListener("click", function _close() {
+            var m = document.getElementById("fileCtxMenu");
+            if (m) m.remove();
+            document.removeEventListener("click", _close);
+          });
+        }, 10);
+      }
+      window._ctxDownload = function (fn) {
+        downloadFileFromServer(fn);
+      };
+      window._ctxReview = function (fn) {
+        sendQuickAction(
+          "Review the code in " + fn + " for bugs, security, and style issues.",
+        );
+      };
+      window._ctxTests = function (fn) {
+        sendQuickAction("Generate complete pytest tests for " + fn);
+      };
+      window._ctxFormat = function (fn) {
+        sendQuickAction("Format the code in " + fn + " to pep8/black style");
+      };
+      window._ctxTokens = function (fn) {
+        sendQuickAction("Count the tokens in " + fn);
+      };
+      window._ctxRename = function (fn) {
+        var newName = prompt("Rename '" + fn + "' to:", fn);
+        if (newName && newName.trim() && newName.trim() !== fn) {
+          sendQuickAction("Rename the file " + fn + " to " + newName.trim());
+        }
+      };
+      window._ctxDelete = function (fn) {
+        if (confirm("Delete '" + fn + "'? This cannot be undone.")) {
+          sendQuickAction("Delete the file " + fn);
+        }
+      };
+
+      function sendQuickAction(text) {
+        var inp = document.getElementById("msgInput");
+        if (inp) {
+          inp.value = text;
+          inp.dispatchEvent(new Event("input"));
+        }
+        // trigger send
+        var sendBtn = document.getElementById("sendBtn");
+        if (sendBtn) sendBtn.click();
+      }
+
       function fvpOpenFile(name) {
         var content = virtualFS[name] || "";
         if (content.startsWith("__ZIP")) {
@@ -6480,6 +6613,12 @@
         var vfsNames = Object.keys(virtualFS);
         if (vfsNames.length)
           lastContent += "\n\n---\n**Files on server:** " + vfsNames.join(", ");
+        // If agent asked a question and user replied, inject reply into last message
+        if (window._pendingAskAnswer) {
+          lastContent +=
+            "\n\n[Answer to agent question]: " + window._pendingAskAnswer;
+          window._pendingAskAnswer = null;
+        }
         messages.push({ role: "user", content: lastContent });
 
         setAgentStep("🧠 Thinking deeply…", "Sending to server", 5);
@@ -6563,13 +6702,8 @@
 
           if (step.type === "answer") {
             sbxTerm("💬 Delivering answer…", "step");
-            if (_sBubId) {
-              finalizeStream(step.content || "");
-            } else if (cfg.typewriter) {
-              await appendAITyped(step.content || "");
-            } else {
-              appendAIMsg(step.content || "");
-            }
+            if (cfg.typewriter) await appendAITyped(step.content || "");
+            else appendAIMsg(step.content || "");
             var conv = convs[curId];
             if (conv) {
               conv.messages.push({
@@ -6617,34 +6751,113 @@
               } catch (_e) {}
             }
             scrollBot();
-          } else if (step.type === "image") {
-            var _iw = document.createElement("div"); _iw.className = "msg-group";
-            var _iu = esc(step.image_url || ""); var _ip = esc(step.prompt || "");
-            _iw.innerHTML = '<div class="msg-row ai"><div class="av ai">❆</div><div class="bwrap">'
-              + '<div class="bubble ai" style="padding:10px">'
-              + '<img src="' + _iu + '" style="max-width:100%;border-radius:8px;display:block" loading="lazy" />'
-              + '<div style="font-size:11px;color:var(--tx3);margin-top:4px">' + _ip + '</div>'
-              + '<a href="' + _iu + '" download="ai-image.jpg" target="_blank"'
-              + ' style="display:inline-block;margin-top:6px;padding:4px 12px;background:var(--acc);color:#fff;border-radius:6px;font-size:11px;text-decoration:none">⬇ Download</a>'
-              + '</div></div></div>';
-            document.getElementById("msgContainer").appendChild(_iw); scrollBot();
-          } else if (step.type === "diagram") {
-            var _dw = document.createElement("div"); _dw.className = "msg-group";
-            var _mId = "mmd_" + Date.now();
-            _dw.innerHTML = '<div class="msg-row ai"><div class="av ai">❆</div><div class="bwrap">'
-              + '<div class="bubble ai"><pre class="mermaid" id="' + _mId + '">' + esc(step.mermaid || "") + '</pre></div>'
-              + '</div></div>';
-            document.getElementById("msgContainer").appendChild(_dw);
-            if (window.mermaid) { try { mermaid.run({ nodes: [document.getElementById(_mId)] }); } catch (_e) {} }
-            scrollBot();
           } else if (step.type === "tool") {
             processToolStep(step);
+          } else if (step.type === "ask_user") {
+            await processAskUserStep(step);
           }
           await sleep(15);
         }
         setAgentStep("✅ Done", "", 100);
         hideEngineBadge();
         await sleep(350);
+      }
+
+      // ── ask_user: show inline question card, wait for pick, re-send ──
+      function processAskUserStep(step) {
+        return new Promise(function (resolve) {
+          var q = step.question || "I have a question:";
+          var opts = step.options || [];
+          var allowCustom = step.allow_custom !== false;
+          liveLog("❓ Agent asks: " + q, "think");
+
+          var cardId = "askCard_" + Date.now();
+          var optHtml = opts
+            .map(function (o, i) {
+              return (
+                "<button onclick=\"pickAskOpt('" +
+                cardId +
+                "','" +
+                esc(o) +
+                "')\" " +
+                'style="display:block;width:100%;text-align:left;margin:4px 0;padding:8px 14px;' +
+                "background:var(--bg2);border:1px solid var(--brd);border-radius:8px;color:var(--tx1);" +
+                'cursor:pointer;font-size:13px;transition:background .15s" ' +
+                "onmouseover=\"this.style.background='var(--purplel)'\" " +
+                "onmouseout=\"this.style.background='var(--bg2)'\">" +
+                esc(o) +
+                "</button>"
+              );
+            })
+            .join("");
+          if (allowCustom) {
+            optHtml +=
+              '<div style="display:flex;gap:6px;margin-top:6px">' +
+              '<input id="' +
+              cardId +
+              '_custom" type="text" placeholder="Or type your own…" ' +
+              'style="flex:1;padding:7px 10px;background:var(--bg2);border:1px solid var(--brd);' +
+              'border-radius:8px;color:var(--tx1);font-size:13px" ' +
+              "onkeydown=\"if(event.key==='Enter')pickAskCustom('" +
+              cardId +
+              "')\">" +
+              "<button onclick=\"pickAskCustom('" +
+              cardId +
+              "')\" " +
+              'style="padding:7px 14px;background:var(--acc);border:none;border-radius:8px;' +
+              'color:#fff;cursor:pointer;font-size:13px">Send</button></div>';
+          }
+
+          var wrap = document.createElement("div");
+          wrap.className = "msg-group";
+          wrap.id = cardId;
+          wrap.innerHTML =
+            '<div class="msg-row ai"><div class="av ai">✦</div>' +
+            '<div class="bwrap"><div class="bubble ai" style="padding:14px 16px">' +
+            '<div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--tx1)">❓ ' +
+            esc(q) +
+            "</div>" +
+            optHtml +
+            "</div></div></div>";
+          document.getElementById("msgContainer").appendChild(wrap);
+          scrollBot();
+
+          // store resolve so the button handlers can call it
+          window._askResolvers = window._askResolvers || {};
+          window._askResolvers[cardId] = resolve;
+        });
+      }
+
+      function pickAskOpt(cardId, value) {
+        _submitAskAnswer(cardId, value);
+      }
+      function pickAskCustom(cardId) {
+        var inp = document.getElementById(cardId + "_custom");
+        var val = inp ? inp.value.trim() : "";
+        if (!val) return;
+        _submitAskAnswer(cardId, val);
+      }
+      function _submitAskAnswer(cardId, value) {
+        if (!value || !value.trim()) return;
+        // Remove the card
+        var card = document.getElementById(cardId);
+        if (card) card.remove();
+        // Resolve the promise so processSteps continues
+        if (window._askResolvers && window._askResolvers[cardId]) {
+          window._askResolvers[cardId]();
+          delete window._askResolvers[cardId];
+        }
+        // Show user's choice as a user bubble
+        appendUserMsg(value);
+        // Inject the answer into the next server request, then automatically continue
+        window._pendingAskAnswer = value;
+        // Auto-resend: the agent paused and is waiting for this answer.
+        // Inject answer into input and trigger sendMsg so agent continues.
+        setTimeout(function () {
+          var inp = document.getElementById("msgInput");
+          if (inp) { inp.value = "continue"; }
+          sendMsg();
+        }, 400);
       }
 
       function sleep(ms) {
@@ -6763,6 +6976,12 @@
           validate_syntax: "✔️",
           run_bash: "💻",
           math: "🔢",
+          code_review: "🔍",
+          rename_file: "🔄",
+          delete_file: "🗑️",
+          generate_tests: "🧪",
+          format_code: "✨",
+          count_tokens: "🔢",
         };
         // Engine tag shown in tool chip
         var CODING_TOOLS_SET = {
@@ -6773,6 +6992,9 @@
           validate_syntax: 1,
           create_zip: 1,
           create_requirements: 1,
+          generate_tests: 1,
+          format_code: 1,
+          code_review: 1,
         };
         var engineTag = CODING_TOOLS_SET[tool]
           ? "<span style=\"font-size:9px;padding:1px 5px;background:rgba(34,211,238,0.12);color:var(--cyan);border-radius:3px;margin-right:4px;font-family:'JetBrains Mono',monospace\">DeepSeek-R1</span>"
@@ -6879,8 +7101,8 @@
             saveStats();
             updateFvpStats();
             sbxFileCreated(fn, content, lang);
-            appendFileOutput(fn, content, desc);
-            if (cfg.autoSplit) openFileInSplit(fn);
+            // Show "writing file" live preview before final card
+            _showWritingPreview(fn, content, lang, desc);
           }
           return;
         }
@@ -7018,6 +7240,201 @@
           sbxTerm("🧠 REMEMBER: " + params.key + " = " + params.value, "step");
           return;
         }
+
+        // ── NEW TOOLS ────────────────────────────────────────────
+
+        if (tool === "code_review") {
+          var rfFile = result.filename || params.filename || "";
+          var review = result.review || result.error || "";
+          sbxTerm(
+            "🔍 CODE REVIEW: " + rfFile + " [" + (params.focus || "all") + "]",
+            "step",
+          );
+          if (result.ok && review) {
+            // Show review as a collapsible AI bubble
+            var revId = "rev_" + Date.now();
+            var container = document.getElementById("msgContainer");
+            var rdiv = document.createElement("div");
+            rdiv.className = "msg-group";
+            rdiv.innerHTML =
+              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap" style="max-width:95%">' +
+              '<div class="bubble ai" style="padding:14px 16px">' +
+              '<div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px;letter-spacing:.5px">🔍 CODE REVIEW — ' +
+              esc(rfFile) +
+              "</div>" +
+              '<div style="font-size:13px;line-height:1.7">' +
+              renderMD(review) +
+              "</div>" +
+              "</div></div></div>";
+            container.appendChild(rdiv);
+            scrollBot();
+          }
+          return;
+        }
+
+        if (tool === "rename_file") {
+          var oldN = result.old_name || params.old_name || "";
+          var newN = result.new_name || params.new_name || "";
+          if (result.ok) {
+            // Update virtualFS
+            if (virtualFS[oldN] !== undefined) {
+              virtualFS[newN] = virtualFS[oldN];
+              delete virtualFS[oldN];
+              refreshFvpFileList();
+              updateSplitTabs();
+            }
+            sbxTerm("🔄 RENAMED: " + oldN + " → " + newN, "success");
+          } else {
+            sbxTerm("🔄 RENAME ERROR: " + (result.error || "unknown"), "error");
+          }
+          return;
+        }
+
+        if (tool === "delete_file") {
+          var delF = result.deleted || params.filename || "";
+          if (result.ok) {
+            if (virtualFS[delF] !== undefined) {
+              delete virtualFS[delF];
+              refreshFvpFileList();
+              updateSplitTabs();
+            }
+            sbxTerm("🗑️ DELETED: " + delF, "step");
+          } else {
+            sbxTerm("🗑️ DELETE ERROR: " + (result.error || "unknown"), "error");
+          }
+          return;
+        }
+
+        if (tool === "generate_tests") {
+          var gtFile = result.test_file || result.filename || "";
+          var gtContent = result.content || "";
+          var gtLang = result.language || "py";
+          if (result.ok && gtFile && gtContent) {
+            virtualFS[gtFile] = gtContent;
+            refreshFvpFileList();
+            updateSplitTabs();
+            sbxFileCreated(gtFile, gtContent, gtLang);
+            sbxTerm(
+              "🧪 TESTS GENERATED: " +
+                gtFile +
+                " [" +
+                (params.framework || "pytest") +
+                "]",
+              "success",
+            );
+            _showWritingPreview(
+              gtFile,
+              gtContent,
+              gtLang,
+              "Auto-generated tests",
+            );
+          } else {
+            sbxTerm(
+              "🧪 TEST GEN ERROR: " + (result.error || "unknown"),
+              "error",
+            );
+          }
+          return;
+        }
+
+        if (tool === "format_code") {
+          var fmtF = result.filename || params.filename || "";
+          if (result.ok) {
+            if (result.content && fmtF) {
+              virtualFS[fmtF] = result.content;
+              refreshFvpFileList();
+              if (fpCurFile === fmtF) renderSplitContent();
+              sbxEditFile(fmtF, result.content);
+            }
+            sbxTerm(
+              "✨ FORMATTED: " +
+                fmtF +
+                " [" +
+                (result.formatter || "?") +
+                "] " +
+                (result.changed ? "— code changed" : "— already clean"),
+              "success",
+            );
+          } else {
+            sbxTerm("✨ FORMAT ERROR: " + (result.error || "unknown"), "error");
+          }
+          return;
+        }
+
+        if (tool === "count_tokens") {
+          var ct = result;
+          sbxTerm(
+            "🔢 TOKENS: " +
+              (ct.approx_llama_tokens || "?") +
+              " llama tokens | " +
+              (ct.approx_gpt_tokens || "?") +
+              " GPT tokens | " +
+              (ct.words || "?") +
+              " words | " +
+              (ct.lines || "?") +
+              " lines | " +
+              (ct.fits_in_context
+                ? "✅ fits in context"
+                : "⚠️ may exceed context"),
+            "info",
+          );
+          return;
+        }
+
+        // ── IMAGE GENERATION ─────────────────────────────────────
+        if (tool === "image_gen") {
+          if (result.ok && result.image_url) {
+            sbxTerm("🎨 Generating image: " + (params.prompt || "").slice(0,60), "step");
+            var imgWrap = document.createElement("div");
+            imgWrap.className = "msg-group";
+            var imgId = "img_" + Date.now();
+            imgWrap.innerHTML =
+              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap">' +
+              '<div class="bubble ai" style="padding:10px 12px">' +
+              '<div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px">🎨 Generated Image</div>' +
+              '<img id="' + imgId + '" src="' + esc(result.image_url) + '" ' +
+              'style="max-width:100%;border-radius:10px;display:block;border:1px solid var(--brd)" ' +
+              'onerror="this.src=\'https://via.placeholder.com/512x512?text=Generation+Failed\'" loading="lazy"/>' +
+              '<div style="font-size:12px;color:var(--tx3);margin-top:6px;font-style:italic">' + esc(params.prompt || "") + '</div>' +
+              '<div style="display:flex;gap:8px;margin-top:8px">' +
+              '<a href="' + esc(result.image_url) + '" download="ai-image.jpg" target="_blank" ' +
+              'style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--acc);' +
+              'color:#fff;border-radius:6px;font-size:12px;text-decoration:none;font-weight:600">⬇ Download</a>' +
+              '<a href="' + esc(result.image_url) + '" target="_blank" ' +
+              'style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--bg2);' +
+              'color:var(--tx1);border:1px solid var(--brd);border-radius:6px;font-size:12px;text-decoration:none">🔗 Open</a>' +
+              '</div></div></div></div>';
+            document.getElementById("msgContainer").appendChild(imgWrap);
+            scrollBot();
+          } else {
+            sbxTerm("🎨 Image generation failed: " + (result.error || "unknown"), "error");
+          }
+          return;
+        }
+
+        // ── TRANSLATE ────────────────────────────────────────────
+        if (tool === "translate") {
+          if (result.ok) {
+            sbxTerm("🌍 Translated → " + result.target + ": " + (result.translated || "").slice(0,80), "stdout");
+          }
+          return;
+        }
+
+        // ── UNIT CONVERT ─────────────────────────────────────────
+        if (tool === "unit_convert") {
+          if (result.ok) {
+            sbxTerm("📐 " + result.from + " = " + result.to, "stdout");
+          }
+          return;
+        }
+
+        // ── PASSWORD GEN ─────────────────────────────────────────
+        if (tool === "password_gen") {
+          if (result.ok) {
+            sbxTerm("🔑 Generated password (" + result.length + " chars)", "stdout");
+          }
+          return;
+        }
       }
 
       function getStepLabel(step) {
@@ -7122,42 +7539,6 @@
         scrollBot();
       }
 
-      var _sBubId = null, _sBubTxt = "";
-      function _startStreamBub() {
-        _sBubTxt = ""; _sBubId = "sb_" + Date.now();
-        var d = document.createElement("div"); d.className = "msg-group";
-        d.innerHTML = '<div class="msg-row ai"><div class="av ai">❆</div><div class="bwrap">'
-          + '<div class="bubble ai" id="' + _sBubId + '"></div>'
-          + '<div class="mmeta" id="' + _sBubId + '_meta"></div></div></div>';
-        document.getElementById("msgContainer").appendChild(d);
-        scrollBot();
-      }
-      function appendStreamToken(tok) {
-        if (!_sBubId) _startStreamBub();
-        _sBubTxt += tok;
-        var b = document.getElementById(_sBubId);
-        if (b) { b.innerHTML = renderMD(_sBubTxt); scrollBot(); }
-      }
-      function finalizeStream(fullText) {
-        if (!_sBubId) return;
-        var b = document.getElementById(_sBubId);
-        var m = document.getElementById(_sBubId + "_meta");
-        if (b) {
-          b.innerHTML = renderMD(fullText || _sBubTxt);
-          b.querySelectorAll("pre").forEach(function(p) {
-            if (!p.querySelector(".copy-pre")) {
-              var btn = document.createElement("button");
-              btn.className = "copy-pre"; btn.textContent = "Copy";
-              btn.onclick = function() { navigator.clipboard.writeText(p.textContent || ""); showToast("Copied!", "ok"); };
-              p.appendChild(btn);
-            }
-          });
-        }
-        if (m) m.innerHTML = buildMsgMeta({ text: fullText || _sBubTxt, time: fmtTime() }, false);
-        _sBubId = null; _sBubTxt = "";
-        scrollBot();
-      }
-
       async function appendAITyped(text) {
         var container = document.getElementById("msgContainer");
         var bubId =
@@ -7209,6 +7590,20 @@
             pre.appendChild(btn);
           }
         });
+      }
+
+      function appendUserMsg(text) {
+        var container = document.getElementById("msgContainer");
+        var div = document.createElement("div");
+        div.className = "msg-group";
+        div.innerHTML =
+          '<div class="msg-row user"><div class="bwrap">' +
+          '<div class="bubble user">' +
+          esc(text) +
+          "</div></div>" +
+          '<div class="av user">U</div></div>';
+        container.appendChild(div);
+        scrollBot();
       }
 
       function appendAIMsg(text, isErr) {
@@ -7766,6 +8161,78 @@
         scrollBot();
       }
 
+      // Shows an animated "writing file" preview then replaces with final card
+      function _showWritingPreview(fn, content, lang, desc) {
+        var container = document.getElementById("msgContainer");
+        var lines = (content || "").split("\n");
+        var previewLines = lines.slice(0, 18); // show first 18 lines live
+        var remaining = lines.length - previewLines.length;
+
+        // Create a live preview card
+        var previewId = "writing_" + Date.now();
+        var div = document.createElement("div");
+        div.className = "msg-group";
+        div.id = previewId;
+        div.innerHTML =
+          '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap" style="max-width:95%">' +
+          '<div class="file-out-card" style="border-color:rgba(124,111,255,0.5)">' +
+          '<div class="fo-head">' +
+          '<div class="fo-icon">' +
+          getFileIcon(fn) +
+          "</div>" +
+          '<div class="fo-info">' +
+          '<div class="fo-name">' +
+          esc(fn) +
+          "</div>" +
+          '<div class="fo-meta" style="color:var(--acc)">✍️ Writing ' +
+          lines.length +
+          " lines…</div>" +
+          "</div></div>" +
+          '<div class="fo-preview" style="max-height:220px;overflow:hidden"><pre id="' +
+          previewId +
+          '_pre" style="font-size:11px;line-height:1.5"></pre></div>' +
+          "</div></div></div>";
+        container.appendChild(div);
+        scrollBot();
+
+        var pre = document.getElementById(previewId + "_pre");
+        var shown = [];
+        var lineIdx = 0;
+
+        function writeNextLine() {
+          if (lineIdx < previewLines.length) {
+            shown.push(esc(previewLines[lineIdx]));
+            if (pre)
+              pre.innerHTML =
+                shown.join("\n") +
+                (lineIdx < previewLines.length - 1
+                  ? "\n<span style='opacity:.4'>▋</span>"
+                  : "");
+            lineIdx++;
+            scrollBot();
+            setTimeout(writeNextLine, Math.min(60, 1200 / previewLines.length));
+          } else {
+            // Done animating — replace with real card
+            if (pre) {
+              pre.innerHTML =
+                shown.join("\n") +
+                (remaining > 0
+                  ? '\n<span style="opacity:.5">… +' +
+                    remaining +
+                    " more lines</span>"
+                  : "");
+            }
+            setTimeout(function () {
+              var old = document.getElementById(previewId);
+              if (old) old.remove();
+              appendFileOutput(fn, content, desc);
+              if (cfg.autoSplit) openFileInSplit(fn);
+            }, 600);
+          }
+        }
+        writeNextLine();
+      }
+
       function appendZipOutput(zipName, files, size) {
         var container = document.getElementById("msgContainer");
         var div = document.createElement("div");
@@ -8157,14 +8624,9 @@
                   "</div>",
               )
               .join("") + vpsWarn;
-          document.getElementById("healthDot").className = d.ollama ? "mdot on" : "mdot red";
-          if (d.model) {
-            var _ml = document.getElementById("modelLabel");
-            if (_ml) {
-              var _mn = d.model.split("|")[0].trim().split("/").pop().split(":")[0];
-              _ml.textContent = "📐 " + _mn + " · SPS v6";
-            }
-          }
+          document.getElementById("healthDot").className = d.ollama
+            ? "mdot on"
+            : "mdot red";
           if (d.model) {
             var _ml2 = document.getElementById("modelLabel");
             if (_ml2) {
@@ -9454,19 +9916,37 @@
       // ═══════════════════════════════════════════════════════════
       //  BOOT
       // ═══════════════════════════════════════════════════════════
-      var GOOGLE_CLIENT_ID = ""; // set your Google OAuth client ID here
+      var GOOGLE_CLIENT_ID =
+        "344884965806-j4l0ao5clql2jk34ruh92pd85ipg3f0m.apps.googleusercontent.com"; // set your Google OAuth client ID here
 
       function triggerGoogleSignIn() {
         if (window.google && window.google.accounts && GOOGLE_CLIENT_ID) {
-          window.google.accounts.id.initialize({
+          // Use renderButton + programmatic click — works in all browsers,
+          // avoids the One Tap popup which Chrome blocks as a pop-under.
+          google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
             callback: handleGoogleCredential,
             auto_select: false,
+            cancel_on_tap_outside: false,
           });
-          window.google.accounts.id.prompt(function (n) {
-            if (n.isNotDisplayed() || n.isSkippedMoment())
-              googleSignInFallback();
+          // Create a hidden div, render the button into it, click it
+          var _div = document.getElementById("_gsi_hidden") || document.createElement("div");
+          _div.id = "_gsi_hidden";
+          _div.style.cssText = "position:absolute;opacity:0;pointer-events:none;top:0;left:0;width:1px;height:1px;overflow:hidden";
+          document.body.appendChild(_div);
+          _div.innerHTML = "";
+          google.accounts.id.renderButton(_div, {
+            type: "standard", theme: "outline", size: "large"
           });
+          var _btn = _div.querySelector("div[role=button]") || _div.querySelector("button");
+          if (_btn) { _btn.click(); return; }
+          // Fallback: use OAuth2 popup flow
+          var _oauthUrl = "https://accounts.google.com/o/oauth2/v2/auth?" +
+            "client_id=" + encodeURIComponent(GOOGLE_CLIENT_ID) +
+            "&redirect_uri=" + encodeURIComponent(window.location.origin + window.location.pathname) +
+            "&response_type=token+id_token&scope=openid%20email%20profile&nonce=" + Math.random().toString(36).slice(2);
+          var _win = window.open(_oauthUrl, "google_auth", "width=500,height=600");
+          if (!_win) googleSignInFallback();
         } else googleSignInFallback();
       }
 
@@ -9534,10 +10014,25 @@
       }
 
       function loadGoogleScript() {
+        if (document.getElementById("_gsi_script")) return;
         var s = document.createElement("script");
+        s.id = "_gsi_script";
         s.src = "https://accounts.google.com/gsi/client";
         s.async = true;
         s.defer = true;
+        s.onload = function () {
+          // Pre-initialize so the button is ready when user clicks
+          if (window.google && window.google.accounts && GOOGLE_CLIENT_ID) {
+            try {
+              google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredential,
+                auto_select: false,
+                cancel_on_tap_outside: false,
+              });
+            } catch(e) { console.warn("[GSI]", e); }
+          }
+        };
         document.head.appendChild(s);
       }
 
@@ -9597,106 +10092,6 @@
         localStorage.setItem("sps_projects", JSON.stringify(projs));
         _renderProj();
         showToast("Project '" + n + "' created!", "ok");
-      }
-
-      // ── GOOGLE SIGN IN ─────────────────────────────────────
-      async function googleSignIn() {
-        var email = prompt("Enter your Google account email:");
-        if (!email || !email.includes("@")) return;
-        email = email.trim().toLowerCase();
-        var btn = document.getElementById("googleBtn");
-        if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
-        try {
-          var r = await fetch(getServer() + "/signup", {
-            method: "POST", headers: CH, body: JSON.stringify({ email: email })
-          });
-          var d = await r.json();
-          if (d.success) {
-            localStorage.setItem("sps_em", email);
-            document.getElementById("sentToEmail").textContent = email;
-            setAS("signupStatus", "Code sent to " + email, "ok");
-            setTimeout(function() { showScreen("verifyScreen"); }, 700);
-          } else { setAS("signupStatus", d.message || "Failed", "err"); }
-        } catch (e) { setAS("signupStatus", "Cannot reach server. Set Server URL first.", "err"); }
-        if (btn) { btn.disabled = false; btn.innerHTML = '✓ Continue with Google'; }
-      }
-
-      // ── SHARE CHAT ──────────────────────────────────────────
-      function shareChat() {
-        var msgs = document.getElementById("msgContainer");
-        if (!msgs) return;
-        var text = "";
-        msgs.querySelectorAll(".msg-group").forEach(function(g) {
-          var isU = g.querySelector(".msg-row.user");
-          var b = g.querySelector(".bubble");
-          if (b) text += (isU ? "You: " : "AI: ") + (b.textContent || "").trim() + "\n\n";
-        });
-        if (navigator.share) {
-          navigator.share({ title: "SPS Agent Chat", text: text.slice(0, 2000) }).catch(function() {});
-        } else {
-          navigator.clipboard.writeText(text);
-          showToast("Chat copied to clipboard!", "ok");
-        }
-      }
-
-      // ── PROJECTS ────────────────────────────────────────────
-      function _renderProj() {
-        var el = document.getElementById("projectsList");
-        if (!el) return;
-        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
-        if (!projs.length) {
-          el.innerHTML = '<div style="color:var(--tx3);font-size:11px;padding:2px 8px">No projects yet</div>';
-          return;
-        }
-        el.innerHTML = projs.map(function(p, i) {
-          return '<div style="display:flex;align-items:center;padding:3px 8px;border-radius:6px;cursor:pointer;gap:4px" onclick="_openProj(' + i + ')">'
-            + '<span>📂</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px">'
-            + esc(p.name) + '</span>'
-            + '<button onclick="event.stopPropagation();_delProj(' + i + ')" style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:10px">×</button>'
-            + '</div>';
-        }).join("");
-      }
-      function newProject() {
-        var n = prompt("Project name:");
-        if (!n) return;
-        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
-        projs.push({ name: n, created: Date.now() });
-        localStorage.setItem("sps_projects", JSON.stringify(projs));
-        _renderProj();
-        showToast("Project created!", "ok");
-      }
-      function _openProj(i) {
-        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
-        showToast("Project: " + (projs[i] || { name: "?" }).name, "ok");
-      }
-      function _delProj(i) {
-        if (!confirm("Delete project?")) return;
-        var projs = JSON.parse(localStorage.getItem("sps_projects") || "[]");
-        projs.splice(i, 1);
-        localStorage.setItem("sps_projects", JSON.stringify(projs));
-        _renderProj();
-      }
-
-      // ── PRINT CHAT ──────────────────────────────────────────
-      function printChat() {
-        var msgs = document.getElementById("msgContainer");
-        if (!msgs) return;
-        var w = window.open("", "_blank");
-        var css = "body{font-family:sans-serif;max-width:860px;margin:0 auto;padding:20px;background:#fff;color:#111}"
-          + ".u{background:#f0f4ff;border-radius:8px;padding:10px;margin:8px 0}"
-          + ".a{background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:10px;margin:8px 0}"
-          + "pre{background:#1e1e1e;color:#fff;padding:10px;border-radius:6px;overflow-x:auto;white-space:pre-wrap}";
-        var html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>SPS Chat</title><style>" + css + "</style></head><body>";
-        html += "<h2>SPS Agent Chat</h2>";
-        msgs.querySelectorAll(".msg-group").forEach(function(g) {
-          var isU = g.querySelector(".msg-row.user");
-          var b = g.querySelector(".bubble");
-          if (b) html += "<div class=\"" + (isU ? "u" : "a") + "\">"
-            + (isU ? "<b>You</b>" : "<b>AI</b>") + "<br>" + b.innerHTML + "</div>";
-        });
-        html += "</body></html>";
-        w.document.open(); w.document.write(html); w.document.close();
-        setTimeout(function() { w.print(); }, 500);
       }
 
       window.onload = function () {
