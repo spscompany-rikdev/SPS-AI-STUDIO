@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>SPS AI Agent Studio v7</title>
+    <title>SPS AI Agent Studio</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
@@ -2868,17 +2868,17 @@
       }
       .comp-ta {
         width: 100%;
-        min-height: 44px;
-        max-height: 200px;
-        padding: 12px 14px 6px;
+        min-height: 100px;
+        max-height: 320px;
+        padding: 14px 16px 8px;
         background: transparent;
         border: none;
         color: var(--tx);
-        font-size: 13px;
+        font-size: 14px;
         font-family: inherit;
         resize: none;
         outline: none;
-        line-height: 1.65;
+        line-height: 1.7;
         overflow-y: auto;
       }
       .comp-actions {
@@ -3269,10 +3269,317 @@
         float: right;
         margin-top: -2px;
       }
+
+      /* ── Enhanced Thinking Block (DeepSeek-R1) ── */
+      .think-block.r1 {
+        border-color: rgba(34, 211, 238, 0.35);
+        background: rgba(34, 211, 238, 0.04);
+      }
+      .think-block.r1 .think-lbl { color: var(--cyan); }
+      .think-block.r1 .think-badge { background: rgba(34,211,238,0.12); color: var(--cyan); }
+      .think-block.r1 .think-ico { background: rgba(34,211,238,0.12); }
+      .think-raw {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        line-height: 1.7;
+        color: var(--tx2);
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: rgba(0,0,0,0.2);
+        padding: 10px 12px;
+        border-radius: 7px;
+        margin-top: 6px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      /* ── Claude-style opening/closing sentence ── */
+      .claude-opening {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 13px;
+        background: linear-gradient(90deg, rgba(108,99,255,0.07), transparent);
+        border-left: 3px solid var(--acc);
+        border-radius: 0 7px 7px 0;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: var(--tx);
+        font-weight: 500;
+      }
+      .claude-closing {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: rgba(34,197,94,0.07);
+        border-left: 3px solid var(--green);
+        border-radius: 0 7px 7px 0;
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--green);
+      }
+      /* ── Role selector modal ── */
+      .role-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.75);
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(6px);
+      }
+      .role-modal {
+        background: var(--bg2);
+        border: 1px solid var(--bd2);
+        border-radius: 18px;
+        padding: 36px 32px 28px;
+        width: 540px;
+        max-width: 96vw;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        animation: fup 0.2s ease;
+      }
+      .role-modal-title {
+        font-size: 22px;
+        font-weight: 900;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, var(--tx), var(--acc2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .role-modal-sub {
+        font-size: 13px;
+        color: var(--tx2);
+        margin-bottom: 26px;
+        line-height: 1.6;
+      }
+      .role-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .role-card {
+        padding: 16px 15px;
+        background: var(--bg3);
+        border: 2px solid var(--bd);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+        text-align: left;
+      }
+      .role-card:hover { border-color: var(--acc); background: var(--bg4); }
+      .role-card.selected { border-color: var(--acc); background: var(--accl); }
+      .role-card-icon { font-size: 24px; margin-bottom: 8px; }
+      .role-card-name { font-size: 13.5px; font-weight: 800; color: var(--tx); margin-bottom: 3px; }
+      .role-card-desc { font-size: 11px; color: var(--tx3); line-height: 1.5; }
+      .role-card-model { font-size: 10px; color: var(--acc); margin-top: 6px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+      .role-confirm-btn {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, var(--acc), var(--pink));
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        letter-spacing: 0.3px;
+      }
+      /* ── Engineer model selector bar (in chat) ── */
+      .eng-model-bar {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        background: var(--bg3);
+        border-bottom: 1px solid var(--bd);
+        flex-shrink: 0;
+        font-size: 11.5px;
+        color: var(--tx2);
+      }
+      .eng-model-bar.visible { display: flex; }
+      .eng-model-btn {
+        padding: 4px 11px;
+        border-radius: 6px;
+        border: 1px solid var(--bd);
+        background: var(--bg4);
+        font-family: inherit;
+        font-size: 11px;
+        color: var(--tx2);
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.12s;
+      }
+      .eng-model-btn.active {
+        background: var(--acc);
+        color: #fff;
+        border-color: var(--acc);
+      }
+      .eng-quality-select {
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--bd);
+        background: var(--bg4);
+        color: var(--tx);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        outline: none;
+        margin-left: auto;
+      }
+      /* ── VRAM status badge ── */
+      .vram-badge {
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(34,197,94,0.1);
+        color: var(--green);
+        border: 1px solid rgba(34,197,94,0.2);
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .vram-badge.warn { background: var(--yellowl); color: var(--yellow); border-color: rgba(240,180,41,0.25); }
+      /* ── Image generation card ── */
+      .img-gen-card {
+        margin: 10px 0;
+        border: 1px solid rgba(249,115,22,0.3);
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(249,115,22,0.03);
+      }
+      .img-gen-head {
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        border-bottom: 1px solid rgba(249,115,22,0.15);
+      }
+      .img-gen-result img {
+        width: 100%; max-width: 100%; border-radius: 0 0 12px 12px;
+        display: block;
+      }
+      /* ── Model info pill in header ── */
+      .model-pill {
+        font-size: 10px;
+        padding: 3px 9px;
+        border-radius: 20px;
+        background: var(--accl);
+        color: var(--acc2);
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid rgba(108,99,255,0.2);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 160px;
+      }
+
+      /* ── Dual GPU Status Widget ── */
+      .gpu-widget {
+        display: flex; gap: 8px; padding: 7px 12px;
+        background: var(--bg3); border-bottom: 1px solid var(--bd);
+        flex-shrink: 0; font-size: 11px; color: var(--tx3); align-items: center;
+      }
+      .gpu-bar-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+      .gpu-bar-row  { display: flex; align-items: center; gap: 6px; }
+      .gpu-bar-label{ font-size: 10px; color: var(--tx3); width: 32px; flex-shrink:0; font-family:monospace; }
+      .gpu-bar-bg   { flex: 1; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+      .gpu-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+      .gpu-temp     { font-size: 10px; font-family: 'JetBrains Mono',monospace; color: var(--tx3); width: 34px; text-align: right; }
+      .gpu-model-name{ font-size: 10px; color: var(--acc2); font-weight: 700; margin-left: 4px;
+                        max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   </head>
   <body>
+
+<!-- ── SERVER SETUP MODAL (shown when no server URL is saved) ── -->
+<div id="serverSetupModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+  <div style="background:var(--bg2);border:1px solid var(--bd2);border-radius:18px;padding:36px 32px 28px;width:520px;max-width:95vw;box-shadow:0 30px 80px rgba(0,0,0,0.7);animation:fup 0.2s ease">
+    <div style="font-size:22px;font-weight:900;margin-bottom:6px;background:linear-gradient(90deg,var(--tx),var(--acc2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">🔗 Connect to your SPS Server</div>
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:22px;line-height:1.7">
+      SPS runs on your <strong>Kaggle notebook</strong>. Paste the tunnel URL from your running notebook cell below.
+      <br><br>
+      <span style="color:var(--tx3);font-size:12px">Don't have it yet? Start your Kaggle notebook first, then come back here.</span>
+    </div>
+    <div style="font-size:11px;color:var(--tx3);margin-bottom:6px;font-weight:700">KAGGLE TUNNEL URL</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input id="setupSrvInput" type="text" placeholder="https://xxxx-xxxx.ngrok-free.app"
+        style="flex:1;padding:11px 13px;background:var(--bg3);border:1.5px solid var(--bd2);border-radius:9px;color:var(--tx);font-family:monospace;font-size:12px;outline:none"
+        onkeydown="if(event.key==='Enter')connectFromModal()"
+      />
+    </div>
+    <button onclick="connectFromModal()"
+      style="width:100%;padding:13px;background:linear-gradient(135deg,var(--acc),var(--pink));color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:10px">
+      Connect →
+    </button>
+    <div style="font-size:11px;color:var(--tx3);text-align:center;line-height:1.8">
+      You can change this anytime in <strong>Settings → Connection</strong>
+      <br>
+      <a onclick="dismissServerModal()" style="color:var(--acc2);cursor:pointer;text-decoration:underline">Skip for now</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── ROLE SELECTOR MODAL ─────────────────────────────── -->
+<div id="roleSelectorOverlay" class="role-modal-overlay">
+  <div class="role-modal">
+    <div class="role-modal-title">✦ Welcome to SPS</div>
+    <div class="role-modal-sub">Choose your role so SPS can assign you the perfect AI specialist. You can change this anytime in Settings.</div>
+    <div class="role-grid" id="roleGrid">
+      <div class="role-card" data-role="general" onclick="selectRole(this)">
+        <div class="role-card-icon">💬</div>
+        <div class="role-card-name">General User</div>
+        <div class="role-card-desc">Everyday tasks, questions, writing, research</div>
+        <div class="role-card-model">SPS-Chat-72B</div>
+      </div>
+      <div class="role-card" data-role="software_engineer" onclick="selectRole(this)">
+        <div class="role-card-icon">💻</div>
+        <div class="role-card-name">Software Engineer</div>
+        <div class="role-card-desc">Code generation, debugging, architecture</div>
+        <div class="role-card-model">SPS-Coder-16B + SPS-StarCoder-15B</div>
+      </div>
+      <div class="role-card" data-role="researcher" onclick="selectRole(this)">
+        <div class="role-card-icon">🔬</div>
+        <div class="role-card-name">Researcher</div>
+        <div class="role-card-desc">Deep analysis, math, reasoning, literature</div>
+        <div class="role-card-model">SPS-Reason-8B (DeepSeek-R1)</div>
+      </div>
+      <div class="role-card" data-role="data_scientist" onclick="selectRole(this)">
+        <div class="role-card-icon">📊</div>
+        <div class="role-card-name">Data Scientist</div>
+        <div class="role-card-desc">ML, statistics, data analysis, visualizations</div>
+        <div class="role-card-model">SPS-Reason-8B + SPS-Coder-16B</div>
+      </div>
+      <div class="role-card" data-role="student" onclick="selectRole(this)">
+        <div class="role-card-icon">🎓</div>
+        <div class="role-card-name">Student</div>
+        <div class="role-card-desc">Homework, explanations, study support</div>
+        <div class="role-card-model">SPS-Chat-72B</div>
+      </div>
+      <div class="role-card" data-role="creative" onclick="selectRole(this)">
+        <div class="role-card-icon">🎨</div>
+        <div class="role-card-name">Creative</div>
+        <div class="role-card-desc">Writing, images, videos, storytelling</div>
+        <div class="role-card-model">SPS-Chat-72B + SPS-Image-FLUX</div>
+      </div>
+      <div class="role-card" data-role="devops" onclick="selectRole(this)">
+        <div class="role-card-icon">⚙️</div>
+        <div class="role-card-name">DevOps / SRE</div>
+        <div class="role-card-desc">Scripts, automation, infra, deployment</div>
+        <div class="role-card-model">SPS-Agent-7B</div>
+      </div>
+      <div class="role-card" data-role="general" onclick="selectRole(this)">
+        <div class="role-card-icon">🌐</div>
+        <div class="role-card-name">Other</div>
+        <div class="role-card-desc">Let SPS auto-route based on your messages</div>
+        <div class="role-card-model">Auto-Router</div>
+      </div>
+    </div>
+    <button class="role-confirm-btn" onclick="confirmRole()">Start Chatting →</button>
+  </div>
+</div>
+
     <div class="toast-stack" id="toastStack"></div>
 
     <div
@@ -3530,7 +3837,7 @@
           <div class="auth-logo-box">SPS</div>
           <div class="auth-logo-txt">SPS <span>Agent</span></div>
         </div>
-        <div class="auth-title">AI Agent Studio v7</div>
+        <div class="auth-title">SPS AI Agent Studio</div>
         <div class="auth-sub">
           Powered by Qwen2.5-Coder. Plans deeply, creates files, tests in
           VPS/Docker/Linux sandbox, fixes all errors, searches the web in
@@ -3813,7 +4120,7 @@
             <div
               class="model-badge"
               onclick="checkHealth()"
-              title="Click to check server status · Dual-Model Router: DeepSeek-R1 (code) + Llama3.1 (tools)"
+              title="Click to check server status · SPS Multi-Router — 5 Specialist Models on Dual T4"
             >
               <div class="mdot on" id="healthDot"></div>
               <span id="modelLabel">📐 Triple-Router · SPS</span>
@@ -3986,6 +4293,39 @@
           <div class="ac-log" id="aiLiveLog" style="display: none"></div>
         </div>
 
+        <!-- ── Dual T4 GPU Status Bar ─────────────────────────── -->
+        <div class="gpu-widget" id="gpuWidget">
+          <span style="font-size:10px;font-weight:700;color:var(--tx3);flex-shrink:0">GPU</span>
+          <div class="gpu-bar-wrap">
+            <div class="gpu-bar-row">
+              <span class="gpu-bar-label">T4·0</span>
+              <div class="gpu-bar-bg"><div class="gpu-bar-fill" id="gpuBar0" style="width:0%;background:var(--green)"></div></div>
+              <span class="gpu-temp" id="gpuTemp0">--°C</span>
+            </div>
+            <div class="gpu-bar-row">
+              <span class="gpu-bar-label">T4·1</span>
+              <div class="gpu-bar-bg"><div class="gpu-bar-fill" id="gpuBar1" style="width:0%;background:var(--cyan)"></div></div>
+              <span class="gpu-temp" id="gpuTemp1">--°C</span>
+            </div>
+          </div>
+          <span class="gpu-model-name" id="gpuModelName">No model loaded</span>
+          <span class="vram-badge" id="gpuFreeBadge">-- GB free</span>
+        </div>
+        <!-- ── Engineer model selector bar ──────────────────────── -->
+        <div class="eng-model-bar" id="engModelBar">
+          <span style="color:var(--tx3);font-weight:700;font-size:11px">SPS Model:</span>
+          <button class="eng-model-btn active" id="engBtnDeepseek" onclick="setCoderVariant('deepseek')">SPS Coder-16B</button>
+          <button class="eng-model-btn" id="engBtnStar" onclick="setCoderVariant('starcoder')">SPS Star-15B</button>
+          <span style="color:var(--tx3);font-size:10px;margin-left:4px">Quality:</span>
+          <select class="eng-quality-select" id="engQualitySelect" onchange="setQualityLevel(this.value)">
+            <option value="low">Low (fast)</option>
+            <option value="default" selected>Default</option>
+            <option value="mid">Mid</option>
+            <option value="max">Max (best)</option>
+          </select>
+          <span class="vram-badge" id="vramBadge">VRAM: --</span>
+        </div>
+
         <div class="breadcrumb">
           <span>SPS Agent</span><span class="bc-sep">›</span>
           <span id="bcConv">New conversation</span>
@@ -3997,14 +4337,15 @@
               <div class="chat-inner" id="chatInner">
                 <div class="welcome" id="welcomeScreen">
                   <div class="w-glow"><span>📐</span></div>
-                  <div class="w-title">SPS Agent Studio v7</div>
+                  <div class="w-title">SPS Agent Studio</div>
                   <div class="w-sub">
-                    <strong style="color: var(--cyan)">🧠 DeepSeek-R1</strong>
-                    architects multi-file codebases with deep reasoning ·
-                    <strong style="color: var(--purple)">🤖 Llama 3.1</strong>
-                    orchestrates tools &amp; JSON with temperature=0 precision.
-                    The router automatically picks the right engine per step —
-                    keeping VRAM safe with q4_0 + keep_alive.
+                    <strong style="color: var(--cyan)">🧠 SPS-Reason-8B</strong>
+                    delivers deep step-by-step reasoning ·
+                    <strong style="color: var(--purple)">💻 SPS-Coder-16B</strong>
+                    writes production-ready code ·
+                    <strong style="color: var(--orange)">🎨 FLUX.2-klein-4B</strong>
+                    generates photorealistic images on dual T4.
+                    78 tools · 7 specialist models · both GPUs always active.
                   </div>
                   <div class="w-chips">
                     <span
@@ -4279,8 +4620,7 @@
                 </div>
                 <div class="inp-hint">
                   <span id="netStatus" style="color: var(--green)">●</span>
-                  Autonomous · <span id="serverHint">connecting…</span> ·
-                  <a onclick="openPanel('apiPanel')">change server</a> ·
+                  SPS · <span id="serverHint">connecting…</span> ·
                   <span id="themeLabel">dark</span> ·
                   <a onclick="openModal('shortcutsModal')">shortcuts</a>
                 </div>
@@ -4405,7 +4745,7 @@
               <span class="sbx-line info"
                 >╔══════════════════════════════════════════════════╗</span
               ><span class="sbx-line info"
-                >║ SPS Agent v7 — Live Sandbox View ║</span
+                >║ SPS Agent — Live Sandbox View ║</span
               ><span class="sbx-line info"
                 >║ VPS SSH → Docker → Local (auto-fallback) ║</span
               ><span class="sbx-line info"
@@ -4865,21 +5205,30 @@
             </div>
           </div>
           <div style="margin-top: 20px">
-            <div class="sgl">Server URL (ngrok)</div>
-            <div class="srv-row">
-              <input
-                class="srv-input"
-                id="serverUrlInput"
-                placeholder="https://xxx.ngrok-free.app"
-              />
-              <button class="srv-save" onclick="saveServerUrl()">
-                Save & Reload
-              </button>
+            <div class="sgl">CONNECTION</div>
+            <div style="padding:12px;background:var(--bg3);border:1px solid var(--bd);border-radius:9px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                <span id="connStatusDot" style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></span>
+                <span style="font-size:12px;font-weight:700;color:var(--tx)">SPS Server</span>
+                <span id="connStatusText" style="font-size:11px;color:var(--tx3);margin-left:auto">Checking…</span>
+              </div>
+              <div style="font-size:11px;color:var(--tx3);margin-bottom:8px;line-height:1.6">
+                Paste your Kaggle ngrok/cloudflared tunnel URL below.<br>
+                Get it from your running Kaggle notebook cell.
+              </div>
+              <div style="display:flex;gap:6px">
+                <input id="srvUrlInput" type="text"
+                  placeholder="https://xxxx.ngrok-free.app"
+                  style="flex:1;padding:7px 10px;background:var(--bg4);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-family:monospace;font-size:11px;outline:none"
+                  onkeydown="if(event.key==='Enter')saveServerUrl()"
+                />
+                <button onclick="saveServerUrl()"
+                  style="padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+                  Save
+                </button>
+              </div>
+              <div id="srvCurrentUrl" style="margin-top:8px;padding:5px 8px;background:var(--bg4);border-radius:6px;font-size:10px;color:var(--tx3);font-family:monospace;word-break:break-all"></div>
             </div>
-            <div style="font-size: 11px; color: var(--tx3); margin-top: 7px">
-              Recent URLs:
-            </div>
-            <div id="srvHist" style="margin-top: 5px"></div>
           </div>
           <div style="margin-top: 20px">
             <div class="sgl">Server Health</div>
@@ -5266,7 +5615,7 @@
       // ═══════════════════════════════════════════════════════════
       //  CONFIG & STATE
       // ═══════════════════════════════════════════════════════════
-      const DEFAULT_SERVER = "https://juice-emporium-frozen.ngrok-free.dev";
+      const DEFAULT_SERVER = "https://juice-emporium-frozen.ngrok-free.dev";  // Set at runtime via server URL modal
       const CH = {
         "Content-Type": "application/json",
         "x-sps-client": "sps_ai_web",
@@ -5335,7 +5684,7 @@
           body: "Build a Python CLI tool with argparse, multiple subcommands, colorized output (rich), progress bars, and comprehensive documentation",
         },
       ];
-      var currentTheme = "dark";
+      var currentTheme = "light";
       var keyHidden = true;
       var t0agent = 0;
       var fvpFilter = "";
@@ -5629,7 +5978,7 @@
         var names = Object.keys(sbx.files);
         if (!names.length) {
           el.innerHTML =
-            "<div style=\"color:#2a2a45;font-size:11px;font-family:'JetBrains Mono',monospace;padding:24px;text-align:center\">no files yet</div>";
+            "<div style=\"color:#2a2a45;font-size:11px;font-family:monospace;padding:24px;text-align:center\">no files yet</div>";
           return;
         }
         el.innerHTML = names
@@ -5665,7 +6014,7 @@
         if (!el) return;
         if (!sbx.runs.length) {
           el.innerHTML =
-            "<div style=\"color:#2a2a45;font-size:11px;font-family:'JetBrains Mono',monospace;padding:24px;text-align:center\">no runs yet</div>";
+            "<div style=\"color:#2a2a45;font-size:11px;font-family:monospace;padding:24px;text-align:center\">no runs yet</div>";
           return;
         }
         el.innerHTML = sbx.runs
@@ -5723,7 +6072,7 @@
         if (!el) return;
         if (!sbx.searches.length) {
           el.innerHTML =
-            "<div style=\"color:#2a2a45;font-size:11px;font-family:'JetBrains Mono',monospace;padding:24px;text-align:center\">no searches yet</div>";
+            "<div style=\"color:#2a2a45;font-size:11px;font-family:monospace;padding:24px;text-align:center\">no searches yet</div>";
           return;
         }
         el.innerHTML = sbx.searches
@@ -5752,7 +6101,7 @@
               .join("");
             return (
               '<div style="margin-bottom:12px">' +
-              "<div style=\"font-size:10px;color:#5a5a80;margin-bottom:5px;font-family:'JetBrains Mono',monospace\">🌐 " +
+              "<div style=\"font-size:10px;color:#5a5a80;margin-bottom:5px;font-family:monospace\">🌐 " +
               s.time +
               ' — "' +
               esc(s.query) +
@@ -5826,10 +6175,12 @@
       //  SERVER & FILES
       // ═══════════════════════════════════════════════════════════
       function getServer() {
-        return (localStorage.getItem("sps_server") || DEFAULT_SERVER).replace(
-          /\/$/,
-          "",
-        );
+        var saved = localStorage.getItem("sps_server") || DEFAULT_SERVER;
+        return saved.replace(/\/$/, "");
+      }
+      function needsServerSetup() {
+        var s = getServer();
+        return !s || s.trim() === "";
       }
 
       async function loadFilesFromServer() {
@@ -6621,9 +6972,9 @@
         }
         messages.push({ role: "user", content: lastContent });
 
-        setAgentStep("🧠 Thinking deeply…", "Sending to server", 5);
+        setAgentStep("🧠 SPS Thinking…", "Routing to specialist model", 5);
         showEngineBadge("agent"); // starts with agent engine routing
-        liveLog("→ Thinking… [📐 Dual-Router active]", "system");
+        liveLog("→ Routing to SPS Specialist… [📐 Massive Multi-Router]", "system");
         sbxTerm("→ Request sent to server…", "step");
 
         var t00 = Date.now();
@@ -6635,6 +6986,9 @@
               api_key: apiKey,
               messages: messages,
               system: cfg.sysPrompt || "",
+              user_role: localStorage.getItem("sps_role") || "general",
+              coder_variant: window.SPSCoderVariant || "deepseek",
+              quality_level: window.SPSQualityLevel || "default",
             }),
           });
           if (!res.ok) {
@@ -6680,7 +7034,7 @@
             (e.message.includes("fetch") ||
               e.message.includes("Failed") ||
               e.message.includes("network"))
-              ? "❌ Cannot connect to server.\n\nMake sure:\n1. Colab/server is running\n2. ngrok is active\n3. Server URL is set in API Key panel\n\nCurrent server: " +
+              ? "❌ Cannot connect to SPS server.\n\nMake sure:\n1. Kaggle notebook is running\n2. ngrok/cloudflared tunnel is active\n3. Server URL is set in API Key panel\n\nCurrent server: " +
                 (getServer() || "(not set)")
               : "Error: " + e.message;
           appendAIMsg(msg, true);
@@ -6713,27 +7067,54 @@
               });
               saveConvs();
             }
+            // Check if this is the last step — if so, add Claude-style closing
+            if (i === steps.length - 1) {
+              var ans = step.content || "";
+              // Extract last sentence as closing (if it looks like a completion sentence)
+              var closingMatch = ans.match(/(?:Done|Complete|Ready|Finished|All set|Everything is set up|You can run|The (?:server|app|script|code|project)|Here's what)[^.!]*[.!]/i);
+              if (closingMatch && closingMatch[0] && closingMatch[0].length < 150) {
+                appendClaudeClosing(closingMatch[0]);
+              }
+            }
           } else if (step.type === "text") {
             if (step.content && step.content.trim()) {
-              appendAIInline(step.content);
+              // Render Claude-style opening sentences in a highlighted block
+              var txt = step.content.trim();
+              if (i === 0 && txt.length < 200 && !txt.includes('\n') && !txt.includes('<tool')) {
+                appendClaudeOpening(txt);
+              } else {
+                appendAIInline(txt);
+              }
             }
-          } else if (step.type === "image") {
+          } else if (step.type === "image" || step.type === "image_local") {
             var _iw = document.createElement("div");
             _iw.className = "msg-group";
+            var imgSrc = "";
+            if (step.image_b64 && step.image_b64.length > 100) {
+              imgSrc = "data:image/png;base64," + step.image_b64;
+            } else {
+              imgSrc = step.image_url || "";
+            }
+            var modelLabel = step.model || (step.type === "image_local" ? "FLUX.1-dev (Dual T4)" : "FLUX.1-dev");
             _iw.innerHTML =
-              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap"><div class="bubble ai" style="padding:10px">' +
-              '<img src="' +
-              esc(step.image_url || "") +
-              '" style="max-width:100%;border-radius:8px;display:block" loading="lazy"/>' +
-              '<div style="font-size:11px;color:var(--tx3);margin-top:4px">' +
-              esc(step.prompt || "") +
-              "</div>" +
-              '<a href="' +
-              esc(step.image_url || "") +
-              '" download="ai-image.jpg" target="_blank" style="display:inline-block;margin-top:6px;padding:4px 12px;background:var(--acc);color:#fff;border-radius:6px;font-size:11px;text-decoration:none">⬇ Download</a>' +
-              "</div></div></div>";
+              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap" style="max-width:92%">' +
+              '<div class="img-gen-card">' +
+              '<div class="img-gen-head">' +
+              '<span style="font-size:20px">🎨</span>' +
+              '<span style="font-size:13px;font-weight:800;color:var(--orange)">SPS Image — ' + esc(modelLabel) + '</span>' +
+              '<span style="font-size:11px;color:var(--tx3);margin-left:auto">' + esc(step.style || "photorealistic") + '</span>' +
+              '</div>' +
+              '<div class="img-gen-result">' +
+              (imgSrc ? '<img src="' + esc(imgSrc) + '" style="max-width:100%;display:block" loading="lazy"/>' : '<div style="padding:30px;text-align:center;color:var(--tx3);font-size:12px">⏳ Generating…</div>') +
+              '</div>' +
+              '<div style="padding:10px 14px;display:flex;align-items:center;gap:8px">' +
+              '<span style="font-size:11px;color:var(--tx3);flex:1">' + esc((step.prompt||"").slice(0,100)) + '</span>' +
+              (imgSrc ? '<a href="' + esc(imgSrc) + '" download="sps-image.png" target="_blank" style="padding:5px 13px;background:var(--orange);color:#fff;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none">⬇ Download</a>' : '') +
+              '</div>' +
+              '</div></div></div>';
             document.getElementById("msgContainer").appendChild(_iw);
             scrollBot();
+            liveLog("🎨 Image generated via " + modelLabel, "search");
           } else if (step.type === "diagram") {
             var _dw = document.createElement("div");
             _dw.className = "msg-group";
@@ -6751,6 +7132,9 @@
               } catch (_e) {}
             }
             scrollBot();
+          } else if (step.type === "thinking") {
+            // ── DeepSeek-R1 visible thinking block ──
+            renderThinkingBlock(step);
           } else if (step.type === "tool") {
             processToolStep(step);
           } else if (step.type === "ask_user") {
@@ -6878,12 +7262,12 @@
           el.style.background = "rgba(34,211,238,0.12)";
           el.style.color = "var(--cyan)";
           el.style.borderColor = "rgba(34,211,238,0.3)";
-          el.textContent = "🧠 DeepSeek-R1";
+          el.textContent = "🧠 SPS-Reason-8B";
         } else {
           el.style.background = "var(--purplel)";
           el.style.color = "var(--purple)";
           el.style.borderColor = "rgba(168,85,247,0.25)";
-          el.textContent = "🤖 Llama3.1";
+          el.textContent = "🤖 SPS-Agent-7B";
         }
       }
       function hideEngineBadge() {
@@ -6997,8 +7381,8 @@
           code_review: 1,
         };
         var engineTag = CODING_TOOLS_SET[tool]
-          ? "<span style=\"font-size:9px;padding:1px 5px;background:rgba(34,211,238,0.12);color:var(--cyan);border-radius:3px;margin-right:4px;font-family:'JetBrains Mono',monospace\">DeepSeek-R1</span>"
-          : "<span style=\"font-size:9px;padding:1px 5px;background:var(--purplel);color:var(--purple);border-radius:3px;margin-right:4px;font-family:'JetBrains Mono',monospace\">Llama3.1</span>";
+          ? "<span style=\"font-size:9px;padding:1px 5px;background:rgba(34,211,238,0.12);color:var(--cyan);border-radius:3px;margin-right:4px;font-family:monospace\">DeepSeek-R1</span>"
+          : "<span style=\"font-size:9px;padding:1px 5px;background:var(--purplel);color:var(--purple);border-radius:3px;margin-right:4px;font-family:monospace\">Llama3.1</span>";
         var toolLabel = toolEmoji[tool] || "🔧";
         var toolMsg = engineTag + toolLabel + " " + tool.replace(/_/g, " ");
         if (params.filename) toolMsg += ": " + params.filename;
@@ -7381,35 +7765,117 @@
           return;
         }
 
-        // ── IMAGE GENERATION ─────────────────────────────────────
+        // ── GPU STATUS ───────────────────────────────────────────
+        if (tool === "gpu_status" && result.ok) {
+          renderGPUStatus(result); return;
+        }
+        // ── ENV CHECK ────────────────────────────────────────────
+        if (tool === "env_check" && result.ok) {
+          var gpuList = (result.gpus||[]).join(" | ") || "No GPU detected";
+          var pkgRows = Object.entries(result.packages||{}).map(function(kv){
+            var ok2 = kv[1] !== "NOT INSTALLED";
+            return '<span style="margin-right:10px;color:' + (ok2?'var(--green)':'var(--red)') + '">' + (ok2?'✅':'❌') + ' ' + esc(kv[0]) + '</span>';
+          }).join('');
+                    var envText = "GPU: " + gpuList + " | VRAM: " + result.vram_free_gb + "GB free | Model: " + (result.current_model||"none") + " | Disk: " + ((result.disk_gb||{}).free||"?") + "GB free | RAM: " + Math.round(((result.ram_mb||{}).available||0)/1024) + "GB free";
+          var envWrap = document.createElement("div"); envWrap.className="msg-group";
+          envWrap.innerHTML='<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap" style="max-width:94%"><div class="bubble ai" style="padding:12px"><div style="font-size:12px;font-weight:800;color:var(--acc2);margin-bottom:8px">🖥 Environment Check</div><div style="font-size:11px;color:var(--tx2);line-height:1.9">'+esc(envText)+'</div><div style="margin-top:8px;font-size:11px">'+pkgRows+'</div></div></div></div>';
+          document.getElementById("msgContainer").appendChild(envWrap); scrollBot(); return;
+        }
+        // ── SECURITY SCAN ────────────────────────────────────────
+        if (tool === "security_scan" && result.ok) {
+          var issues = result.issues || [];
+          var html2 = '<div style="padding:12px;background:var(--bg3);border:1px solid rgba(239,68,68,0.3);border-radius:10px">' +
+            '<div style="font-size:12px;font-weight:800;color:var(--red);margin-bottom:8px">🔒 Security Scan: ' + esc(result.filename||'') + '</div>' +
+            (result.clean ? '<div style="color:var(--green);font-size:12px">✅ No vulnerabilities detected</div>' :
+              issues.map(function(i){
+                return '<div style="margin-bottom:8px;padding:8px;background:var(--bg4);border-radius:7px;border-left:3px solid ' + (i.severity==="HIGH"?"var(--red)":"var(--orange)") + '">' +
+                  '<div style="font-size:11px;font-weight:800;color:' + (i.severity==="HIGH"?"var(--red)":"var(--orange)") + '">' + esc(i.severity) + ': ' + esc(i.vulnerability) + ' (line ' + i.line + ')</div>' +
+                  '<div style="font-size:11px;color:var(--tx3);font-family:monospace;margin-top:3px">' + esc(i.snippet) + '</div></div>';
+              }).join('')
+            ) +
+            '<div style="font-size:10px;color:var(--tx3);margin-top:6px">' + result.issue_count + ' issues · ' + (result.high||0) + ' HIGH</div>' +
+            '</div>';
+          var sw = document.createElement("div"); sw.className="msg-group";
+          sw.innerHTML='<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap" style="max-width:92%"><div class="bubble ai" style="padding:8px">'+html2+'</div></div></div>';
+          document.getElementById("msgContainer").appendChild(sw); scrollBot(); return;
+        }
+        // ── IMAGE GENERATION (FLUX.2-klein-4B Dual T4) ───────────
         if (tool === "image_gen") {
-          if (result.ok && result.image_url) {
-            sbxTerm("🎨 Generating image: " + (params.prompt || "").slice(0,60), "step");
+          if (result.ok) {
+            var modelUsed = result.model || "FLUX.1-dev";
+            var isLocal   = result.type === "image_local" || !!result.image_b64;
+            sbxTerm("🎨 Image generated via " + modelUsed, "step");
             var imgWrap = document.createElement("div");
             imgWrap.className = "msg-group";
-            var imgId = "img_" + Date.now();
+            // Determine src: local b64 or remote URL
+            var imgSrc2 = "";
+            if (result.image_b64 && result.image_b64.length > 100) {
+              imgSrc2 = "data:image/png;base64," + result.image_b64;
+            } else if (result.image_url) {
+              imgSrc2 = result.image_url;
+            }
             imgWrap.innerHTML =
-              '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap">' +
-              '<div class="bubble ai" style="padding:10px 12px">' +
-              '<div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px">🎨 Generated Image</div>' +
-              '<img id="' + imgId + '" src="' + esc(result.image_url) + '" ' +
-              'style="max-width:100%;border-radius:10px;display:block;border:1px solid var(--brd)" ' +
-              'onerror="this.src=\'https://via.placeholder.com/512x512?text=Generation+Failed\'" loading="lazy"/>' +
-              '<div style="font-size:12px;color:var(--tx3);margin-top:6px;font-style:italic">' + esc(params.prompt || "") + '</div>' +
-              '<div style="display:flex;gap:8px;margin-top:8px">' +
-              '<a href="' + esc(result.image_url) + '" download="ai-image.jpg" target="_blank" ' +
-              'style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--acc);' +
-              'color:#fff;border-radius:6px;font-size:12px;text-decoration:none;font-weight:600">⬇ Download</a>' +
-              '<a href="' + esc(result.image_url) + '" target="_blank" ' +
-              'style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:var(--bg2);' +
-              'color:var(--tx1);border:1px solid var(--brd);border-radius:6px;font-size:12px;text-decoration:none">🔗 Open</a>' +
+              '<div class="msg-row ai"><div class="av ai">✦</div>' +
+              '<div class="bwrap" style="max-width:92%">' +
+              '<div class="img-gen-card">' +
+              '<div class="img-gen-head">' +
+              '<span style="font-size:20px">🎨</span>' +
+              '<span style="font-size:13px;font-weight:800;color:var(--orange)">SPS Image · ' + esc(modelUsed) + '</span>' +
+              (isLocal ? '<span style="margin-left:auto;font-size:10px;padding:2px 8px;background:rgba(34,197,94,0.12);color:var(--green);border-radius:10px;font-weight:700">LOCAL GPU</span>' : '<span style="margin-left:auto;font-size:10px;padding:2px 8px;background:var(--bg4);color:var(--tx3);border-radius:10px">API</span>') +
+              '</div>' +
+              '<div class="img-gen-result">' +
+              (imgSrc2
+                ? '<img src="' + esc(imgSrc2) + '" style="max-width:100%;display:block;border-radius:0 0 10px 10px" loading="lazy"/>'
+                : '<div style="padding:40px;text-align:center;color:var(--tx3);font-size:13px">⏳ Generating on Dual T4…<br><small>FLUX.1-dev BF16 · 28 steps · 1024×1024</small></div>') +
+              '</div>' +
+              '<div style="padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+              '<span style="font-size:11px;color:var(--tx3);flex:1;min-width:120px">' + esc((params.prompt||"").slice(0,120)) + '</span>' +
+              (imgSrc2
+                ? '<a href="' + esc(imgSrc2) + '" download="sps-flux-image.png" style="padding:5px 13px;background:var(--orange);color:#fff;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none">⬇ Download</a>' +
+                  '<a href="' + esc(imgSrc2) + '" target="_blank" style="padding:5px 13px;background:var(--bg4);color:var(--tx);border:1px solid var(--bd);border-radius:7px;font-size:11px;font-weight:700;text-decoration:none">🔗 Open</a>'
+                : '') +
               '</div></div></div></div>';
             document.getElementById("msgContainer").appendChild(imgWrap);
             scrollBot();
+            // ── Timer tool ───────────────────────────────────────────
           } else {
             sbxTerm("🎨 Image generation failed: " + (result.error || "unknown"), "error");
           }
           return;
+        }
+        // ── TIMER ─────────────────────────────────────────────────
+        if (tool === "timer" && result.ok) {
+          var tsec3   = parseInt(result.seconds) || 60;
+          var tlabel3 = result.label || "Timer";
+          var tid3    = "timer_" + Date.now();
+          var tw3     = document.createElement("div");
+          tw3.className = "msg-group";
+          tw3.innerHTML =
+            '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap">' +
+            '<div style="padding:14px 18px;background:var(--bg3);border:1px solid rgba(34,211,238,0.3);border-radius:12px;text-align:center;min-width:200px">' +
+            '<div style="font-size:11px;color:var(--tx3);margin-bottom:6px">⏱ ' + esc(tlabel3) + '</div>' +
+            '<div id="' + tid3 + '" style="font-size:36px;font-weight:900;color:var(--cyan);font-family:\'JetBrains Mono\',monospace">' + formatTimerSec(tsec3) + '</div>' +
+            '<div style="margin-top:8px;display:flex;gap:8px;justify-content:center">' +
+            '<button onclick="startTimer(\'' + tid3 + '\',' + tsec3 + ')" style="padding:5px 14px;background:var(--green);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700">▶ Start</button>' +
+            '<button onclick="pauseTimer(\'' + tid3 + '\')" style="padding:5px 14px;background:var(--bg4);color:var(--tx);border:1px solid var(--bd);border-radius:6px;cursor:pointer;font-size:11px;font-weight:700">⏸ Pause</button>' +
+            '</div></div></div></div>';
+          document.getElementById("msgContainer").appendChild(tw3);
+          scrollBot(); return;
+        }
+        // ── CHART / MERMAID ───────────────────────────────────────
+        if (tool === "generate_chart" && result.ok && result.mermaid) {
+          var cw3 = document.createElement("div");
+          cw3.className = "msg-group";
+          cw3.innerHTML =
+            '<div class="msg-row ai"><div class="av ai">✦</div>' +
+            '<div class="bwrap" style="max-width:96%">' +
+            '<div style="border:1px solid rgba(108,99,255,0.25);border-radius:12px;background:var(--bg3)">' +
+            '<div style="padding:9px 14px;border-bottom:1px solid var(--bd);font-size:12px;font-weight:800;color:var(--acc2)">📊 ' + esc(result.title || "Chart") + '</div>' +
+            '<div style="padding:16px"><div class="mermaid">' + esc(result.mermaid) + '</div></div>' +
+            '</div></div></div>';
+          document.getElementById("msgContainer").appendChild(cw3);
+          if (window.mermaid) { try { mermaid.run({nodes:cw3.querySelectorAll(".mermaid")}); } catch(e){} }
+          scrollBot(); return;
         }
 
         // ── TRANSLATE ────────────────────────────────────────────
@@ -7557,16 +8023,17 @@
         container.appendChild(div);
         var bub = document.getElementById(bubId);
         var built = "";
-        // Stream word by word like Claude - fast for code, normal for text
+        // Stream word by word like Claude actually typing/running commands -
+        // deliberately slower and more "human" paced than a raw dump.
         var chunks = text.split(" ");
         var isCode =
           text.includes("```") || text.includes("    ") || text.includes("	");
-        var delay = isCode ? 3 : 18; // code streams faster
+        var delay = isCode ? 14 : 34; // slower, more deliberate pacing
+        var wordsPerTick = isCode ? 2 : 1; // fewer words per render tick
         for (var i = 0; i < chunks.length; i++) {
           if (stopFlag) break;
           built += chunks[i] + (i < chunks.length - 1 ? " " : "");
-          // Render every 3 words for smoothness
-          if (i % 3 === 0 || i === chunks.length - 1) {
+          if (i % wordsPerTick === 0 || i === chunks.length - 1) {
             bub.innerHTML = renderMD(built);
             scrollBot();
             await sleep(delay);
@@ -8475,7 +8942,10 @@
         document.getElementById("panelKey").textContent = k
           ? k.slice(0, 8) + "…" + k.slice(-4)
           : "(none)";
-        document.getElementById("serverUrlInput").value = getServer();
+        // Show current server in locked display
+        var srvEl = document.getElementById("srvCurrentUrl");
+        if (srvEl) srvEl.textContent = getServer();
+        renderSrvHist();
         var hint = getServer().replace("https://", "").replace("http://", "");
         document.getElementById("serverHint").textContent = hint
           ? hint.slice(0, 28) + (hint.length > 28 ? "…" : "")
@@ -8495,6 +8965,136 @@
         var draft = localStorage.getItem("sps_draft");
         if (draft && cfg.draft)
           document.getElementById("msgInput").value = draft;
+        connectThinkingSocket();
+      }
+
+      // ── Live "thinking" websocket — shows deep-think tokens as they stream ──
+      var thinkWS = null;
+      var thinkBubId = null;
+      function connectThinkingSocket() {
+        try {
+          var k = localStorage.getItem("sps_key");
+          if (!k) return;
+          if (thinkWS) { try { thinkWS.close(); } catch (e) {} }
+          var wsUrl =
+            getServer().replace(/^https/, "wss").replace(/^http/, "ws") +
+            "/ws/" + encodeURIComponent(k);
+          thinkWS = new WebSocket(wsUrl);
+          thinkWS.onmessage = function (ev) {
+            try {
+              var d = JSON.parse(ev.data);
+              if (d.event !== "sandbox") return;
+              handleThinkingEvent(d.type, d.data || {});
+            } catch (e) {}
+          };
+          thinkWS.onclose = function () {
+            setTimeout(connectThinkingSocket, 5000);
+          };
+          thinkWS.onerror = function () {};
+        } catch (e) {}
+      }
+
+      function ensureThinkBubble() {
+        var container = document.getElementById("msgContainer");
+        if (!container) return null;
+        if (thinkBubId && document.getElementById(thinkBubId))
+          return document.getElementById(thinkBubId);
+        thinkBubId = "think_" + Date.now();
+        var div = document.createElement("div");
+        div.className = "msg-group";
+        div.innerHTML =
+          '<div class="msg-row ai"><div class="av ai">🧠</div><div class="bwrap">' +
+          '<div class="bubble ai" id="' +
+          thinkBubId +
+          '" style="opacity:0.7;font-style:italic;font-size:0.92em;white-space:pre-wrap;"></div>' +
+          "</div></div>";
+        container.appendChild(div);
+        scrollBot();
+        return document.getElementById(thinkBubId);
+      }
+
+      function handleThinkingEvent(type, data) {
+        if (type === "agent_thinking_start") {
+          var bub = ensureThinkBubble();
+          if (bub) bub.textContent = "Thinking…\n";
+        } else if (type === "agent_thinking_token") {
+          var bub = ensureThinkBubble();
+          if (bub) {
+            bub.textContent += data.token || "";
+            scrollBot();
+          }
+        } else if (type === "agent_thinking_done") {
+          var bub = document.getElementById(thinkBubId);
+          if (bub) {
+            bub.innerHTML =
+              '<details><summary>💭 Thought process</summary><div style="white-space:pre-wrap;margin-top:6px;">' +
+              esc(data.thinking || "") +
+              "</div></details>";
+          }
+          thinkBubId = null;
+        } else if (type === "install_start") {
+          showToast("Installing " + (data.packages || []).join(", ") + "…", "info");
+        } else if (type === "install_done") {
+          if (data.ok) {
+            showToast(
+              data.used_fallback ? "Packages installed (local fallback)" : "Packages installed",
+              "ok"
+            );
+          } else {
+            showToast("Install failed — agent is retrying/fixing…", "err");
+          }
+        } else if (type === "image_generated" || type === "image_local") {
+          // FLUX.1-dev local image — render base64 inline
+          var b64 = data.image_b64 || "";
+          if (b64 && b64.length > 100) {
+            var iw = document.createElement("div");
+            iw.className = "msg-group";
+            var modelLbl = "FLUX.1-dev (Dual T4 BF16)";
+            iw.innerHTML =
+              '<div class="msg-row ai"><div class="av ai">✦</div>' +
+              '<div class="bwrap" style="max-width:92%">' +
+              '<div class="img-gen-card">' +
+              '<div class="img-gen-head">' +
+              '<span style="font-size:18px">🎨</span>' +
+              '<span style="font-size:13px;font-weight:800;color:var(--orange)">SPS Image — ' + esc(modelLbl) + '</span>' +
+              '</div>' +
+              '<div class="img-gen-result">' +
+              '<img src="data:image/png;base64,' + b64 + '" style="max-width:100%;display:block;border-radius:0 0 10px 10px" loading="lazy"/>' +
+              '</div>' +
+              '<div style="padding:8px 14px;display:flex;align-items:center;gap:8px">' +
+              '<span style="font-size:11px;color:var(--tx3);flex:1">' + esc((data.prompt||"").slice(0,120)) + '</span>' +
+              '<a href="data:image/png;base64,' + b64 + '" download="sps-flux-image.png" style="padding:5px 12px;background:var(--orange);color:#fff;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none">⬇ Download</a>' +
+              '</div></div></div></div>';
+            document.getElementById("msgContainer").appendChild(iw);
+            scrollBot();
+            liveLog("🎨 FLUX.1-dev image rendered (Dual T4)", "search");
+          }
+        } else if (type === "thinking") {
+          // DeepSeek-R1 thinking block via WS
+          renderThinkingBlock({
+            content: data.content || data.text || "",
+            model:   data.model || "",
+            label:   data.label || "🧠 SPS-Reason-8B Thinking",
+          });
+        } else if (type === "chart") {
+          // generate_chart tool result — render mermaid
+          var mmd = data.mermaid || "";
+          var cTitle = data.title || "Chart";
+          if (mmd) {
+            var cw = document.createElement("div");
+            cw.className = "msg-group";
+            cw.innerHTML =
+              '<div class="msg-row ai"><div class="av ai">✦</div>' +
+              '<div class="bwrap" style="max-width:96%">' +
+              '<div style="border:1px solid rgba(108,99,255,0.25);border-radius:12px;background:var(--bg3)">' +
+              '<div style="padding:9px 14px;border-bottom:1px solid var(--bd);font-size:12px;font-weight:800;color:var(--acc2)">📊 ' + esc(cTitle) + '</div>' +
+              '<div style="padding:16px"><div class="mermaid">' + esc(mmd) + '</div></div>' +
+              '</div></div></div>';
+            document.getElementById("msgContainer").appendChild(cw);
+            if (window.mermaid) { try { mermaid.run({nodes:cw.querySelectorAll(".mermaid")}); } catch(e){} }
+            scrollBot();
+          }
+        }
       }
 
       async function refreshUsage() {
@@ -8570,14 +9170,19 @@
           var rows = [
             { label: "Server", ok: d.server === "ok", val: d.server || "?" },
             {
-              label: "Ollama",
-              ok: !!d.ollama,
-              val: d.ollama ? "Running" : "⚠ Not running — run: ollama serve &",
+              label: "HF Backend",
+              ok: d.backend != null,
+              val: d.backend || "HuggingFace Transformers (Dual T4)",
             },
             {
-              label: "🧠 Coder",
-              ok: !!d.ollama,
-              val: "deepseek-r1:7b · temp=0.6 · architecture & files",
+              label: "Active Model",
+              ok: !!d.current_model && d.current_model !== "none",
+              val: d.current_model ? d.current_model.split("/").pop() : "None loaded",
+            },
+            {
+              label: "VRAM Free",
+              ok: (parseFloat(d.vram_free_gb) || 0) > 4,
+              val: d.vram_free_gb != null ? d.vram_free_gb + " GB" : "Unknown",
             },
             {
               label: "🤖 Agent",
@@ -8633,7 +9238,7 @@
               _ml2.textContent =
                 "📐 " +
                 d.model.split("|")[0].trim().split("/").pop().split(":")[0] +
-                " · SPS v6";
+                " · SPS";
             }
           }
           var ml = document.getElementById("modelLabel");
@@ -8659,46 +9264,27 @@
       }
 
       function saveServerUrl() {
-        var url = document.getElementById("serverUrlInput").value.trim();
-        if (!url) {
-          showToast("Enter URL", "err");
-          return;
+        var inp = document.getElementById("srvUrlInput");
+        var url = (inp ? inp.value : "").trim().replace(/\/$/, "");
+        if (!url || !url.startsWith("http")) {
+          showToast("Enter a valid https:// URL", "err"); return;
         }
-        var clean = url.replace(/\/$/, "");
-        localStorage.setItem("sps_server", clean);
-        saveServerHistory(clean);
-        showToast("Server saved — reloading…", "ok");
-        setTimeout(() => location.reload(), 800);
+        localStorage.setItem("sps_server", url);
+        renderSrvHist();
+        showToast("Server URL saved ✅", "ok");
+        setTimeout(updateConnStatus, 300);
+        // Close setup modal if open
+        var m = document.getElementById("serverSetupModal");
+        if (m) m.style.display = "none";
       }
       function saveServerHistory(url) {
-        if (!url) return;
-        var hist = [];
-        try {
-          hist = JSON.parse(localStorage.getItem("sps_srvhist") || "[]");
-        } catch (e) {}
-        hist = hist.filter((u) => u !== url);
-        hist.unshift(url);
-        if (hist.length > 4) hist.pop();
-        localStorage.setItem("sps_srvhist", JSON.stringify(hist));
-        renderSrvHist();
+        if (url) localStorage.setItem("sps_server", url);
       }
       function renderSrvHist() {
-        var el = document.getElementById("srvHist");
-        if (!el) return;
-        var hist = [];
-        try {
-          hist = JSON.parse(localStorage.getItem("sps_srvhist") || "[]");
-        } catch (e) {}
-        el.innerHTML = hist
-          .map(
-            (u) =>
-              "<div class=\"srv-hist-item\" onclick=\"document.getElementById('serverUrlInput').value='" +
-              esc(u) +
-              "';\">" +
-              esc(u.replace("https://", "").replace("http://", "")) +
-              "</div>",
-          )
-          .join("");
+        var el = document.getElementById("srvCurrentUrl");
+        if (el) el.textContent = getServer() || "(not set)";
+        var inp = document.getElementById("srvUrlInput");
+        if (inp && !inp.value) inp.value = getServer() || "";
       }
       function toggleKeyVis() {
         keyHidden = !keyHidden;
@@ -8877,7 +9463,7 @@
           cfg.showSearch !== false;
         document.getElementById("memN").value = cfg.mem || 12;
         document.getElementById("customSP").value = cfg.sysPrompt || "";
-        var theme = localStorage.getItem("sps_theme") || "dark";
+        var theme = localStorage.getItem("sps_theme") || "light";
         var fs = localStorage.getItem("sps_fs") || "md";
         setTheme(theme, true);
         setFontSize(fs, true);
@@ -10130,6 +10716,485 @@
           else showScreen("signupScreen");
         }
       };
+
+      // ═══════════════════════════════════════════════════════════
+      //  ROLE SELECTOR — SPS
+      // ═══════════════════════════════════════════════════════════
+      var SPSRole = localStorage.getItem("sps_role") || "";
+      window.SPSCoderVariant = localStorage.getItem("sps_coder_variant") || "deepseek";
+      window.SPSQualityLevel = localStorage.getItem("sps_quality_level") || "default";
+
+      // Role display names for UI
+      var ROLE_DISPLAY = {
+        general: "General User", software_engineer: "Software Engineer",
+        researcher: "Researcher", data_scientist: "Data Scientist",
+        student: "Student", creative: "Creative", devops: "DevOps/SRE"
+      };
+      var ROLE_MODEL_BADGE = {
+        general: "SPS-Chat-72B", software_engineer: "SPS-Coder-16B",
+        researcher: "SPS-Reason-8B", data_scientist: "SPS-Reason-8B",
+        student: "SPS-Chat-72B", creative: "SPS-Chat-72B", devops: "SPS-Agent-7B"
+      };
+
+      function showRoleSelector() {
+        var overlay = document.getElementById("roleSelectorOverlay");
+        if (overlay) overlay.style.display = "flex";
+      }
+      function hideRoleSelector() {
+        var overlay = document.getElementById("roleSelectorOverlay");
+        if (overlay) overlay.style.display = "none";
+      }
+      function selectRole(card) {
+        document.querySelectorAll(".role-card").forEach(function(c){ c.classList.remove("selected"); });
+        card.classList.add("selected");
+      }
+      function confirmRole() {
+        var sel = document.querySelector(".role-card.selected");
+        if (!sel) { showToast("Please select a role first", "err"); return; }
+        var role = sel.getAttribute("data-role");
+        SPSRole = role;
+        localStorage.setItem("sps_role", role);
+        hideRoleSelector();
+        applyRole(role);
+        showToast("Role set: " + (ROLE_DISPLAY[role] || role), "ok");
+      }
+      function applyRole(role) {
+        // Show engineer model bar only for software_engineer
+        var bar = document.getElementById("engModelBar");
+        if (bar) bar.className = "eng-model-bar" + (role === "software_engineer" ? " visible" : "");
+        // Update header role pill if present
+        var pill = document.getElementById("rolePill");
+        if (pill) {
+          pill.textContent = "👤 " + (ROLE_DISPLAY[role] || role);
+          pill.title = "Model: " + (ROLE_MODEL_BADGE[role] || "Auto");
+        }
+        // Update welcome suggestions based on role
+        updateWelcomeSuggestions(role);
+      }
+      function updateWelcomeSuggestions(role) {
+        var grid = document.getElementById("sugGrid");
+        if (!grid) return;
+        var sugs = {
+          software_engineer: [
+            {icon:"💻", title:"Full-stack app", desc:"Build a complete React + FastAPI app with auth"},
+            {icon:"🐛", title:"Debug my code", desc:"Find and fix bugs in my project files"},
+            {icon:"⚡", title:"Optimize performance", desc:"Refactor slow code to be production-ready"},
+            {icon:"🏗️", title:"System design", desc:"Design a scalable microservices architecture"},
+          ],
+          researcher: [
+            {icon:"🔬", title:"Deep analysis", desc:"Analyze a complex research paper step by step"},
+            {icon:"🧮", title:"Math proof", desc:"Walk me through a mathematical proof"},
+            {icon:"📊", title:"Literature review", desc:"Summarize key findings in a research area"},
+            {icon:"💡", title:"Hypothesis testing", desc:"Help me design an experiment methodology"},
+          ],
+          data_scientist: [
+            {icon:"📈", title:"ML pipeline", desc:"Build a complete machine learning pipeline"},
+            {icon:"🔢", title:"Statistical analysis", desc:"Run hypothesis tests on my dataset"},
+            {icon:"🗂️", title:"Feature engineering", desc:"Extract and select the best features"},
+            {icon:"🤖", title:"Model evaluation", desc:"Compare models and interpret metrics"},
+          ],
+          creative: [
+            {icon:"🎨", title:"Generate image", desc:"Create a photorealistic image with FLUX"},
+            {icon:"🎬", title:"Create video", desc:"Generate a talking avatar video"},
+            {icon:"✍️", title:"Story writing", desc:"Write a compelling short story"},
+            {icon:"🎵", title:"Content ideas", desc:"Generate creative content ideas for my project"},
+          ],
+          devops: [
+            {icon:"🐳", title:"Docker setup", desc:"Write a complete Dockerfile and compose"},
+            {icon:"🔄", title:"CI/CD pipeline", desc:"Set up GitHub Actions for my project"},
+            {icon:"📡", title:"Monitoring script", desc:"Build a server health monitoring script"},
+            {icon:"🔒", title:"Security audit", desc:"Review my server config for vulnerabilities"},
+          ],
+        };
+        var items = sugs[role] || [
+          {icon:"✦", title:"Ask anything", desc:"I'll route your question to the best specialist"},
+          {icon:"💻", title:"Write code", desc:"Build any app — web, mobile, API, game"},
+          {icon:"🔬", title:"Deep research", desc:"Analyze, reason, and explain complex topics"},
+          {icon:"🎨", title:"Create images", desc:"Generate photorealistic images with FLUX"},
+        ];
+        grid.innerHTML = items.map(function(s) {
+          return '<button class="sug" onclick="useSug(this)">' +
+            '<span class="sug-icon">' + s.icon + '</span>' +
+            '<strong>' + s.title + '</strong>' + s.desc + '</button>';
+        }).join('');
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  ENGINEER MODEL SELECTOR (only for software_engineer)
+      // ═══════════════════════════════════════════════════════════
+      function setCoderVariant(variant) {
+        window.SPSCoderVariant = variant;
+        localStorage.setItem("sps_coder_variant", variant);
+        document.getElementById("engBtnDeepseek").className =
+          "eng-model-btn" + (variant === "deepseek" ? " active" : "");
+        document.getElementById("engBtnStar").className =
+          "eng-model-btn" + (variant === "starcoder" ? " active" : "");
+        showToast("Model: " + (variant === "deepseek" ? "SPS Coder-16B" : "SPS Star-15B"), "ok");
+      }
+      function setQualityLevel(level) {
+        window.SPSQualityLevel = level;
+        localStorage.setItem("sps_quality_level", level);
+        showToast("Quality: " + level, "ok");
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  DEEPSEEK-R1 THINKING BLOCK RENDERER
+      // ═══════════════════════════════════════════════════════════
+      function renderThinkingBlock(step) {
+        var thinking = step.content || "";
+        var model = step.model || "";
+        var label = step.label || "🧠 Reasoning";
+        if (!thinking.trim()) return;
+
+        // Parse thinking into logical steps (split on newlines / sentence boundaries)
+        var lines = thinking.split(/\n+/).filter(function(l){ return l.trim().length > 5; });
+        var wordCount = thinking.split(/\s+/).length;
+
+        var stepsHtml = "";
+        if (lines.length <= 20) {
+          stepsHtml = '<ul class="think-steps">' +
+            lines.map(function(l){ return '<li class="think-step">' + esc(l.trim()) + '</li>'; }).join('') +
+            '</ul>';
+        } else {
+          // For very long thinking, show raw scrollable
+          stepsHtml = '<div class="think-raw">' + esc(thinking) + '</div>';
+        }
+
+        var blockId = "think_" + Date.now();
+        var html =
+          '<div class="think-block r1" id="' + blockId + '">' +
+          '<div class="think-head" onclick="toggleThink(\'' + blockId + '\')">' +
+          '<div class="think-ico">🧠</div>' +
+          '<div class="think-lbl">' + esc(label) + '</div>' +
+          '<span class="think-badge">' + wordCount + ' words · ' + lines.length + ' steps</span>' +
+          '<div style="font-size:9px;color:var(--tx3);font-family:\'JetBrains Mono\',monospace;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(model.split('/').pop() || '') + '</div>' +
+          '<span class="think-chevron">▼</span>' +
+          '</div>' +
+          '<div class="think-body">' + stepsHtml + '</div>' +
+          '</div>';
+
+        // Insert into current AI message or create new group
+        var mc = document.getElementById("msgContainer");
+        var group = document.createElement("div");
+        group.className = "msg-group";
+        group.innerHTML =
+          '<div class="msg-row ai"><div class="av ai">✦</div>' +
+          '<div class="bwrap" style="max-width:92%"><div class="bubble ai" style="padding:6px 8px">' + html + '</div></div></div>';
+        mc.appendChild(group);
+        scrollBot();
+        liveLog("🧠 DeepSeek-R1 thinking: " + wordCount + " words", "think");
+      }
+
+      function toggleThink(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.toggle("open");
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  CLAUDE-STYLE OPENING / CLOSING SENTENCES
+      // ═══════════════════════════════════════════════════════════
+      function appendClaudeOpening(text) {
+        if (!text || !text.trim()) return;
+        var mc = document.getElementById("msgContainer");
+        var group = document.createElement("div");
+        group.className = "msg-group";
+        group.innerHTML =
+          '<div class="msg-row ai"><div class="av ai">✦</div>' +
+          '<div class="bwrap"><div class="bubble ai" style="padding:8px 14px">' +
+          '<div class="claude-opening">💬 ' + esc(text) + '</div>' +
+          '</div></div></div>';
+        mc.appendChild(group);
+        scrollBot();
+        liveLog("💬 " + text, "answer");
+      }
+
+      function appendClaudeClosing(text) {
+        if (!text || !text.trim()) return;
+        var mc = document.getElementById("msgContainer");
+        var lastBubble = mc.querySelector(".bubble.ai:last-of-type");
+        if (lastBubble) {
+          var closing = document.createElement("div");
+          closing.className = "claude-closing";
+          closing.innerHTML = "✅ " + esc(text);
+          lastBubble.appendChild(closing);
+        }
+        scrollBot();
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  VRAM POLLING (every 30s when active)
+      // ═══════════════════════════════════════════════════════════
+      async function pollVram() {
+        var k = localStorage.getItem("sps_key");
+        if (!k) return;
+        try {
+          var r = await fetch(getServer() + "/health", { method: "GET" });
+          var d = await r.json();
+          var badge = document.getElementById("vramBadge");
+          if (badge && d.vram_free_gb != null) {
+            var gb = parseFloat(d.vram_free_gb);
+            badge.textContent = "VRAM: " + gb.toFixed(1) + "GB free";
+            badge.className = "vram-badge" + (gb < 6 ? " warn" : "");
+          }
+          var mp = document.getElementById("modelPillHeader");
+          if (mp && d.current_model) {
+            mp.textContent = "▶ " + (d.current_model.split('/').pop() || 'none');
+          }
+        } catch(e) {}
+      }
+      setInterval(pollVram, 30000);
+      setTimeout(pollVram, 2000);
+
+      // ═══════════════════════════════════════════════════════════
+      //  ROLE INIT — Show modal if first visit
+      // ═══════════════════════════════════════════════════════════
+      (function initRole() {
+        var saved = localStorage.getItem("sps_role");
+        if (!saved) {
+          // First time — show role selector after short delay
+          setTimeout(function() {
+            var overlay = document.getElementById("roleSelectorOverlay");
+            if (overlay && localStorage.getItem("sps_key")) {
+              overlay.style.display = "flex";
+            } else if (overlay) {
+              overlay.style.display = "none"; // Hide until logged in
+            }
+          }, 800);
+        } else {
+          // Already set — hide modal and apply role
+          var overlay = document.getElementById("roleSelectorOverlay");
+          if (overlay) overlay.style.display = "none";
+          setTimeout(function(){ applyRole(saved); }, 100);
+        }
+      })();
+
+      // Show role modal after login
+      var _origOnLogin = window.onLoginSuccess;
+      window.onLoginSuccess = function(key, email) {
+        if (_origOnLogin) _origOnLogin(key, email);
+        if (!localStorage.getItem("sps_role")) {
+          setTimeout(function(){
+            var overlay = document.getElementById("roleSelectorOverlay");
+            if (overlay) overlay.style.display = "flex";
+          }, 400);
+        }
+      };
+
+      // ── Settings panel: Role change ──
+      function changeRoleFromSettings() {
+        var overlay = document.getElementById("roleSelectorOverlay");
+        if (overlay) {
+          overlay.style.display = "flex";
+          // Pre-select current role
+          var cur = localStorage.getItem("sps_role");
+          if (cur) {
+            var card = document.querySelector('.role-card[data-role="' + cur + '"]');
+            if (card) {
+              document.querySelectorAll(".role-card").forEach(function(c){ c.classList.remove("selected"); });
+              card.classList.add("selected");
+            }
+          }
+        }
+      }
+
+
+      // ═══════════════════════════════════════════════════════════
+      //  TIMER WIDGET HELPERS
+      // ═══════════════════════════════════════════════════════════
+      var _timerIntervals = {};
+      function formatTimerSec(s) {
+        var m = Math.floor(s / 60), sec = s % 60;
+        return (m > 0 ? m + ":" : "") + String(sec).padStart(2, "0");
+      }
+      function startTimer(id, totalSec) {
+        if (_timerIntervals[id]) clearInterval(_timerIntervals[id]);
+        var remaining = totalSec;
+        var el = document.getElementById(id);
+        _timerIntervals[id] = setInterval(function() {
+          remaining--;
+          if (el) el.textContent = formatTimerSec(remaining);
+          if (remaining <= 0) {
+            clearInterval(_timerIntervals[id]);
+            if (el) { el.textContent = "00"; el.style.color = "var(--red)"; }
+            showToast("⏱ Timer finished!", "ok");
+          }
+        }, 1000);
+      }
+      function pauseTimer(id) {
+        if (_timerIntervals[id]) {
+          clearInterval(_timerIntervals[id]);
+          delete _timerIntervals[id];
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      //  CONNECTION STATUS (locked server display)
+      // ═══════════════════════════════════════════════════════════
+      async function updateConnStatus() {
+        var dot  = document.getElementById("connStatusDot");
+        var text = document.getElementById("connStatusText");
+        var urlEl = document.getElementById("srvCurrentUrl");
+        if (urlEl) urlEl.textContent = getServer();
+        try {
+          var r = await fetch(getServer() + "/health", {method:"GET"});
+          var d = await r.json();
+          if (dot)  dot.style.background  = "var(--green)";
+          if (text) text.textContent = "Connected ✅";
+        } catch(e) {
+          if (dot)  dot.style.background  = "var(--red)";
+          if (text) text.textContent = "Disconnected ❌";
+        }
+      }
+      // Run when API panel opens
+      var _origOpenPanel = openPanel;
+      openPanel = function(id) {
+        _origOpenPanel(id);
+        if (id === "apiPanel") setTimeout(updateConnStatus, 200);
+      };
+
+
+      // ═══════════════════════════════════════════════════════════
+      //  DUAL T4 GPU STATUS POLLING
+      // ═══════════════════════════════════════════════════════════
+      async function pollGPUStatus() {
+        try {
+          var srv = getServer();
+          if (!srv) return;
+          var r = await fetch(srv + "/gpu_status_ws", {method:"GET", signal: AbortSignal.timeout(4000)});
+          if (!r.ok) return;
+          var d = await r.json();
+          updateGPUBars(d);
+        } catch(e) {
+          // Try health endpoint fallback
+          try {
+            var r2 = await fetch(getServer() + "/health", {signal: AbortSignal.timeout(3000)});
+            var d2 = await r2.json();
+            if (d2.vram_free_gb != null) {
+              document.getElementById("gpuFreeBadge").textContent = d2.vram_free_gb + "GB free";
+              if (d2.current_model) {
+                var mn = d2.current_model.split("/").pop() || "none";
+                document.getElementById("gpuModelName").textContent = mn;
+              }
+            }
+          } catch(e2) {}
+        }
+      }
+      function updateGPUBars(data) {
+        var gpus = data.gpus || [];
+        var totalFree = data.total_free_gb || 0;
+        gpus.forEach(function(gpu, i) {
+          var bar  = document.getElementById("gpuBar" + i);
+          var temp = document.getElementById("gpuTemp" + i);
+          if (!bar) return;
+          var pct  = gpu.total_mb > 0 ? Math.round(gpu.used_mb / gpu.total_mb * 100) : 0;
+          bar.style.width = pct + "%";
+          // Color: green < 70%, orange 70-90%, red > 90%
+          bar.style.background = pct > 90 ? "var(--red)" : pct > 70 ? "var(--orange)" : (i === 0 ? "var(--green)" : "var(--cyan)");
+          if (temp) temp.textContent = (gpu.temp_c || "--") + "°C";
+        });
+        var badge = document.getElementById("gpuFreeBadge");
+        if (badge) {
+          badge.textContent = totalFree.toFixed(1) + "GB free";
+          badge.className = "vram-badge" + (totalFree < 6 ? " warn" : "");
+        }
+        if (data.active_model) {
+          var mn = document.getElementById("gpuModelName");
+          if (mn) mn.textContent = data.active_model.split("/").pop() || "none";
+        }
+      }
+      // Poll every 15 seconds
+      setInterval(pollGPUStatus, 15000);
+      setTimeout(pollGPUStatus, 3000);
+
+      // ═══════════════════════════════════════════════════════════
+      //  GPU STATUS tool result renderer
+      // ═══════════════════════════════════════════════════════════
+      function renderGPUStatus(result) {
+        var gpus = result.gpus || [];
+        var rows = gpus.map(function(g) {
+          var pct = g.total_mb > 0 ? Math.round(g.used_mb/g.total_mb*100) : 0;
+          var color = pct > 90 ? "var(--red)" : pct > 70 ? "var(--orange)" : "var(--green)";
+          return (
+            '<div style="margin-bottom:10px">' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+            '<span style="font-size:11px;font-weight:800;color:var(--tx)">GPU ' + g.index + ' · ' + esc(g.name) + '</span>' +
+            '<span style="font-size:10px;color:var(--tx3)">' + g.temp_c + '°C</span>' +
+            '<span style="margin-left:auto;font-size:10px;font-family:monospace;color:var(--acc2)">' + g.used_gb + '/' + (g.total_mb/1024).toFixed(1) + 'GB</span>' +
+            '</div>' +
+            '<div style="height:10px;background:var(--bg4);border-radius:5px;overflow:hidden">' +
+            '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:5px;transition:width 0.4s"></div>' +
+            '</div>' +
+            '<div style="font-size:10px;color:var(--tx3);margin-top:2px">Util: ' + (g.gpu_util_pct||0) + '% · Free: ' + g.free_gb + 'GB</div>' +
+            '</div>'
+          );
+        }).join('');
+        var html = (
+          '<div style="padding:14px;background:var(--bg3);border:1px solid rgba(34,211,238,0.25);border-radius:12px;min-width:280px">' +
+          '<div style="font-size:12px;font-weight:800;color:var(--cyan);margin-bottom:12px">🖥 Dual T4 GPU Status</div>' +
+          rows +
+          '<div style="border-top:1px solid var(--bd);padding-top:8px;margin-top:4px;font-size:11px;color:var(--tx3)">' +
+          'Total free: <strong style="color:var(--green)">' + result.total_free_gb + 'GB</strong> · ' +
+          'Active: <span style="color:var(--acc2);font-family:monospace">' + esc((result.active_model||'none').split('/').pop()) + '</span>' +
+          '</div></div>'
+        );
+        var cw = document.createElement("div");
+        cw.className = "msg-group";
+        cw.innerHTML = '<div class="msg-row ai"><div class="av ai">✦</div><div class="bwrap">' +
+          '<div class="bubble ai" style="padding:10px">' + html + '</div></div></div>';
+        document.getElementById("msgContainer").appendChild(cw);
+        updateGPUBars(result);
+        scrollBot();
+      }
+
+
+      // ═══════════════════════════════════════════════════════════
+      //  SERVER SETUP MODAL (GitHub Pages — no hardcoded URL)
+      // ═══════════════════════════════════════════════════════════
+      function connectFromModal() {
+        var inp = document.getElementById("setupSrvInput");
+        var url = (inp ? inp.value : "").trim().replace(/\/$/, "");
+        if (!url || !url.startsWith("http")) {
+          inp.style.borderColor = "var(--red)";
+          inp.placeholder = "Must start with https://...";
+          return;
+        }
+        localStorage.setItem("sps_server", url);
+        var m = document.getElementById("serverSetupModal");
+        if (m) m.style.display = "none";
+        renderSrvHist();
+        showToast("Server connected ✅", "ok");
+        setTimeout(updateConnStatus, 400);
+        // Also update the settings panel input
+        var si = document.getElementById("srvUrlInput");
+        if (si) si.value = url;
+      }
+      function dismissServerModal() {
+        var m = document.getElementById("serverSetupModal");
+        if (m) m.style.display = "none";
+      }
+      function showServerSetupIfNeeded() {
+        if (needsServerSetup()) {
+          var m = document.getElementById("serverSetupModal");
+          if (m) m.style.display = "flex";
+        }
+      }
+      // Show after login if no server URL set
+      var _origHandleLogin = window.onLoginSuccess;
+      window.onLoginSuccess = function(key, email) {
+        if (_origHandleLogin) _origHandleLogin(key, email);
+        setTimeout(showServerSetupIfNeeded, 600);
+      };
+      // Show on page load if no server set and user already logged in
+      (function() {
+        var k = localStorage.getItem("sps_key");
+        if (k && needsServerSetup()) {
+          setTimeout(function() {
+            var m = document.getElementById("serverSetupModal");
+            if (m) m.style.display = "flex";
+          }, 1200);
+        }
+      })();
+
     </script>
   </body>
 </html>
